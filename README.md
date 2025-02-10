@@ -1,1 +1,3 @@
 # room-visualizer
+
+`npm start`
