@@ -1,8 +1,7 @@
-import React from 'react';
-import { Canvas } from '@react-three/fiber';  // Importing the Canvas component from @react-three/fiber
-import { useFrame } from '@react-three/fiber'; // Importing useFrame hook for animation
+import React, { useState, useEffect } from 'react';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';  // Importing the Canvas component from @react-three/fiber
 import { OrbitControls } from '@react-three/drei'; // Import OrbitControls from @react-three/drei
-
+import Room from './Room';
 
 
 const RotatingCube = () => {
@@ -28,7 +27,7 @@ const RotatingCubeWrapper = () => {
   return (
     <div style={{ height: '100vh', margin: 0 }}>
       {/* Canvas for 3D scene */}
-      <Canvas>
+      <Canvas camera={{ position: [0, 0, 5] }}>
         {/* Lighting */}
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 10]} intensity={1} />
@@ -36,7 +35,8 @@ const RotatingCubeWrapper = () => {
         <OrbitControls/>
 
         {/* Rotating Cube */}
-        <RotatingCube/>
+        {/* <RotatingCube/> */}
+        <Room  length={3} width={2} height={3} />
 
       </Canvas>
     </div>

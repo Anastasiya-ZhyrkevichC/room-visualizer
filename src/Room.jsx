@@ -1,36 +1,46 @@
+import { RoomProvider, useRoom } from "./RoomProvider";
+
+import * as THREE from 'three';
+
+
+
+
+const VerticalWall = ({position, size}) => {
+    const { X, Y, Z } = useRoom();
+
+    const rotation = [0, Math.PI / 2, 0];
+
+    const roomPosition = new THREE.Vector3(X, Y, Z);
+    const elemPosition = new THREE.Vector3(...position);
+
+    const addup = roomPosition.clone().add(elemPosition);
+
+    console.log(position, X, Y, Z, addup, roomPosition);
+
+
+    return (
+        <mesh position={addup} rotation={rotation}>
+            <planeGeometry args={size} />
+            <meshStandardMaterial color="lightgray" />
+        </mesh>
+    );
+}
+
+
+
 
 const Room = ({ length, width, height }) => {
+
     return (
-      <>
-        {/* Floor */}
-        <mesh position={[0, -height / 2 / 1000, 0]}>
-          <planeGeometry args={[width / 1000, length / 1000]} />
-          <meshStandardMaterial color="lightgray" />
-        </mesh>
+        <>
+            <RoomProvider length={length} width={width} height={height}>
 
-        {/* Left Wall */}
-        <mesh position={[-width / 2 / 1000, height / 2 / 1000, 0]}>
-          <planeGeometry args={[height / 1000, length / 1000]} />
-          <meshStandardMaterial color="lightblue" />
-        </mesh>
-
-        {/* Right Wall */}
-        <mesh position={[width / 2 / 1000, height / 2 / 1000, 0]}>
-          <planeGeometry args={[height / 1000, length / 1000]} />
-          <meshStandardMaterial color="lightblue" />
-        </mesh>
-
-        {/* Center Wall */}
-        <mesh position={[0, height / 2 / 1000, 0]}>
-          <planeGeometry args={[height / 1000, length / 1000]} />
-          <meshStandardMaterial color="gray" />
-        </mesh>
-
-        {/* Lighting */}
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 10]} intensity={1} />
-      </>
+                {/* Walls */}
+                <VerticalWall position={[-width / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]} size={[height, width]} />
+            </RoomProvider>
+        </>
     );
-  };
+}
+
 
 export default Room;
