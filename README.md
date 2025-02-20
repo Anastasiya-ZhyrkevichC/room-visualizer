@@ -13,10 +13,12 @@
   - Problem: the room corner is in the center of the Room -> Need to come back to RoomProvider
 - _20 Feb:_
   - Added PositionAdjuster
+  - prettier
+  - <img src="./img_progress/2025-02-20.png" alt="Alt text" width="300" height="300">
 
 # Nearest plans:
 
-- Inside `VerticalWall = ({position, size}) => {` Undestand how to draw a wall
+- Experiments with Raycaster. It does not change the color, `intersectObjects` return empty list.
 
 # Comments:
 

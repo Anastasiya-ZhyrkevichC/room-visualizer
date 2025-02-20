@@ -30,7 +30,7 @@ const RotatingCubeWrapper = () => {
   return (
     <div style={{ height: "100vh", width: "100vh", margin: 0 }}>
       {/* Canvas for 3D scene */}
-      <Canvas camera={{ position: [length / 2, height / 2, 2 * width] }}>
+      <Canvas camera={{ position: [0, height / 2, 2 * width] }}>
         {/* Lighting */}
         <ambientLight intensity={0.5} />
         <directionalLight position={[length / 2, height, width / 2]} intensity={1} />
