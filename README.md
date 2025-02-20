@@ -4,9 +4,18 @@
 
 
 # Done:
-- Starting the basic default application
-- Form on the top + Rotating cube below
--
+
+- *4 Feb:*
+    - Starting the basic default application
+    - Form on the top + Rotating cube below
+- *19 Feb:*
+    - Axis for rendering
+    - Camera position change to look from aside
+    - Problem: the room corner is in the center of the Room -> Need to come back to RoomProvider
+- *20 Feb:*
+    - Added PositionAdjuster
+
+
 
 
 
