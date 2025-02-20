@@ -1,10 +1,8 @@
-import './App.css';
-import RoomVisualizer from './RoomVisualizer';
+import "./App.css";
+import RoomVisualizer from "./RoomVisualizer";
 
 function App() {
-  return (
-    <RoomVisualizer/>
-  );
+  return <RoomVisualizer />;
 }
 
 export default App;

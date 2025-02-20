@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Button } from '@mui/material';
+import React, { useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Button } from "@mui/material";
 
-
-import Room from './Room';
-import RotatingCubeWrapper from './RotatingCubeWrapper';
+import Room from "./Room";
+import RotatingCubeWrapper from "./RotatingCubeWrapper";
 
 const RoomVisualizer = () => {
   // State to manage the room dimensions
@@ -16,9 +15,9 @@ const RoomVisualizer = () => {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'length') setLength(value);
-    else if (name === 'width') setWidth(value);
-    else if (name === 'height') setHeight(value);
+    if (name === "length") setLength(value);
+    else if (name === "width") setWidth(value);
+    else if (name === "height") setHeight(value);
   };
 
   // Handle the button click (done)
@@ -27,7 +26,14 @@ const RoomVisualizer = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginTop: "20px",
+      }}
+    >
       <h1>Room Visualizer</h1>
 
       {/* Input Fields for Length, Width, and Height */}
@@ -35,35 +41,17 @@ const RoomVisualizer = () => {
         <div>
           <label>
             Length (mm):
-            <input
-              type="number"
-              name="length"
-              value={length}
-              onChange={handleChange}
-              style={{ margin: '10px' }}
-            />
+            <input type="number" name="length" value={length} onChange={handleChange} style={{ margin: "10px" }} />
           </label>
           <br />
           <label>
             Width (mm):
-            <input
-              type="number"
-              name="width"
-              value={width}
-              onChange={handleChange}
-              style={{ margin: '10px' }}
-            />
+            <input type="number" name="width" value={width} onChange={handleChange} style={{ margin: "10px" }} />
           </label>
           <br />
           <label>
             Height (mm):
-            <input
-              type="number"
-              name="height"
-              value={height}
-              onChange={handleChange}
-              style={{ margin: '10px' }}
-            />
+            <input type="number" name="height" value={height} onChange={handleChange} style={{ margin: "10px" }} />
           </label>
           <br />
           <Button variant="contained" color="primary" onClick={handleDone}>
@@ -71,13 +59,9 @@ const RoomVisualizer = () => {
           </Button>
         </div>
       )}
-        <RotatingCubeWrapper/>
+      <RotatingCubeWrapper />
     </div>
   );
 };
-
-
-
-
 
 export default RoomVisualizer;

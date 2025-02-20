@@ -2,30 +2,24 @@
 
 `npm start`
 
-
 # Done:
 
-- *4 Feb:*
-    - Starting the basic default application
-    - Form on the top + Rotating cube below
-- *19 Feb:*
-    - Axis for rendering
-    - Camera position change to look from aside
-    - Problem: the room corner is in the center of the Room -> Need to come back to RoomProvider
-- *20 Feb:*
-    - Added PositionAdjuster
-
-
-
-
+- _4 Feb:_
+  - Starting the basic default application
+  - Form on the top + Rotating cube below
+- _19 Feb:_
+  - Axis for rendering
+  - Camera position change to look from aside
+  - Problem: the room corner is in the center of the Room -> Need to come back to RoomProvider
+- _20 Feb:_
+  - Added PositionAdjuster
 
 # Nearest plans:
+
 - Inside `VerticalWall = ({position, size}) => {` Undestand how to draw a wall
 
-
-
-
 # Comments:
+
 1. This is fine:
 
 ```

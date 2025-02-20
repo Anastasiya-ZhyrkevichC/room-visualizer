@@ -1,6 +1,6 @@
-import React from 'react';
-import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
+import React from "react";
+import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
 
 const AxesWithTicks = () => {
   // Function to create tick lines along axes
@@ -9,10 +9,10 @@ const AxesWithTicks = () => {
     for (let i = -length; i <= length; i += step) {
       const tick = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([
-          axis === 'x' ? new THREE.Vector3(i, 0, 0) : new THREE.Vector3(0, i, 0),
-          axis === 'x' ? new THREE.Vector3(i, 0.1, 0) : new THREE.Vector3(0, i, 0.1),
+          axis === "x" ? new THREE.Vector3(i, 0, 0) : new THREE.Vector3(0, i, 0),
+          axis === "x" ? new THREE.Vector3(i, 0.1, 0) : new THREE.Vector3(0, i, 0.1),
         ]),
-        new THREE.LineBasicMaterial({ color: 0x000000 })
+        new THREE.LineBasicMaterial({ color: 0x000000 }),
       );
       ticks.push(tick);
     }
@@ -29,16 +29,16 @@ const AxesWithTicks = () => {
     scene.add(axesHelper);
 
     // Create and add ticks for each axis
-    createTicks('x').forEach(tick => scene.add(tick));
-    createTicks('y').forEach(tick => scene.add(tick));
-    createTicks('z').forEach(tick => scene.add(tick));
+    createTicks("x").forEach((tick) => scene.add(tick));
+    createTicks("y").forEach((tick) => scene.add(tick));
+    createTicks("z").forEach((tick) => scene.add(tick));
 
     // Cleanup: remove the axes and ticks when the component unmounts
     return () => {
       scene.remove(axesHelper);
-      createTicks('x').forEach(tick => scene.remove(tick));
-      createTicks('y').forEach(tick => scene.remove(tick));
-      createTicks('z').forEach(tick => scene.remove(tick));
+      createTicks("x").forEach((tick) => scene.remove(tick));
+      createTicks("y").forEach((tick) => scene.remove(tick));
+      createTicks("z").forEach((tick) => scene.remove(tick));
     };
   }, [scene]);
 

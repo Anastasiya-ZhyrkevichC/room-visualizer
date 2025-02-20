@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext } from "react";
 
 // Create a RoomContext to store room parameters
 const RoomContext = createContext();
@@ -8,15 +8,11 @@ export const useRoom = () => {
 };
 
 export const RoomProvider = ({ children, length, width, height }) => {
-    const X = - length / 2;
-    const Y = 0;
-    const Z = 0;
+  const X = -length / 2;
+  const Y = 0;
+  const Z = 0;
 
-  return (
-    <RoomContext.Provider value={{ X, Y, Z }}>
-      {children}
-    </RoomContext.Provider>
-  );
+  return <RoomContext.Provider value={{ X, Y, Z }}>{children}</RoomContext.Provider>;
 };
 
 export const PositionAdjuster = ({ children }) => {
@@ -28,17 +24,13 @@ export const PositionAdjuster = ({ children }) => {
       // If the child accepts the 'position' prop, adjust it
       if (child.props.position) {
         return React.cloneElement(child, {
-          position: [
-            child.props.position[0] + X,
-            child.props.position[1] + Y,
-            child.props.position[2] + Z,
-          ]
+          position: [child.props.position[0] + X, child.props.position[1] + Y, child.props.position[2] + Z],
         });
       }
       // If the child has children itself, apply recursively
       if (child.props.children) {
         return React.cloneElement(child, {
-          children: React.Children.map(child.props.children, adjustPositionRecursively)
+          children: React.Children.map(child.props.children, adjustPositionRecursively),
         });
       }
     }
@@ -46,9 +38,5 @@ export const PositionAdjuster = ({ children }) => {
   };
 
   // Apply adjustment to each child element
-  return (
-    <>
-      {React.Children.map(children, adjustPositionRecursively)}
-    </>
-  );
+  return <>{React.Children.map(children, adjustPositionRecursively)}</>;
 };
