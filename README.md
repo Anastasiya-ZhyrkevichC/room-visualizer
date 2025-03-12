@@ -15,6 +15,9 @@
   - Added PositionAdjuster
   - prettier
   - <img src="./img_progress/2025-02-20.png" alt="Alt text" width="300" height="300">
+- _12 Mar:_
+  - Raycaster is now using `canvas.getBoundingClientRect()`, which is the correct usage of the Raycaster
+
 
 # Nearest plans:
 
