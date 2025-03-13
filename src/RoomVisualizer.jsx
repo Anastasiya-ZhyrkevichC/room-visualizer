@@ -12,6 +12,8 @@ const RoomVisualizer = () => {
   const [height, setHeight] = useState(3000); // in mm
   const [drawRoom, setDrawRoom] = useState(false);
 
+  const [raycastingEnabled, setRaycastingEnabled] = useState(false);
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,12 +32,21 @@ const RoomVisualizer = () => {
     { id: 1, name: "Box 1" },
     { id: 2, name: "Box 2" },
     { id: 3, name: "Box 3" },
+    { id: -1, name: "Unselect all"},
   ];
 
   const [selectedBox, setSelectedBox] = useState(null);
 
   const handleBoxClick = (boxId) => {
-    setSelectedBox(boxId);
+    if (boxId >= 0) {
+      setSelectedBox(boxId);
+      setRaycastingEnabled(true);
+    } else {
+      console.log('Raycasting false 1');
+      setSelectedBox(null);
+      setRaycastingEnabled(false);
+      console.log('Raycasting false');
+    }
   };
 
   return (
@@ -73,7 +84,7 @@ const RoomVisualizer = () => {
             </Button>
           </div>
         )}
-        <RotatingCubeWrapper />
+        <RotatingCubeWrapper raycastingEnabled={raycastingEnabled}/>
       </div>
 
       {/* Sidebar Panel with Buttons */}
@@ -99,6 +110,7 @@ const RoomVisualizer = () => {
             {box.name}
           </Button>
         ))}
+
 
         {/* Display the selected box */}
         {selectedBox && <div>Selected Box ID: {selectedBox}</div>}
