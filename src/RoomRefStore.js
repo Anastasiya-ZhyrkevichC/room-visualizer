@@ -53,7 +53,6 @@ class RoomRefStore {
   getRoomCenter() {
     return this.roomCenter;
   }
-
 }
 
 // Export as a singleton instance

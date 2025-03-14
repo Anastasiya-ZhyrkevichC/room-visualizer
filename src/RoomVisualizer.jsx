@@ -42,11 +42,14 @@ const RoomVisualizer = () => {
       setSelectedBox(boxId);
       setRaycastingEnabled(true);
     } else {
-      console.log("Raycasting false 1");
       setSelectedBox(null);
       setRaycastingEnabled(false);
-      console.log("Raycasting false");
     }
+  };
+
+  const placeNewCupBoard = () => {
+    setSelectedBox(null);
+    setRaycastingEnabled(false);
   };
 
   return (
@@ -84,7 +87,7 @@ const RoomVisualizer = () => {
             </Button>
           </div>
         )}
-        <RotatingCubeWrapper raycastingEnabled={raycastingEnabled} />
+        <RotatingCubeWrapper raycastingEnabled={raycastingEnabled} placeNewCupBoard={placeNewCupBoard} />
       </div>
 
       {/* Sidebar Panel with Buttons */}

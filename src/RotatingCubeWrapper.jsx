@@ -25,7 +25,7 @@ const SmallCube = () => {
   );
 };
 
-const RotatingCubeWrapper = ({ raycastingEnabled }) => {
+const RotatingCubeWrapper = ({ raycastingEnabled, placeNewCupBoard }) => {
   const length = 3;
   const width = 2;
   const height = 3;
@@ -42,7 +42,13 @@ const RotatingCubeWrapper = ({ raycastingEnabled }) => {
 
         <AxesWithTicks />
 
-        <Room length={length} width={width} height={height} raycastingEnabled={raycastingEnabled} />
+        <Room
+          length={length}
+          width={width}
+          height={height}
+          raycastingEnabled={raycastingEnabled}
+          placeNewCupBoard={placeNewCupBoard}
+        />
         {/* <RotatingCube /> */}
       </Canvas>
     </div>

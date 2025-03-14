@@ -20,15 +20,16 @@
 - _13 Mar:_
   - Raycasting against the whole room, when the box is selected. Now, the nearest plan is get the render a cupboard + find the potential places for rendering the cupboard.
 - _14 Mar:_
-- When the box is selected, then render the cupboard somewhere in the room around the wall. Supported the back wall currently.
-
+  - When the box is selected, then render the cupboard somewhere in the room around the wall. Supported the back wall currently.
+  - onClick -> draw a solid cupboard and insert it into the room.
 
 # Nearest plans:
 
 - Make opacity, when trying to find a place for the element.
-- onClick -> draw a solid cupboard and insert it into the room.
+- Make a storage of possible boxes with sizes. Use them for buttons and for rendering.
+- Handle the intersections.
+- Handle esc on the draw phase.
 - Get 2D plan.
-
 
 # Comments:
 

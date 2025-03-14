@@ -7,7 +7,8 @@ import RoomRefStore from "./RoomRefStore";
 
 import * as THREE from "three";
 import { SolidCupboard } from "./CupBoard";
-import { Vector3 } from 'three';
+import { Vector3 } from "three";
+import BoxPlacer from "./CupBoardPlacer";
 
 const RoomBox = forwardRef(({ position, size, children }, ref) => {
   return (
@@ -53,61 +54,8 @@ const Floor = forwardRef(({ position, size }, ref) => {
   return <Wall ref={ref} position={position} rotation={rotation} size={size} />;
 });
 
-// Decided to have a room, left-below corner in (-length / 2, 0, 0) position.
-// Later I can move that corner to any other place using `RoomProvider` and `PositionAdjuster`
-// All objects have centers in the center of the object.
-const Room = ({ length, width, height, raycastingEnabled }) => {
-  const { camera, gl } = useThree();
-  const raycaster = useRef(new THREE.Raycaster());
-  const mouse = useRef(new THREE.Vector2());
-
-  const [cupboardPosition, setCupboardPosition] = useState(null);
-
-  const boxWidth = 0.6;
-  const boxHeight = 0.6;
-  const boxDepth = 0.4;
-
-  useEffect(() => {
-    if (!raycastingEnabled) {
-      setCupboardPosition(null);
-    }
-  }, [raycastingEnabled]);
-
-
-  const setCupBoardPositionCallback = (intersectionPosition, boxHeight, boxDepth) => {
-    const newPosition = intersectionPosition;
-    // [TODO] Need to find the nearest wall
-
-    const updatedCupboardPosition = new Vector3(newPosition.x, boxHeight / 2, boxDepth / 2);
-    updatedCupboardPosition.sub(RoomRefStore.getRoomCenter());
-
-    setCupboardPosition(updatedCupboardPosition);
-  };
-
-  const onMouseMoveFloor = useCallback(
-    (event) =>
-      applyRaycastIntersectionCallback(
-        event,
-        raycaster.current,
-        mouse.current,
-        camera,
-        RoomRefStore.getFloor(),
-        (intersectionPosition) => setCupBoardPositionCallback(intersectionPosition, boxHeight, boxDepth),
-        gl,
-      ),
-    [camera, gl, boxHeight, boxDepth],
-  );
-
-  // Enable/disable mousemove event listener
-  useEffect(() => {
-    if (raycastingEnabled) {
-      gl.domElement.addEventListener("mousemove", onMouseMoveFloor);
-    } else {
-      gl.domElement.removeEventListener("mousemove", onMouseMoveFloor);
-    }
-    return () => gl.domElement.removeEventListener("mousemove", onMouseMoveFloor);
-  }, [raycastingEnabled, gl.domElement, onMouseMoveFloor]);
-
+// Room component
+const Room = ({ length, width, height, raycastingEnabled, placeNewCupBoard }) => {
   const roomBoxRef = useRef();
   const floorRef = useRef(null);
   const leftWallRef = useRef(null);
@@ -136,8 +84,7 @@ const Room = ({ length, width, height, raycastingEnabled }) => {
           {/* Floor */}
           <Floor ref={floorRef} position={[0, -height / 2, 0]} size={[length, width]} />
 
-          {cupboardPosition && <SolidCupboard position={cupboardPosition} size={[boxWidth, boxHeight, boxDepth]} />}
-
+          <BoxPlacer raycastingEnabled={raycastingEnabled} placeNewCupBoard={placeNewCupBoard} />
         </RoomBox>
       </RoomProvider>
     </>
