@@ -12,7 +12,6 @@ import { OrbitControls } from "@react-three/drei";
 
 // export default App;
 
-
 const RaycastLogic = () => {
   const [intersectedObject, setIntersectedObject] = useState(null);
   const boxRef = useRef();

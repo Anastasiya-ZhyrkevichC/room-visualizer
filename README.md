@@ -19,39 +19,15 @@
   - Raycaster is now using `canvas.getBoundingClientRect()`, which is the correct usage of the Raycaster
 - _13 Mar:_
   - Raycasting against the whole room, when the box is selected. Now, the nearest plan is get the render a cupboard + find the potential places for rendering the cupboard.
-
+- _14 Mar:_
+- When the box is selected, then render the cupboard somewhere in the room around the wall. Supported the back wall currently.
 
 
 # Nearest plans:
 
-- When the box is selected, then render the cupboard somewhere in the room around the wall.
-
+- Make opacity, when trying to find a place for the element.
+- onClick -> draw a solid cupboard and insert it into the room.
 - Get 2D plan.
-
-
-- Current error
-```
-ERROR
-R3F: Hooks can only be used within the Canvas component!
-useStore@http://localhost:3000/static/js/bundle.js:14010:30
-useThree@http://localhost:3000/static/js/bundle.js:14019:18
-RotatingCubeWrapper@http://localhost:3000/static/js/bundle.js:910:60
-renderWithHooks@http://localhost:3000/static/js/bundle.js:35184:31
-mountIndeterminateComponent@http://localhost:3000/static/js/bundle.js:39155:32
-callCallback@http://localhost:3000/static/js/bundle.js:25440:23
-dispatchEvent@[native code]
-invokeGuardedCallbackDev@http://localhost:3000/static/js/bundle.js:25484:33
-invokeGuardedCallback@http://localhost:3000/static/js/bundle.js:25541:40
-beginWork$1@http://localhost:3000/static/js/bundle.js:45439:32
-performUnitOfWork@http://localhost:3000/static/js/bundle.js:44687:27
-workLoopSync@http://localhost:3000/static/js/bundle.js:44610:26
-renderRootSync@http://localhost:3000/static/js/bundle.js:44583:23
-performConcurrentWorkOnRoot@http://localhost:3000/static/js/bundle.js:43978:92
-performConcurrentWorkOnRoot@[native code]
-workLoop@http://localhost:3000/static/js/bundle.js:47806:46
-flushWork@http://localhost:3000/static/js/bundle.js:47784:26
-performWorkUntilDeadline@http://localhost:3000/static/js/bundle.js:48021:46
-```
 
 
 # Comments:

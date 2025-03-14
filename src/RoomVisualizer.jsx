@@ -32,7 +32,7 @@ const RoomVisualizer = () => {
     { id: 1, name: "Box 1" },
     { id: 2, name: "Box 2" },
     { id: 3, name: "Box 3" },
-    { id: -1, name: "Unselect all"},
+    { id: -1, name: "Unselect all" },
   ];
 
   const [selectedBox, setSelectedBox] = useState(null);
@@ -42,10 +42,10 @@ const RoomVisualizer = () => {
       setSelectedBox(boxId);
       setRaycastingEnabled(true);
     } else {
-      console.log('Raycasting false 1');
+      console.log("Raycasting false 1");
       setSelectedBox(null);
       setRaycastingEnabled(false);
-      console.log('Raycasting false');
+      console.log("Raycasting false");
     }
   };
 
@@ -84,7 +84,7 @@ const RoomVisualizer = () => {
             </Button>
           </div>
         )}
-        <RotatingCubeWrapper raycastingEnabled={raycastingEnabled}/>
+        <RotatingCubeWrapper raycastingEnabled={raycastingEnabled} />
       </div>
 
       {/* Sidebar Panel with Buttons */}
@@ -110,7 +110,6 @@ const RoomVisualizer = () => {
             {box.name}
           </Button>
         ))}
-
 
         {/* Display the selected box */}
         {selectedBox && <div>Selected Box ID: {selectedBox}</div>}
