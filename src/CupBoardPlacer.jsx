@@ -86,7 +86,7 @@ const BoxPlacer = ({ raycastingEnabled, placeNewCupBoard }) => {
     };
   }, [raycastingEnabled, gl.domElement, onMouseMoveFloor, onMouseClickFloor]);
 
-  console.log(boxes);
+  console.log(boxes, currentCupboard);
 
   return (
     <>

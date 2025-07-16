@@ -4,6 +4,12 @@
 
 # Done:
 
+## Summer changes
+- _16 Jul_:
+  - Make opacity, when trying to find a place for the element.
+
+
+## Winter changes
 - _4 Feb:_
   - Starting the basic default application
   - Form on the top + Rotating cube below
@@ -25,7 +31,6 @@
 
 # Nearest plans:
 
-- Make opacity, when trying to find a place for the element.
 - Make a storage of possible boxes with sizes. Use them for buttons and for rendering.
 - Handle the intersections.
 - Handle esc on the draw phase.

@@ -5,8 +5,9 @@ const OpacityCupboard = ({ position, size }) => {
     <mesh position={position}>
       <boxGeometry args={size} />
       <meshStandardMaterial
-        color="blue"
-        opacity={0.5} // Adjust transparency (0 = fully invisible, 1 = solid)
+        color="red"
+        opacity={0.3} // Adjust transparency (0 = fully invisible, 1 = solid)
+        transparent={true}
         depthWrite={false}
       />
     </mesh>
