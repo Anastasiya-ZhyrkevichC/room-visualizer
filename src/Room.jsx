@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback, forwardRef } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 
-import { RoomProvider, useRoom, PositionAdjuster } from "./RoomProvider";
-import { handleMouseMoveInRoom, applyRaycastIntersectionCallback } from "./mouseRaycastHandler";
+import { RoomProvider } from "./RoomProvider";
 import RoomRefStore from "./RoomRefStore";
 
 import * as THREE from "three";
 import { SolidCupboard } from "./CupBoard";
 import { Vector3 } from "three";
-import BoxPlacer from "./CupBoardPlacer";
+import CupBoardRenderer from "./CupBoardRenderer";
 
 const RoomBox = forwardRef(({ position, size, children }, ref) => {
   return (
@@ -55,7 +54,7 @@ const Floor = forwardRef(({ position, size }, ref) => {
 });
 
 // Room component
-const Room = ({ length, width, height, raycastingEnabled, placeNewCupBoard }) => {
+const Room = ({ length, width, height }) => {
   const roomBoxRef = useRef();
   const floorRef = useRef(null);
   const leftWallRef = useRef(null);
@@ -84,7 +83,7 @@ const Room = ({ length, width, height, raycastingEnabled, placeNewCupBoard }) =>
           {/* Floor */}
           <Floor ref={floorRef} position={[0, -height / 2, 0]} size={[length, width]} />
 
-          <BoxPlacer raycastingEnabled={raycastingEnabled} placeNewCupBoard={placeNewCupBoard} />
+          <CupBoardRenderer />
         </RoomBox>
       </RoomProvider>
     </>

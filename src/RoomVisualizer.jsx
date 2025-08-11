@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 
 import Room from "./Room";
 import RotatingCubeWrapper from "./RotatingCubeWrapper";
+import { useCupboards } from "./CupBoardProvider";
 
 const RoomVisualizer = () => {
   // State to manage the room dimensions
@@ -12,7 +13,7 @@ const RoomVisualizer = () => {
   const [height, setHeight] = useState(3000); // in mm
   const [drawRoom, setDrawRoom] = useState(false);
 
-  const [raycastingEnabled, setRaycastingEnabled] = useState(false);
+  const { addCupboard } = useCupboards();
 
   // Handle input changes
   const handleChange = (e) => {
@@ -35,21 +36,8 @@ const RoomVisualizer = () => {
     { id: -1, name: "Unselect all" },
   ];
 
-  const [selectedBox, setSelectedBox] = useState(null);
-
   const handleBoxClick = (boxId) => {
-    if (boxId >= 0) {
-      setSelectedBox(boxId);
-      setRaycastingEnabled(true);
-    } else {
-      setSelectedBox(null);
-      setRaycastingEnabled(false);
-    }
-  };
-
-  const placeNewCupBoard = () => {
-    setSelectedBox(null);
-    setRaycastingEnabled(false);
+    addCupboard();
   };
 
   return (
@@ -87,7 +75,7 @@ const RoomVisualizer = () => {
             </Button>
           </div>
         )}
-        <RotatingCubeWrapper raycastingEnabled={raycastingEnabled} placeNewCupBoard={placeNewCupBoard} />
+        <RotatingCubeWrapper />
       </div>
 
       {/* Sidebar Panel with Buttons */}
@@ -113,9 +101,6 @@ const RoomVisualizer = () => {
             {box.name}
           </Button>
         ))}
-
-        {/* Display the selected box */}
-        {selectedBox && <div>Selected Box ID: {selectedBox}</div>}
       </div>
     </div>
   );

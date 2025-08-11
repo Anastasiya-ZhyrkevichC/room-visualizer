@@ -5,11 +5,15 @@
 # Done:
 
 ## Summer changes
+
 - _16 Jul_:
   - Make opacity, when trying to find a place for the element.
+- _11 Aug_:
+  - Adding the rendering of the boxes on the click of the button without the raycasting.
 
 
 ## Winter changes
+
 - _4 Feb:_
   - Starting the basic default application
   - Form on the top + Rotating cube below
@@ -30,6 +34,11 @@
   - onClick -> draw a solid cupboard and insert it into the room.
 
 # Nearest plans:
+
+- Remove raycaster of the mouse and add the rendering in the random place.
+- Add the possibility to check-out the box.
+- Add the modification things for checkouted box. Like, rotation and moving along the wall.
+- Change the concept of the drawing. Do not draw by mouse RayCaster. Draw in the good place with the possibility to move the box around.
 
 - Make a storage of possible boxes with sizes. Use them for buttons and for rendering.
 - Handle the intersections.

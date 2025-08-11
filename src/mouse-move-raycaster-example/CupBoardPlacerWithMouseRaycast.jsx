@@ -1,12 +1,16 @@
+// This is a class for adding cupboards to a room by clicking on the floor.
+// The important parameter is that the raycastingEnabled prop should be true when you want to place a cupboard.
+// This parameter is passed from the parent (Room, RoomVizualizer) components (throughout all the hierarchy) to this component.
+
 import React, { useState, useEffect, useRef, useCallback, forwardRef } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 
 import { applyRaycastIntersectionCallback } from "./mouseRaycastHandler";
-import RoomRefStore from "./RoomRefStore";
+import RoomRefStore from "../RoomRefStore";
 
 import * as THREE from "three";
 import { Vector3 } from "three";
-import { SolidCupboard, OpacityCupboard } from "./CupBoard";
+import { SolidCupboard, OpacityCupboard } from "../CupBoard";
 
 const boxWidth = 0.6;
 const boxHeight = 0.6;
@@ -19,7 +23,7 @@ class CupBoard {
   }
 }
 
-const BoxPlacer = ({ raycastingEnabled, placeNewCupBoard }) => {
+const BoxPlacerWithMouseRaycast = ({ raycastingEnabled, placeNewCupBoard }) => {
   const [boxes, setBoxes] = useState([]);
 
   const { camera, gl } = useThree();
@@ -101,4 +105,4 @@ const BoxPlacer = ({ raycastingEnabled, placeNewCupBoard }) => {
   );
 };
 
-export default BoxPlacer;
+export default BoxPlacerWithMouseRaycast;

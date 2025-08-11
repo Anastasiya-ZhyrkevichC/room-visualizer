@@ -3,7 +3,7 @@ import { Canvas, useThree, useFrame } from "@react-three/fiber"; // Importing th
 import { OrbitControls } from "@react-three/drei"; // Import OrbitControls from @react-three/drei
 import Room from "./Room";
 import AxesWithTicks from "./AxesWithTicks";
-import handleMouseMove from "./mouseRaycastHandler";
+import handleMouseMove from "./mouse-move-raycaster-example/mouseRaycastHandler";
 
 import * as THREE from "three";
 
@@ -25,7 +25,7 @@ const SmallCube = () => {
   );
 };
 
-const RotatingCubeWrapper = ({ raycastingEnabled, placeNewCupBoard }) => {
+const RotatingCubeWrapper = () => {
   const length = 3;
   const width = 2;
   const height = 3;
@@ -42,13 +42,7 @@ const RotatingCubeWrapper = ({ raycastingEnabled, placeNewCupBoard }) => {
 
         <AxesWithTicks />
 
-        <Room
-          length={length}
-          width={width}
-          height={height}
-          raycastingEnabled={raycastingEnabled}
-          placeNewCupBoard={placeNewCupBoard}
-        />
+        <Room length={length} width={width} height={height} />
         {/* <RotatingCube /> */}
       </Canvas>
     </div>
