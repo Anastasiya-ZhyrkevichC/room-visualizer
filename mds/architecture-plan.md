@@ -10,14 +10,14 @@ This project should stay simple:
 - Users must be able to save and reopen projects as JSON files on their own machine.
 - Fast implementation is more important than enterprise architecture.
 
-Design decision: build one browser-first React application. Project persistence lives on the client through local JSON files, with `localStorage` used only for temporary draft recovery.
+Design decision: build one browser-first React application. Project persistence lives on the client through browser-local autosave in `localStorage` plus user-triggered JSON import/export.
 
 Important browser constraint:
 
 - A normal web app cannot silently read or write arbitrary files in a user's local directory.
 - File access must be initiated by the user.
-- Direct save-back to the same file is only available in browsers that support the File System Access API.
-- A fallback import/export flow is required for browsers without that API.
+- This v1 should not implement the File System Access API, even in browsers that support it.
+- Portable save/load in v1 uses JSON download/upload only.
 
 ---
 
@@ -28,10 +28,8 @@ flowchart LR
   U["User Browser"] --> FE["React Frontend"]
   FE --> STATE["Planner Store + Domain Logic"]
   FE --> CATALOG["Static catalog.json"]
-  FE --> DRAFT["localStorage (draft recovery only)"]
-  FE --> FILES["Local JSON file access"]
-  FILES --> FSAPI["File System Access API (preferred)"]
-  FILES --> FALLBACK["Download / Upload fallback"]
+  FE --> DRAFT["localStorage autosave (working draft)"]
+  FE --> FILES["JSON export / import"]
   FE -. optional .-> QUOTE["Quote request endpoint or email service"]
 ```
 
@@ -40,6 +38,7 @@ flowchart LR
 - The current product does not need accounts, collaboration, or shared cloud persistence.
 - The browser can fully own room editing, placement logic, and pricing for the current scale.
 - JSON files are simple to inspect, version, export, and support manually.
+- Standard browser storage plus JSON import/export is enough for v1.
 - Removing project persistence from the backend reduces implementation time and operational cost.
 
 ---
@@ -55,9 +54,9 @@ flowchart LR
 
 ### `ProjectFileBar`
 - Responsibility:
-  - Exposes `New`, `Open`, `Save`, `Save As`, `Import`, and `Export`.
-  - Shows current project name and file status.
-  - Warns when the browser only supports fallback file handling.
+  - Exposes `New`, `Import`, and `Export`.
+  - Shows current project name plus draft/export status.
+  - Makes it clear that v1 uses browser autosave plus JSON import/export.
 
 ### `RoomSetupPanel`
 - Responsibility:
@@ -92,6 +91,7 @@ flowchart LR
 ### `ImportExportDialogs`
 - Responsibility:
   - Confirms risky actions such as replacing the current project with an imported file.
+  - Offers restore or discard when a local draft is found on app boot.
   - Shows validation errors for unsupported or corrupted JSON files.
 
 ### `ToastNotifications`
@@ -111,7 +111,7 @@ flowchart LR
     - Active tool mode
     - Pricing state
     - Dirty/saved status
-    - Current file metadata
+    - Current project metadata
 - Rule:
   - UI reads from the store and all changes happen through actions.
 
@@ -143,21 +143,17 @@ flowchart LR
 
 ### `ProjectFileService`
 - Responsibility:
-  - Implements file open/save behavior.
-  - Uses the File System Access API when available.
-  - Falls back to browser download/upload when unavailable.
+  - Implements JSON import/export behavior.
+  - Creates downloadable JSON exports and reads user-selected JSON files.
+  - Does not keep local file handles in v1.
 
 ### `DraftCacheService`
 - Responsibility:
   - Saves the latest unsaved draft to `localStorage`.
   - Restores that draft after refresh or crash recovery.
 - Rule:
-  - `localStorage` is not the canonical saved project format.
-
-### `BrowserCapabilityService`
-- Responsibility:
-  - Detects support for `showOpenFilePicker` and `showSaveFilePicker`.
-  - Drives feature flags for save/open UX.
+  - `localStorage` is the primary working-copy protection in v1.
+  - Exported JSON is the portable user-controlled saved project format.
 
 ---
 
@@ -210,31 +206,31 @@ Rules:
 
 ## 4.2 Read/Write Strategy
 
-### Primary path: File System Access API
-- User chooses a file through browser-native open/save dialogs.
-- The app writes JSON directly to the selected file after user permission.
-- `Save` overwrites the currently opened file handle for the current session.
-- `Save As` creates a new file handle.
+### Primary path: Browser-local autosave
+- On planner changes, store the latest draft in `localStorage`.
+- On reload, offer to restore the draft if it is newer than the last imported or exported state.
+- Clear the draft only after explicit user confirmation or when starting a new project.
 
-### Fallback path: Download/Upload
+### Portable project copy: Export/Import
 - `Export` creates a downloadable JSON file.
 - `Import` reads a user-selected JSON file through a file input.
-- This path works in browsers without File System Access API support.
+- This is the only file persistence flow in v1.
 
-### Temporary draft recovery
-- On planner changes, store a lightweight draft in `localStorage`.
-- On reload, offer to restore the draft if it is newer than the last opened or saved file.
-- Clear the draft only after explicit user confirmation or a successful file save.
+### Explicit v1 boundary
+- Do not implement `Open`, `Save`, or `Save As` in v1.
+- Do not implement the File System Access API in v1.
+- If same-file save later becomes a hard requirement, evaluate it as a future enhancement.
 
 ## 4.3 Non-Goal
 
 The app should not try to:
 
 - Write into arbitrary local directories without user interaction.
+- Implement browser-specific same-file save behavior in v1.
 - Sync projects across devices.
 - Maintain a server-side library of user projects.
 
-If fully automatic filesystem control becomes a hard requirement later, that is no longer a normal web app problem. It would point toward an Electron or other desktop wrapper.
+If same-file save or fully automatic filesystem control becomes a hard requirement later, evaluate File System Access API or a desktop wrapper separately.
 
 ---
 
@@ -285,7 +281,7 @@ Suggested module fields:
 
 ## 6.3 No Database
 
-Do not add a `projects` table or any other persistence database for v1. The saved project file itself is the durable source of truth.
+Do not add a `projects` table or any other persistence database for v1. The exported project file is the durable portable source of truth outside the browser, and the local draft is the working copy inside the browser.
 
 ---
 
@@ -299,20 +295,19 @@ Do not add a `projects` table or any other persistence database for v1. The save
 5. `PricingEngine` recalculates totals.
 6. `DraftCacheService` marks the project as dirty and updates the local draft.
 
-## 7.2 Save Project
-1. User clicks `Save` or `Save As` in `ProjectFileBar`.
+## 7.2 Export Project
+1. User clicks `Export` in `ProjectFileBar`.
 2. `ProjectSerializer` converts planner state to a project document.
-3. `ProjectFileService` writes the JSON:
-   - via File System Access API when supported
-   - or via download fallback when unsupported
-4. Store updates saved metadata and clears the dirty flag.
+3. `ProjectFileService` creates a downloadable JSON file.
+4. Store updates export metadata and clears the "changes since export" flag.
 
-## 7.3 Open Project
-1. User clicks `Open` or `Import`.
+## 7.3 Import Project
+1. User clicks `Import`.
 2. `ProjectFileService` reads the selected JSON file.
 3. `ValidationService` and `ProjectSerializer` validate and parse the document.
 4. `PlannerStore` replaces current state with the imported project.
-5. `PricingEngine` recalculates to confirm consistency with the current catalog rules.
+5. `DraftCacheService` updates the local draft with the imported project.
+6. `PricingEngine` recalculates to confirm consistency with the current catalog rules.
 
 ## 7.4 Recover Draft
 1. App boots.
@@ -332,13 +327,15 @@ Do not add a `projects` table or any other persistence database for v1. The save
 
 - Performance:
   - Initial page load under 3 seconds on normal broadband.
-  - Local save and open operations should feel immediate for normal project sizes.
+  - Local export and import operations should feel immediate for normal project sizes.
 - Reliability:
   - Imported JSON must be validated before state mutation.
   - Draft recovery should survive refresh and accidental tab close.
+  - After initial load, short network interruptions must not affect current in-browser editing or local autosave.
 - Compatibility:
-  - The app must work without File System Access API support.
-  - Fallback import/export is required.
+  - The app relies only on standard browser storage and file upload/download APIs used across major browsers.
+  - File System Access API is not required and should not be implemented in v1.
+  - Reloading the app while fully offline is not guaranteed in v1 unless the app shell is already cached by the browser.
 - Security:
   - Never execute imported content.
   - Treat imported JSON as untrusted input.
@@ -373,7 +370,6 @@ src/
     pricingEngine.js
     validationService.js
   services/
-    browserCapabilityService.js
     catalogService.js
     draftCacheService.js
     projectFileService.js
@@ -392,11 +388,11 @@ This folder structure is a target shape. Existing files such as `RoomVisualizer.
   - Display planner state and collect user actions.
 - Store and domain logic:
   - Keep room editing, placement, and pricing consistent.
-- File services:
-  - Open, save, import, export, and recover local project documents.
+- Project persistence services:
+  - Autosave the working draft and import/export local project documents.
 - Catalog data:
   - Define the available modules and pricing inputs.
 - Optional quote integration:
   - Send a project snapshot outward without becoming the primary persistence layer.
 
-This architecture keeps the product aligned with the actual requirement: no accounts, no server-side project library, and reliable project persistence through local JSON files.
+This architecture keeps the product aligned with the actual requirement: no accounts, no server-side project library, browser-local loss protection while editing, and portable project persistence through JSON import/export.
