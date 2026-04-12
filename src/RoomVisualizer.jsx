@@ -11,9 +11,9 @@ const defaultRoomDimensions = {
 };
 
 const roomFields = [
-  { name: "length", label: "Length (mm)" },
-  { name: "width", label: "Width (mm)" },
-  { name: "height", label: "Height (mm)" },
+  { name: "length", label: "Length", unit: "mm" },
+  { name: "width", label: "Width", unit: "mm" },
+  { name: "height", label: "Height", unit: "mm" },
 ];
 
 const quickAddOptions = [
@@ -22,55 +22,139 @@ const quickAddOptions = [
   { id: 3, name: "Add wall box" },
 ];
 
-const toSceneValue = (value, fallback) => {
-  const numericValue = Number(value);
+const createDraftRoomDimensions = (dimensions) =>
+  roomFields.reduce((draft, field) => ({ ...draft, [field.name]: String(dimensions[field.name]) }), {});
 
-  if (!Number.isFinite(numericValue) || numericValue <= 0) {
-    return fallback;
-  }
+const formatRoomDimensions = (dimensions) => `${dimensions.length} x ${dimensions.width} x ${dimensions.height} mm`;
 
-  return numericValue / 1000;
+const validateRoomDimensions = (dimensions) => {
+  const errors = {};
+  const parsedDimensions = {};
+
+  roomFields.forEach((field) => {
+    const rawValue = String(dimensions[field.name] ?? "").trim();
+
+    if (rawValue === "") {
+      errors[field.name] = `${field.label} is required.`;
+      return;
+    }
+
+    const numericValue = Number(rawValue);
+
+    if (!Number.isFinite(numericValue)) {
+      errors[field.name] = `${field.label} must be a valid number.`;
+      return;
+    }
+
+    if (numericValue === 0) {
+      errors[field.name] = `${field.label} must be greater than 0 ${field.unit}.`;
+      return;
+    }
+
+    if (numericValue < 0) {
+      errors[field.name] = `${field.label} cannot be negative.`;
+      return;
+    }
+
+    parsedDimensions[field.name] = numericValue;
+  });
+
+  return {
+    errors,
+    parsedDimensions,
+    isValid: Object.keys(errors).length === 0,
+  };
 };
 
 const RoomVisualizer = () => {
-  const [draftRoomDimensions, setDraftRoomDimensions] = useState(defaultRoomDimensions);
-  const [sceneRoomDimensions, setSceneRoomDimensions] = useState(defaultRoomDimensions);
+  const [draftRoomDimensions, setDraftRoomDimensions] = useState(() =>
+    createDraftRoomDimensions(defaultRoomDimensions),
+  );
+  const [appliedRoomDimensions, setAppliedRoomDimensions] = useState(defaultRoomDimensions);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [roomFeedback, setRoomFeedback] = useState(null);
+  const [hasAttemptedApply, setHasAttemptedApply] = useState(false);
   const { addCupboard, cupboards } = useCupboards();
 
   const handleRoomChange = (event) => {
     const { name, value } = event.target;
-
-    setDraftRoomDimensions((currentValues) => ({
-      ...currentValues,
+    const nextDraftRoomDimensions = {
+      ...draftRoomDimensions,
       [name]: value,
-    }));
+    };
+
+    setDraftRoomDimensions(nextDraftRoomDimensions);
+
+    if (hasAttemptedApply) {
+      setValidationErrors(validateRoomDimensions(nextDraftRoomDimensions).errors);
+    }
+
+    if (roomFeedback) {
+      setRoomFeedback(null);
+    }
   };
 
-  const handleRefreshRoom = () => {
-    setSceneRoomDimensions(draftRoomDimensions);
+  const handleApplyRoom = (event) => {
+    event.preventDefault();
+    setHasAttemptedApply(true);
+
+    const { errors, parsedDimensions, isValid } = validateRoomDimensions(draftRoomDimensions);
+
+    if (!isValid) {
+      setValidationErrors(errors);
+      setRoomFeedback({
+        tone: "error",
+        message: "Enter a positive value for each room dimension before applying changes.",
+      });
+      return;
+    }
+
+    setValidationErrors({});
+    setHasAttemptedApply(false);
+    setAppliedRoomDimensions(parsedDimensions);
+    setDraftRoomDimensions(createDraftRoomDimensions(parsedDimensions));
+    setRoomFeedback({
+      tone: "success",
+      message: `Room updated to ${formatRoomDimensions(parsedDimensions)}.`,
+    });
   };
 
-  const sceneLength = toSceneValue(sceneRoomDimensions.length, defaultRoomDimensions.length / 1000);
-  const sceneWidth = toSceneValue(sceneRoomDimensions.width, defaultRoomDimensions.width / 1000);
-  const sceneHeight = toSceneValue(sceneRoomDimensions.height, defaultRoomDimensions.height / 1000);
+  const handleResetRoom = () => {
+    setDraftRoomDimensions(createDraftRoomDimensions(defaultRoomDimensions));
+    setAppliedRoomDimensions(defaultRoomDimensions);
+    setValidationErrors({});
+    setHasAttemptedApply(false);
+    setRoomFeedback({
+      tone: "info",
+      message: `Room reset to default size: ${formatRoomDimensions(defaultRoomDimensions)}.`,
+    });
+  };
+
+  const sceneLength = appliedRoomDimensions.length / 1000;
+  const sceneWidth = appliedRoomDimensions.width / 1000;
+  const sceneHeight = appliedRoomDimensions.height / 1000;
+  const hasDraftChanges = roomFields.some(
+    (field) => draftRoomDimensions[field.name] !== String(appliedRoomDimensions[field.name]),
+  );
+  const isDefaultRoomApplied = roomFields.every(
+    (field) => appliedRoomDimensions[field.name] === defaultRoomDimensions[field.name],
+  );
 
   return (
     <div className="planner-page">
       <header className="planner-header">
         <div>
-          <p className="planner-header__eyebrow">Kitchen Planner Prototype</p>
-          <h1 className="planner-header__title">Shape the room before placing cabinets.</h1>
+          <p className="planner-header__eyebrow">Kitchen Planner Prototype · Step 2</p>
+          <h1 className="planner-header__title">Confirm the room shell before placing cabinets.</h1>
           <p className="planner-header__copy">
-            Step 1 establishes the workspace: controls on the left, the 3D room in the center, and future detail panels
-            on the right.
+            Set the core room size in millimeters, apply valid changes to update the 3D shell, and reset back to the
+            default plan when needed.
           </p>
         </div>
         <div className="planner-header__stats" aria-label="Planner overview">
           <div className="planner-stat">
-            <span className="planner-stat__label">Room shell</span>
-            <strong className="planner-stat__value">
-              {sceneRoomDimensions.length} x {sceneRoomDimensions.width} x {sceneRoomDimensions.height} mm
-            </strong>
+            <span className="planner-stat__label">Room shell in scene</span>
+            <strong className="planner-stat__value">{formatRoomDimensions(appliedRoomDimensions)}</strong>
           </div>
           <div className="planner-stat">
             <span className="planner-stat__label">Placed modules</span>
@@ -83,30 +167,71 @@ const RoomVisualizer = () => {
         <aside className="planner-panel planner-panel--left">
           <section className="panel-card">
             <div className="panel-card__header">
-              <p className="panel-card__eyebrow">Left Panel</p>
-              <h2 className="panel-card__title">Room controls</h2>
+              <p className="panel-card__eyebrow">Room Setup</p>
+              <h2 className="panel-card__title">Define room dimensions</h2>
             </div>
             <p className="panel-card__copy">
-              Keep the core dimensions editable here while the rest of the planner grows around this structure.
+              The 3D room updates only after you apply valid dimensions, so temporary edits and validation problems
+              never break the scene.
             </p>
 
-            <div className="room-form">
+            <form className="room-form" onSubmit={handleApplyRoom} noValidate>
               {roomFields.map((field) => (
-                <label key={field.name} className="room-form__field">
-                  <span>{field.label}</span>
+                <label
+                  key={field.name}
+                  className={`room-form__field${validationErrors[field.name] ? " room-form__field--error" : ""}`}
+                >
+                  <span className="room-form__label">
+                    <span>{field.label}</span>
+                    <span className="room-form__unit">{field.unit}</span>
+                  </span>
                   <input
                     type="number"
                     name={field.name}
+                    min="1"
+                    step="1"
                     value={draftRoomDimensions[field.name]}
                     onChange={handleRoomChange}
+                    aria-invalid={Boolean(validationErrors[field.name])}
+                    aria-describedby={validationErrors[field.name] ? `${field.name}-error` : undefined}
                   />
+                  {validationErrors[field.name] ? (
+                    <span className="room-form__error" id={`${field.name}-error`}>
+                      {validationErrors[field.name]}
+                    </span>
+                  ) : null}
                 </label>
               ))}
-            </div>
 
-            <Button variant="contained" onClick={handleRefreshRoom} className="planner-button planner-button--primary">
-              Refresh room view
-            </Button>
+              {roomFeedback ? (
+                <div
+                  className={`room-form__feedback room-form__feedback--${roomFeedback.tone}`}
+                  role={roomFeedback.tone === "error" ? "alert" : "status"}
+                >
+                  {roomFeedback.message}
+                </div>
+              ) : null}
+
+              <div className="room-form__actions">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={!hasDraftChanges}
+                  className="planner-button planner-button--primary"
+                >
+                  Apply
+                </Button>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  onClick={handleResetRoom}
+                  disabled={!hasDraftChanges && isDefaultRoomApplied}
+                  className="planner-button planner-button--secondary"
+                >
+                  Reset
+                </Button>
+              </div>
+            </form>
           </section>
 
           <section className="panel-card panel-card--secondary">
@@ -139,7 +264,7 @@ const RoomVisualizer = () => {
               <p className="planner-stage__eyebrow">Main Workspace</p>
               <h2 className="planner-stage__title">3D room preview</h2>
             </div>
-            <div className="planner-stage__badge">Center view stays dominant</div>
+            <div className="planner-stage__badge">Updates after Apply</div>
           </div>
 
           <div className="planner-stage__canvas">
@@ -172,7 +297,7 @@ const RoomVisualizer = () => {
               <div className="summary-list__item">
                 <span>Room dimensions</span>
                 <strong>
-                  {sceneRoomDimensions.length} / {sceneRoomDimensions.width} / {sceneRoomDimensions.height} mm
+                  {appliedRoomDimensions.length} / {appliedRoomDimensions.width} / {appliedRoomDimensions.height} mm
                 </strong>
               </div>
               <div className="summary-list__item">
