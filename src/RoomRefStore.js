@@ -56,4 +56,6 @@ class RoomRefStore {
 }
 
 // Export as a singleton instance
-export default new RoomRefStore();
+const roomRefStore = new RoomRefStore();
+
+export default roomRefStore;

@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback, forwardRef } from "react";
-import { useThree, useFrame } from "@react-three/fiber";
+import React, { useEffect, useRef, forwardRef } from "react";
 
 import { RoomProvider } from "./RoomProvider";
 import RoomRefStore from "./RoomRefStore";
 
-import * as THREE from "three";
-import { SolidCupboard } from "./CupBoard";
 import { Vector3 } from "three";
 import CupBoardRenderer from "./CupBoardRenderer";
 
@@ -67,12 +64,12 @@ const Room = ({ length, width, height }) => {
     RoomRefStore.setRightWall(rightWallRef);
     RoomRefStore.setBackWall(backWallRef);
     RoomRefStore.setRoomCenter(new Vector3(0, height / 2, width / 2));
-  }, []);
+  }, [height, width]);
 
   return (
     <>
       <RoomProvider length={length} width={width} height={height}>
-        \{/* Invisible Room */}
+        {/* Invisible Room */}
         <RoomBox ref={roomBoxRef} position={[0, height / 2, width / 2]} size={[length, height, width]}>
           {/* <RoomBox ref={roomBoxRef} position={[10, 5, 5]} size={[length, height, width]}> */}
           {/* Walls */}

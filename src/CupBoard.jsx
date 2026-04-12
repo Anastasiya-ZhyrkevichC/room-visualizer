@@ -1,5 +1,3 @@
-import * as THREE from "three";
-
 const OpacityCupboard = ({ position, size }) => {
   return (
     <mesh position={position}>

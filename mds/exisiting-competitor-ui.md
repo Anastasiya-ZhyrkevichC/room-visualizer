@@ -2,10 +2,6 @@
 
 This document captures the UI patterns visible in the competitor kitchen constructor and translates them into a practical brief for our UI designer.
 
-Reference URL:
-
-- [Competitor constructor](https://kuhnimodul.online/constructor/)
-
 Reference basis:
 
 - Screenshot 1: room setup / room elements state

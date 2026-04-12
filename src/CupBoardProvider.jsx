@@ -53,7 +53,7 @@ export function CupBoardProvider({ children }) {
     });
   }, []);
 
-  const value = useMemo(() => ({ cupboards, addCupboard }), [cupboards]);
+  const value = useMemo(() => ({ cupboards, addCupboard }), [cupboards, addCupboard]);
 
   return <CupBoardContext.Provider value={value}>{children}</CupBoardContext.Provider>;
 }
