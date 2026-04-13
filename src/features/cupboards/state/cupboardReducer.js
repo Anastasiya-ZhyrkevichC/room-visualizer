@@ -5,9 +5,7 @@ import {
   alignCupboardToBackWall,
   createPlacementPreview,
   createCupboard,
-  createInitialCupboardPosition,
   getBackWallAlignedPreviewPosition,
-  getAttachedCupboardPosition,
 } from "../model/placement";
 
 export const initialCupboardState = {
@@ -19,23 +17,6 @@ export const initialCupboardState = {
 
 export const cupboardReducer = (state, action) => {
   switch (action.type) {
-    case "ADD_CUPBOARD": {
-      const cabinet = getStarterCabinet(action.payload.catalogId ?? defaultStarterCabinetId);
-      const nextCupboardId = state.nextCupboardId;
-      const position =
-        state.cupboards.length === 0
-          ? createInitialCupboardPosition(cabinet.size, action.payload.roomBounds)
-          : getAttachedCupboardPosition(state.cupboards[state.cupboards.length - 1], cabinet.size);
-
-      return {
-        ...state,
-        cupboards: [...state.cupboards, createCupboard({ id: nextCupboardId, cabinet, position })],
-        placementPreview: null,
-        selectedCupboardId: nextCupboardId,
-        nextCupboardId: nextCupboardId + 1,
-      };
-    }
-
     case "START_PLACEMENT_PREVIEW": {
       const cabinet = getStarterCabinet(action.payload.catalogId ?? defaultStarterCabinetId);
 

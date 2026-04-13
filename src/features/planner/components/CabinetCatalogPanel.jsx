@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { Button } from "@mui/material";
 
 import { starterCabinetCatalog } from "../../cupboards/model/catalog";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { formatMillimeterTuple } from "../lib/roomFormatting";
 
 const CabinetCatalogPanel = () => {
-  const { addCupboard, cancelPlacementPreview, finishPlacementPreview, placementPreview, startPlacementPreview } =
-    useCupboards();
+  const { cancelPlacementPreview, finishPlacementPreview, placementPreview, startPlacementPreview } = useCupboards();
   const dragCleanupRef = useRef(null);
 
   useEffect(() => {
@@ -64,12 +62,9 @@ const CabinetCatalogPanel = () => {
     <section className="panel-card panel-card--secondary">
       <div className="panel-card__header">
         <p className="panel-card__eyebrow">Starter Catalog</p>
-        <h2 className="panel-card__title">Add a cabinet</h2>
+        <h2 className="panel-card__title">Drag a cabinet</h2>
       </div>
-      <p className="panel-card__copy">
-        Drag a cabinet card into the room and release on the back wall to place it, or use the quick add button for the
-        existing auto-placement flow.
-      </p>
+      <p className="panel-card__copy">Drag a cabinet card into the room and release on the back wall to place it.</p>
 
       <div className="catalog-list">
         {starterCabinetCatalog.map((cabinet) => (
@@ -83,15 +78,6 @@ const CabinetCatalogPanel = () => {
               <span className="catalog-card__size">{formatMillimeterTuple(cabinet.dimensionsMm)}</span>
               <p className="catalog-card__copy">{cabinet.description}</p>
             </div>
-
-            <Button
-              variant="outlined"
-              onPointerDown={(event) => event.stopPropagation()}
-              onClick={() => addCupboard(cabinet.id)}
-              className="planner-button planner-button--secondary"
-            >
-              Add
-            </Button>
           </article>
         ))}
       </div>

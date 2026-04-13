@@ -19,7 +19,6 @@ export const CupboardProvider = ({ children }) => {
       isPlacementActive: Boolean(state.placementPreview),
       selectedCupboardId: state.selectedCupboardId,
       selectedCupboard,
-      addCupboard: (catalogId) => dispatch({ type: "ADD_CUPBOARD", payload: { catalogId, roomBounds: bounds } }),
       startPlacementPreview: (catalogId) =>
         dispatch({ type: "START_PLACEMENT_PREVIEW", payload: { catalogId, roomBounds: bounds } }),
       updatePlacementPreview: (placement) =>
