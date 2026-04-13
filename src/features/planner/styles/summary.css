@@ -1,0 +1,12 @@
+.summary-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.summary-list__item span {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--planner-text-soft);
+}

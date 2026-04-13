@@ -1,18 +1,18 @@
 import React from "react";
 
-import { SolidCupboard } from "./CupBoard";
-import { useCupboards } from "./CupBoardProvider";
+import { useCupboards } from "../state/CupboardProvider";
+import { CupboardMesh } from "./CupboardMesh";
 
-const CupBoardRenderer = () => {
+const CupboardRenderer = () => {
   const { cupboards, selectedCupboardId, selectCupboard } = useCupboards();
 
   return (
     <>
       {cupboards.map((cupboard) => (
-        <SolidCupboard
+        <CupboardMesh
           key={cupboard.id}
           position={cupboard.position}
-          rotation={[0, cupboard.rotation, 0]}
+          rotation={cupboard.rotation}
           size={cupboard.size}
           isSelected={cupboard.id === selectedCupboardId}
           onSelect={() => selectCupboard(cupboard.id)}
@@ -22,4 +22,4 @@ const CupBoardRenderer = () => {
   );
 };
 
-export default CupBoardRenderer;
+export default CupboardRenderer;

@@ -1,0 +1,41 @@
+.catalog-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.catalog-card {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--planner-border);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.catalog-card__content {
+  display: grid;
+  gap: 8px;
+}
+
+.catalog-card__title {
+  font-size: 1rem;
+}
+
+.catalog-card__size {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--planner-highlight);
+}
+
+.catalog-card__copy {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--planner-text-soft);
+}
+
+.catalog-card .planner-button {
+  margin-top: 0;
+}

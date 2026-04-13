@@ -1,27 +1,27 @@
 import { Edges } from "@react-three/drei";
 
-const OpacityCupboard = ({ position, size }) => {
+const toPositionProp = (position) => (Array.isArray(position) ? position : [position.x, position.y, position.z]);
+
+export const GhostCupboardMesh = ({ position, size }) => {
   return (
-    <mesh position={position}>
+    <mesh position={toPositionProp(position)}>
       <boxGeometry args={size} />
-      <meshStandardMaterial
-        color="red"
-        opacity={0.3} // Adjust transparency (0 = fully invisible, 1 = solid)
-        transparent={true}
-        depthWrite={false}
-      />
+      <meshStandardMaterial color="red" opacity={0.3} transparent depthWrite={false} />
     </mesh>
   );
 };
 
-const SolidCupboard = ({ position, rotation, size, isSelected, onSelect }) => {
+export const CupboardMesh = ({ position, rotation = 0, size, isSelected = false, onSelect }) => {
   return (
     <mesh
-      position={position}
-      rotation={rotation}
+      position={toPositionProp(position)}
+      rotation={[0, rotation, 0]}
       onClick={(event) => {
         event.stopPropagation();
-        onSelect();
+
+        if (onSelect) {
+          onSelect();
+        }
       }}
     >
       <boxGeometry args={size} />
@@ -34,5 +34,3 @@ const SolidCupboard = ({ position, rotation, size, isSelected, onSelect }) => {
     </mesh>
   );
 };
-
-export { SolidCupboard, OpacityCupboard };

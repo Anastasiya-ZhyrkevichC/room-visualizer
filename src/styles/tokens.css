@@ -1,0 +1,12 @@
+:root {
+  --planner-bg: #f4efe6;
+  --planner-bg-accent: #e3d2bf;
+  --planner-surface: rgba(255, 251, 245, 0.82);
+  --planner-surface-strong: rgba(255, 248, 239, 0.92);
+  --planner-border: rgba(93, 72, 47, 0.16);
+  --planner-shadow: 0 24px 80px rgba(84, 56, 33, 0.12);
+  --planner-text: #2f2419;
+  --planner-text-soft: #6c5846;
+  --planner-highlight: #b65932;
+  --planner-highlight-soft: rgba(182, 89, 50, 0.12);
+}

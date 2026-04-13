@@ -1,15 +1,8 @@
 import "./App.css";
-import RoomVisualizer from "./RoomVisualizer";
-import { CupBoardProvider } from "./CupBoardProvider";
+import PlannerPage from "./features/planner/PlannerPage";
 
 function App() {
-  return (
-    <>
-      <CupBoardProvider>
-        <RoomVisualizer />
-      </CupBoardProvider>
-    </>
-  );
+  return <PlannerPage />;
 }
 
 export default App;

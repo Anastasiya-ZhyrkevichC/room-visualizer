@@ -1,0 +1,93 @@
+.room-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.room-form__field {
+  display: grid;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.room-form__label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.room-form__unit {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--planner-text-soft);
+}
+
+.room-form__field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(93, 72, 47, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--planner-text);
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.room-form__field input:focus {
+  outline: 2px solid rgba(182, 89, 50, 0.24);
+  border-color: rgba(182, 89, 50, 0.48);
+}
+
+.room-form__field--error input {
+  border-color: rgba(169, 66, 31, 0.42);
+  background: rgba(255, 245, 242, 0.92);
+}
+
+.room-form__error {
+  font-size: 0.84rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #8d3414;
+}
+
+.room-form__feedback {
+  margin-top: 6px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.room-form__feedback--success {
+  border-color: rgba(58, 109, 54, 0.2);
+  background: rgba(230, 245, 228, 0.88);
+  color: #2f6530;
+}
+
+.room-form__feedback--info {
+  border-color: rgba(59, 92, 138, 0.18);
+  background: rgba(235, 242, 251, 0.9);
+  color: #355277;
+}
+
+.room-form__feedback--error {
+  border-color: rgba(169, 66, 31, 0.18);
+  background: rgba(252, 238, 233, 0.94);
+  color: #8d3414;
+}
+
+.room-form__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.room-form__actions .planner-button {
+  margin-top: 0;
+}
