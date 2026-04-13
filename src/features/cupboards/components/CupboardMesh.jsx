@@ -1,14 +1,35 @@
 import { Edges } from "@react-three/drei";
 
+import KitchenCabinetModel from "./KitchenCabinetModel";
+
 const toPositionProp = (position) => (Array.isArray(position) ? position : [position.x, position.y, position.z]);
 
-export const GhostCupboardMesh = ({ position, rotation = 0, size }) => {
+const getOutlineColor = ({ isGhost = false, isMoving = false, isSelected = false }) => {
+  if (isGhost) {
+    return "#fff5dc";
+  }
+
+  if (isMoving || isSelected) {
+    return "#fff7dc";
+  }
+
+  return "#2a3c53";
+};
+
+const CabinetOutline = ({ size, color, scale = 1.01 }) => (
+  <mesh>
+    <boxGeometry args={size} />
+    <meshBasicMaterial transparent opacity={0.001} depthWrite={false} />
+    <Edges scale={scale} threshold={15} color={color} />
+  </mesh>
+);
+
+export const GhostCupboardMesh = ({ position, rotation = 0, size, category, model }) => {
   return (
-    <mesh position={toPositionProp(position)} rotation={[0, rotation, 0]}>
-      <boxGeometry args={size} />
-      <meshStandardMaterial color="#d8894a" emissive="#8f471d" emissiveIntensity={0.26} opacity={0.36} transparent />
-      <Edges scale={1.02} threshold={15} color="#fff5dc" />
-    </mesh>
+    <group position={toPositionProp(position)} rotation={[0, rotation, 0]}>
+      <KitchenCabinetModel size={size} category={category} model={model} isGhost />
+      <CabinetOutline size={size} color={getOutlineColor({ isGhost: true })} scale={1.02} />
+    </group>
   );
 };
 
@@ -16,13 +37,15 @@ export const CupboardMesh = ({
   position,
   rotation = 0,
   size,
+  category,
+  model,
   isMoving = false,
   isSelected = false,
   onMoveStart,
   onSelect,
 }) => {
   return (
-    <mesh
+    <group
       position={toPositionProp(position)}
       rotation={[0, rotation, 0]}
       onPointerDown={(event) => {
@@ -47,13 +70,14 @@ export const CupboardMesh = ({
         }
       }}
     >
-      <boxGeometry args={size} />
-      <meshStandardMaterial
-        color={isMoving ? "#d57d41" : isSelected ? "#c86f3d" : "#4f75b6"}
-        emissive={isMoving ? "#8b411d" : isSelected ? "#7a351a" : "#25406f"}
-        emissiveIntensity={isMoving ? 0.62 : isSelected ? 0.55 : 0.14}
+      <KitchenCabinetModel
+        size={size}
+        category={category}
+        model={model}
+        isMoving={isMoving}
+        isSelected={isSelected}
       />
-      <Edges scale={1.01} threshold={15} color={isMoving || isSelected ? "#fff7dc" : "#1f3966"} />
-    </mesh>
+      <CabinetOutline size={size} color={getOutlineColor({ isMoving, isSelected })} />
+    </group>
   );
 };

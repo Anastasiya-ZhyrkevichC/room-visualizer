@@ -15,6 +15,8 @@ const CupboardRenderer = () => {
           position={cupboard.position}
           rotation={cupboard.rotation}
           size={cupboard.size}
+          category={cupboard.category}
+          model={cupboard.model}
           isMoving={cupboard.id === activeMove?.cupboardId}
           isSelected={cupboard.id === selectedCupboardId}
           onMoveStart={cupboard.id === selectedCupboardId ? () => startCupboardMove(cupboard.id) : undefined}
@@ -27,6 +29,8 @@ const CupboardRenderer = () => {
           position={placementPreview.position}
           rotation={placementPreview.rotation}
           size={placementPreview.size}
+          category={placementPreview.category}
+          model={placementPreview.model}
         />
       ) : null}
     </>

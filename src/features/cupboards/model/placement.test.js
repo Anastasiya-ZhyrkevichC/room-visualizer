@@ -44,6 +44,11 @@ describe("cupboard placement", () => {
         id: "base-600",
         name: "Double-door base 600",
         category: "base",
+        model: {
+          front: {
+            type: "doubleDoor",
+          },
+        },
         width: 600,
         height: 720,
         depth: 560,
@@ -57,6 +62,11 @@ describe("cupboard placement", () => {
       x: 0.83,
       y: -1.14,
       z: -1.72,
+    });
+    expect(firstCupboard.model).toMatchObject({
+      front: {
+        type: "doubleDoor",
+      },
     });
   });
 
@@ -84,6 +94,12 @@ describe("cupboard placement", () => {
         id: "drawer-900",
         name: "Three-drawer base 900",
         category: "drawer",
+        model: {
+          front: {
+            type: "drawers",
+            drawerCount: 3,
+          },
+        },
         width: 900,
         height: 720,
         depth: 560,
@@ -105,6 +121,11 @@ describe("cupboard placement", () => {
       x: 0,
       y: -1.14,
       z: -1.72,
+    });
+    expect(preview.model).toMatchObject({
+      front: {
+        type: "drawers",
+      },
     });
   });
 

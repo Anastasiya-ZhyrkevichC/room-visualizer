@@ -1,41 +1,45 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { starterCabinetCatalog } from "../../cupboards/model/catalog";
+import {
+  defaultOpenStarterCabinetGroupIds,
+  starterCabinetCatalogGroups,
+} from "../../cupboards/model/catalog";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
-import { formatModuleCategory, formatModuleDimensions, formatPrototypePrice } from "../lib/roomFormatting";
+import { formatModuleDimensions, formatPrototypePrice } from "../lib/roomFormatting";
+
+const createInitialOpenGroups = () =>
+  starterCabinetCatalogGroups.reduce((lookup, group) => {
+    lookup[group.id] = defaultOpenStarterCabinetGroupIds.includes(group.id);
+    return lookup;
+  }, {});
 
 const CabinetCatalogPanel = () => {
   const { cancelPlacementPreview, finishPlacementPreview, placementPreview, startPlacementPreview } = useCupboards();
-  const dragCleanupRef = useRef(null);
+  const [openGroups, setOpenGroups] = useState(createInitialOpenGroups);
+  const placementCleanupRef = useRef(null);
 
   useEffect(() => {
     return () => {
-      if (dragCleanupRef.current) {
-        dragCleanupRef.current("cancel");
+      if (placementCleanupRef.current) {
+        placementCleanupRef.current("cancel");
       }
     };
   }, []);
 
-  const handleCatalogPointerDown = (catalogId, event) => {
-    if (event.button !== 0) {
-      return;
+  const startPlacementSession = (catalogId) => {
+    if (placementCleanupRef.current) {
+      placementCleanupRef.current("cancel");
     }
 
-    event.preventDefault();
-
-    if (dragCleanupRef.current) {
-      dragCleanupRef.current("cancel");
-    }
-
-    const finalizeDrag = (mode = "cancel") => {
+    const finalizePlacement = (mode = "cancel") => {
       if (mode === "finish") {
         finishPlacementPreview();
       } else {
         cancelPlacementPreview();
       }
 
-      if (dragCleanupRef.current) {
-        dragCleanupRef.current = null;
+      if (placementCleanupRef.current === finalizePlacement) {
+        placementCleanupRef.current = null;
       }
 
       window.removeEventListener("pointerup", handlePointerUp);
@@ -43,48 +47,122 @@ const CabinetCatalogPanel = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
 
-    const handlePointerUp = () => finalizeDrag("finish");
-    const handlePointerCancel = () => finalizeDrag("cancel");
-    const handleKeyDown = (keyboardEvent) => {
-      if (keyboardEvent.key === "Escape") {
-        finalizeDrag("cancel");
+    const handlePointerUp = (event) => {
+      if (event.button !== 0) {
+        return;
+      }
+
+      finalizePlacement("finish");
+    };
+
+    const handlePointerCancel = () => {
+      finalizePlacement("cancel");
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        finalizePlacement("cancel");
       }
     };
 
-    dragCleanupRef.current = finalizeDrag;
+    placementCleanupRef.current = finalizePlacement;
     window.addEventListener("pointerup", handlePointerUp);
     window.addEventListener("pointercancel", handlePointerCancel);
     window.addEventListener("keydown", handleKeyDown);
     startPlacementPreview(catalogId);
   };
 
+  const handleCatalogPointerDown = (catalogId, event) => {
+    if (event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    startPlacementSession(catalogId);
+  };
+
+  const handleCatalogAddClick = (catalogId) => {
+    startPlacementSession(catalogId);
+  };
+
+  const handleGroupToggle = (groupId) => {
+    setOpenGroups((currentOpenGroups) => ({
+      ...currentOpenGroups,
+      [groupId]: !currentOpenGroups[groupId],
+    }));
+  };
+
   return (
     <section className="panel-card panel-card--secondary">
       <div className="panel-card__header">
         <p className="panel-card__eyebrow">Kitchen Catalog</p>
-        <h2 className="panel-card__title">Drag a module</h2>
+        <h2 className="panel-card__title">Browse by cabinet type</h2>
       </div>
       <p className="panel-card__copy">
-        Drag a module card into the room and release on the back, left, or right wall to place it.
+        Expand a cabinet family, then drag a module into the room or click Add and place it on the back, left, or
+        right wall.
       </p>
 
-      <div className="catalog-list">
-        {starterCabinetCatalog.map((cabinet) => (
-          <article
-            className={`catalog-card${placementPreview?.catalogId === cabinet.id ? " catalog-card--dragging" : ""}`}
-            key={cabinet.id}
-            onPointerDown={(event) => handleCatalogPointerDown(cabinet.id, event)}
-          >
-            <div className="catalog-card__content">
-              <div className="catalog-card__meta">
-                <span className="catalog-card__category">{formatModuleCategory(cabinet.category)}</span>
-                <strong className="catalog-card__price">{formatPrototypePrice(cabinet.price)}</strong>
-              </div>
-              <strong className="catalog-card__title">{cabinet.name}</strong>
-              <span className="catalog-card__size">{formatModuleDimensions(cabinet)}</span>
-            </div>
-          </article>
-        ))}
+      <div className="catalog-tree">
+        {starterCabinetCatalogGroups.map((group) => {
+          const isOpen = openGroups[group.id];
+          const groupCountLabel = `${group.cabinets.length} ${group.cabinets.length === 1 ? "module" : "modules"}`;
+
+          return (
+            <section className={`catalog-group${isOpen ? " catalog-group--open" : ""}`} key={group.id}>
+              <button
+                type="button"
+                className="catalog-group__toggle"
+                onClick={() => handleGroupToggle(group.id)}
+                aria-expanded={isOpen}
+              >
+                <div className="catalog-group__heading">
+                  <strong className="catalog-group__title">{group.label}</strong>
+                  <span className="catalog-group__count">{groupCountLabel}</span>
+                </div>
+                <span className="catalog-group__icon" aria-hidden="true">
+                  {isOpen ? "-" : "+"}
+                </span>
+              </button>
+
+              {isOpen ? (
+                <div className="catalog-list" id={`catalog-group-${group.id}`}>
+                  {group.cabinets.length > 0 ? (
+                    group.cabinets.map((cabinet) => (
+                      <article
+                        className={`catalog-card${
+                          placementPreview?.catalogId === cabinet.id ? " catalog-card--dragging" : ""
+                        }`}
+                        key={cabinet.id}
+                        onPointerDown={(event) => handleCatalogPointerDown(cabinet.id, event)}
+                      >
+                        <div className="catalog-card__content">
+                          <strong className="catalog-card__title">{cabinet.name}</strong>
+                          <span className="catalog-card__size">{formatModuleDimensions(cabinet)}</span>
+                          <strong className="catalog-card__price">{formatPrototypePrice(cabinet.price)}</strong>
+                        </div>
+                        <div className="catalog-card__actions">
+                          <button
+                            type="button"
+                            className="catalog-card__add"
+                            onPointerDown={(event) => {
+                              event.stopPropagation();
+                            }}
+                            onClick={() => handleCatalogAddClick(cabinet.id)}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <p className="catalog-group__empty">No starter modules in this family yet.</p>
+                  )}
+                </div>
+              ) : null}
+            </section>
+          );
+        })}
       </div>
     </section>
   );
