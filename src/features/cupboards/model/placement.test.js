@@ -1,13 +1,20 @@
 import {
   alignCupboardToBackWall,
+  createPlacementPreview,
   createCupboard,
   createInitialCupboardPosition,
+  getBackWallAlignedPreviewPosition,
+  getFloorAlignedPreviewPosition,
   getAttachedCupboardPosition,
 } from "./placement";
 
 const roomBounds = {
+  left: -2,
+  right: 2,
   floor: -1.5,
+  ceiling: 1.5,
   back: -2,
+  front: 2,
 };
 
 const expectPositionToMatch = (receivedPosition, expectedPosition) => {
@@ -56,10 +63,51 @@ describe("cupboard placement", () => {
         roomBounds,
       ),
       {
-      x: 0.83,
-      y: -1.14,
-      z: -1.55,
+        x: 0.83,
+        y: -1.14,
+        z: -1.55,
       },
     );
+  });
+
+  it("creates an invalid centered back-wall preview for a dragged cabinet", () => {
+    const preview = createPlacementPreview(
+      {
+        id: "drawer-900",
+        name: "Drawer base 900",
+        description: "Drawer",
+        dimensionsMm: [900, 720, 560],
+        size: [0.9, 0.72, 0.56],
+      },
+      roomBounds,
+    );
+
+    expect(preview).toMatchObject({
+      catalogId: "drawer-900",
+      name: "Drawer base 900",
+      wall: null,
+      isValid: false,
+    });
+    expectPositionToMatch(preview.position, {
+      x: 0,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("keeps the floor preview within the room bounds while the pointer moves", () => {
+    expectPositionToMatch(getFloorAlignedPreviewPosition([0.9, 0.72, 0.56], { x: 5, z: -4 }, roomBounds), {
+      x: 1.55,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("keeps the back-wall preview flush to the wall and within the wall span", () => {
+    expectPositionToMatch(getBackWallAlignedPreviewPosition([0.9, 0.72, 0.56], { x: 5 }, roomBounds), {
+      x: 1.55,
+      y: -1.14,
+      z: -1.72,
+    });
   });
 });

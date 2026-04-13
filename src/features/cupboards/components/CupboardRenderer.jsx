@@ -1,10 +1,10 @@
 import React from "react";
 
 import { useCupboards } from "../state/CupboardProvider";
-import { CupboardMesh } from "./CupboardMesh";
+import { CupboardMesh, GhostCupboardMesh } from "./CupboardMesh";
 
 const CupboardRenderer = () => {
-  const { cupboards, selectedCupboardId, selectCupboard } = useCupboards();
+  const { cupboards, placementPreview, selectedCupboardId, selectCupboard } = useCupboards();
 
   return (
     <>
@@ -18,6 +18,14 @@ const CupboardRenderer = () => {
           onSelect={() => selectCupboard(cupboard.id)}
         />
       ))}
+
+      {placementPreview ? (
+        <GhostCupboardMesh
+          position={placementPreview.position}
+          rotation={placementPreview.rotation}
+          size={placementPreview.size}
+        />
+      ) : null}
     </>
   );
 };

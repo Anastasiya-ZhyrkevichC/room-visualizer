@@ -7,12 +7,23 @@ import RoomBox from "./RoomBox";
 import WallPlane from "./WallPlane";
 
 const RoomShell = () => {
-  const { bounds, dimensions } = useRoomScene();
+  const { bounds, dimensions, roomPosition } = useRoomScene();
 
   return (
-    <RoomBox position={[0, dimensions.height / 2, dimensions.width / 2]} size={[dimensions.length, dimensions.height, dimensions.width]}>
-      <WallPlane position={[bounds.left, 0, 0]} rotation={[0, Math.PI / 2, 0]} size={[dimensions.width, dimensions.height]} />
-      <WallPlane position={[bounds.right, 0, 0]} rotation={[0, -Math.PI / 2, 0]} size={[dimensions.width, dimensions.height]} />
+    <RoomBox
+      position={[roomPosition.x, roomPosition.y, roomPosition.z]}
+      size={[dimensions.length, dimensions.height, dimensions.width]}
+    >
+      <WallPlane
+        position={[bounds.left, 0, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        size={[dimensions.width, dimensions.height]}
+      />
+      <WallPlane
+        position={[bounds.right, 0, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+        size={[dimensions.width, dimensions.height]}
+      />
       <WallPlane position={[0, 0, bounds.back]} rotation={[0, 0, 0]} size={[dimensions.length, dimensions.height]} />
       <FloorPlane position={[0, bounds.floor, 0]} size={[dimensions.length, dimensions.width]} />
       <CupboardRenderer />

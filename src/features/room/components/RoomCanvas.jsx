@@ -4,11 +4,12 @@ import { Canvas } from "@react-three/fiber";
 
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { useRoomScene } from "../context/RoomSceneContext";
+import PlacementPreviewController from "./PlacementPreviewController";
 import RoomShell from "./RoomShell";
 import SceneAxes from "./SceneAxes";
 
 const RoomCanvas = () => {
-  const { clearSelection } = useCupboards();
+  const { clearSelection, isPlacementActive } = useCupboards();
   const { dimensions } = useRoomScene();
 
   return (
@@ -26,7 +27,8 @@ const RoomCanvas = () => {
           intensity={1}
         />
 
-        <OrbitControls />
+        <OrbitControls enabled={!isPlacementActive} />
+        <PlacementPreviewController />
         <SceneAxes />
         <RoomShell />
       </Canvas>

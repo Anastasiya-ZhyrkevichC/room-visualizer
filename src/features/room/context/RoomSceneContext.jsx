@@ -11,18 +11,23 @@ const createRoomBounds = ({ length, width, height }) => ({
   ceiling: height / 2,
 });
 
+const createRoomPosition = ({ width, height }) => ({
+  x: 0,
+  y: height / 2,
+  z: width / 2,
+});
+
 export const RoomSceneProvider = ({ children, dimensions }) => {
-  const bounds = useMemo(
-    () => createRoomBounds(dimensions),
-    [dimensions],
-  );
+  const bounds = useMemo(() => createRoomBounds(dimensions), [dimensions]);
+  const roomPosition = useMemo(() => createRoomPosition(dimensions), [dimensions]);
 
   const value = useMemo(
     () => ({
       dimensions,
       bounds,
+      roomPosition,
     }),
-    [bounds, dimensions],
+    [bounds, dimensions, roomPosition],
   );
 
   return <RoomSceneContext.Provider value={value}>{children}</RoomSceneContext.Provider>;

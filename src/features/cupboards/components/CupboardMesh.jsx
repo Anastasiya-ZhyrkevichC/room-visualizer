@@ -2,11 +2,12 @@ import { Edges } from "@react-three/drei";
 
 const toPositionProp = (position) => (Array.isArray(position) ? position : [position.x, position.y, position.z]);
 
-export const GhostCupboardMesh = ({ position, size }) => {
+export const GhostCupboardMesh = ({ position, rotation = 0, size }) => {
   return (
-    <mesh position={toPositionProp(position)}>
+    <mesh position={toPositionProp(position)} rotation={[0, rotation, 0]}>
       <boxGeometry args={size} />
-      <meshStandardMaterial color="red" opacity={0.3} transparent depthWrite={false} />
+      <meshStandardMaterial color="#d8894a" emissive="#8f471d" emissiveIntensity={0.26} opacity={0.36} transparent />
+      <Edges scale={1.02} threshold={15} color="#fff5dc" />
     </mesh>
   );
 };
