@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@mui/material";
 
 import RotatingCubeWrapper from "./RotatingCubeWrapper";
-import { useCupboards } from "./CupBoardProvider";
+import { getCupboardFootprint, getCupboardRotationDegrees, useCupboards } from "./CupBoardProvider";
 
 const defaultRoomDimensions = {
   length: 5000,
@@ -16,16 +16,13 @@ const roomFields = [
   { name: "height", label: "Height", unit: "mm" },
 ];
 
-const quickAddOptions = [
-  { id: 1, name: "Add starter box" },
-  { id: 2, name: "Add tall box" },
-  { id: 3, name: "Add wall box" },
-];
-
 const createDraftRoomDimensions = (dimensions) =>
   roomFields.reduce((draft, field) => ({ ...draft, [field.name]: String(dimensions[field.name]) }), {});
 
 const formatRoomDimensions = (dimensions) => `${dimensions.length} x ${dimensions.width} x ${dimensions.height} mm`;
+const formatMillimeterTuple = (values) => values.map((value) => Math.round(value)).join(" x ") + " mm";
+const formatSelectionPosition = (position) =>
+  `X ${Math.round(position.x * 1000)} mm · Z ${Math.round(position.z * 1000)} mm`;
 
 const validateRoomDimensions = (dimensions) => {
   const errors = {};
@@ -74,7 +71,15 @@ const RoomVisualizer = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [roomFeedback, setRoomFeedback] = useState(null);
   const [hasAttemptedApply, setHasAttemptedApply] = useState(false);
-  const { addCupboard, cupboards } = useCupboards();
+  const {
+    addCupboard,
+    cupboards,
+    starterCabinetCatalog,
+    selectedCupboard,
+    clearSelection,
+    rotateSelectedCupboard,
+    deleteSelectedCupboard,
+  } = useCupboards();
 
   const handleRoomChange = (event) => {
     const { name, value } = event.target;
@@ -139,16 +144,24 @@ const RoomVisualizer = () => {
   const isDefaultRoomApplied = roomFields.every(
     (field) => appliedRoomDimensions[field.name] === defaultRoomDimensions[field.name],
   );
+  const selectedCupboardFootprint = selectedCupboard
+    ? getCupboardFootprint(selectedCupboard.size, selectedCupboard.rotation)
+    : null;
+  const selectedRotationDegrees = selectedCupboard ? getCupboardRotationDegrees(selectedCupboard.rotation) : null;
+  const selectedFootprintDimensionsMm = selectedCupboardFootprint
+    ? [selectedCupboardFootprint.width * 1000, selectedCupboardFootprint.depth * 1000]
+    : null;
+  const selectionBadge = selectedCupboard ? `${selectedCupboard.name} selected` : "Click a cabinet to select it";
 
   return (
     <div className="planner-page">
       <header className="planner-header">
         <div>
-          <p className="planner-header__eyebrow">Kitchen Planner Prototype · Step 2</p>
-          <h1 className="planner-header__title">Confirm the room shell before placing cabinets.</h1>
+          <p className="planner-header__eyebrow">Kitchen Planner Prototype · Step 4</p>
+          <h1 className="planner-header__title">Select a cabinet, then rotate or remove it.</h1>
           <p className="planner-header__copy">
-            Set the core room size in millimeters, apply valid changes to update the 3D shell, and reset back to the
-            default plan when needed.
+            Keep the room dimensions stable, add starter cabinets from the catalog, and click a placed module in the
+            scene to edit it from the inspector on the right.
           </p>
         </div>
         <div className="planner-header__stats" aria-label="Planner overview">
@@ -157,8 +170,8 @@ const RoomVisualizer = () => {
             <strong className="planner-stat__value">{formatRoomDimensions(appliedRoomDimensions)}</strong>
           </div>
           <div className="planner-stat">
-            <span className="planner-stat__label">Placed modules</span>
-            <strong className="planner-stat__value">{cupboards.length}</strong>
+            <span className="planner-stat__label">Current selection</span>
+            <strong className="planner-stat__value">{selectedCupboard ? selectedCupboard.name : "None"}</strong>
           </div>
         </div>
       </header>
@@ -236,23 +249,31 @@ const RoomVisualizer = () => {
 
           <section className="panel-card panel-card--secondary">
             <div className="panel-card__header">
-              <p className="panel-card__eyebrow">Prototype Actions</p>
-              <h2 className="panel-card__title">Quick add</h2>
+              <p className="panel-card__eyebrow">Starter Catalog</p>
+              <h2 className="panel-card__title">Add a cabinet</h2>
             </div>
             <p className="panel-card__copy">
-              These temporary actions keep the cupboard renderer reachable until the catalog work lands in Step 3.
+              New cabinets snap into a predictable run along the back wall and become selected immediately so you can
+              edit them without an extra click.
             </p>
 
-            <div className="quick-actions">
-              {quickAddOptions.map((option) => (
-                <Button
-                  key={option.id}
-                  variant="outlined"
-                  onClick={() => addCupboard()}
-                  className="planner-button planner-button--secondary"
-                >
-                  {option.name}
-                </Button>
+            <div className="catalog-list">
+              {starterCabinetCatalog.map((cabinet) => (
+                <article className="catalog-card" key={cabinet.id}>
+                  <div className="catalog-card__content">
+                    <strong className="catalog-card__title">{cabinet.name}</strong>
+                    <span className="catalog-card__size">{formatMillimeterTuple(cabinet.dimensionsMm)}</span>
+                    <p className="catalog-card__copy">{cabinet.description}</p>
+                  </div>
+
+                  <Button
+                    variant="outlined"
+                    onClick={() => addCupboard(cabinet.id)}
+                    className="planner-button planner-button--secondary"
+                  >
+                    Add
+                  </Button>
+                </article>
               ))}
             </div>
           </section>
@@ -264,7 +285,9 @@ const RoomVisualizer = () => {
               <p className="planner-stage__eyebrow">Main Workspace</p>
               <h2 className="planner-stage__title">3D room preview</h2>
             </div>
-            <div className="planner-stage__badge">Updates after Apply</div>
+            <div className={`planner-stage__badge${selectedCupboard ? " planner-stage__badge--active" : ""}`}>
+              {selectionBadge}
+            </div>
           </div>
 
           <div className="planner-stage__canvas">
@@ -275,22 +298,80 @@ const RoomVisualizer = () => {
         <aside className="planner-panel planner-panel--right">
           <section className="panel-card">
             <div className="panel-card__header">
-              <p className="panel-card__eyebrow">Right Panel</p>
+              <p className="panel-card__eyebrow">Cabinet Inspector</p>
               <h2 className="panel-card__title">Selected cabinet</h2>
             </div>
 
-            <div className="empty-state">
-              <strong className="empty-state__title">Nothing selected yet</strong>
-              <p className="empty-state__copy">
-                Cabinet details, rotation, delete actions, and other object tools will appear here in later steps.
-              </p>
-            </div>
+            {selectedCupboard ? (
+              <div className="selection-panel">
+                <div className="selection-panel__hero">
+                  <span className="selection-panel__tag">Selected in scene</span>
+                  <strong className="selection-panel__name">{selectedCupboard.name}</strong>
+                  <p className="selection-panel__copy">{selectedCupboard.description}</p>
+                </div>
+
+                <div className="selection-details">
+                  <div className="selection-details__item">
+                    <span className="selection-details__label">Cabinet size</span>
+                    <strong className="selection-details__value">
+                      {formatMillimeterTuple(selectedCupboard.dimensionsMm)}
+                    </strong>
+                  </div>
+                  <div className="selection-details__item">
+                    <span className="selection-details__label">Current footprint</span>
+                    <strong className="selection-details__value">
+                      {selectedFootprintDimensionsMm ? formatMillimeterTuple(selectedFootprintDimensionsMm) : "N/A"}
+                    </strong>
+                  </div>
+                  <div className="selection-details__item">
+                    <span className="selection-details__label">Rotation</span>
+                    <strong className="selection-details__value">{selectedRotationDegrees}°</strong>
+                  </div>
+                  <div className="selection-details__item">
+                    <span className="selection-details__label">Scene position</span>
+                    <strong className="selection-details__value">
+                      {formatSelectionPosition(selectedCupboard.position)}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="selection-actions">
+                  <Button
+                    type="button"
+                    variant="contained"
+                    onClick={rotateSelectedCupboard}
+                    className="planner-button planner-button--primary"
+                  >
+                    Rotate 90°
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    onClick={deleteSelectedCupboard}
+                    className="planner-button planner-button--danger"
+                  >
+                    Delete
+                  </Button>
+                </div>
+
+                <Button type="button" variant="text" onClick={clearSelection} className="selection-panel__clear">
+                  Clear selection
+                </Button>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <strong className="empty-state__title">Nothing selected yet</strong>
+                <p className="empty-state__copy">
+                  Click a cabinet in the 3D room to inspect it here, rotate it 90 degrees, or delete it from the layout.
+                </p>
+              </div>
+            )}
           </section>
 
           <section className="panel-card panel-card--secondary">
             <div className="panel-card__header">
               <p className="panel-card__eyebrow">Planner Summary</p>
-              <h2 className="panel-card__title">Reserved blocks</h2>
+              <h2 className="panel-card__title">Scene snapshot</h2>
             </div>
 
             <div className="summary-list">
@@ -304,10 +385,14 @@ const RoomVisualizer = () => {
                 <span>Modules in scene</span>
                 <strong>{cupboards.length}</strong>
               </div>
+              <div className="summary-list__item">
+                <span>Inspector state</span>
+                <strong>{selectedCupboard ? "Cabinet selected" : "Waiting for selection"}</strong>
+              </div>
             </div>
 
             <div className="empty-state empty-state--compact">
-              Pricing, cabinet summaries, and project notes will live in this panel once those features are added.
+              Pricing, cabinet totals, and project notes can build on this selection flow in the next step.
             </div>
           </section>
         </aside>

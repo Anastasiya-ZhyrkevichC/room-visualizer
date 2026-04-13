@@ -3,11 +3,17 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import Room from "./Room";
 import AxesWithTicks from "./AxesWithTicks";
+import { useCupboards } from "./CupBoardProvider";
 
 const RotatingCubeWrapper = ({ length, width, height }) => {
+  const { clearSelection } = useCupboards();
+
   return (
     <div className="room-canvas-shell">
-      <Canvas camera={{ position: [0, Math.max(height / 2, 1.6), Math.max(width * 2.4, 4.5)], fov: 45 }}>
+      <Canvas
+        camera={{ position: [0, Math.max(height / 2, 1.6), Math.max(width * 2.4, 4.5)], fov: 45 }}
+        onPointerMissed={() => clearSelection()}
+      >
         <ambientLight intensity={0.5} />
         <directionalLight position={[length / 2, height * 1.25, width]} intensity={1} />
 
