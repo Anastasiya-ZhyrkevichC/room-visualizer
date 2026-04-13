@@ -4,7 +4,8 @@ import { useCupboards } from "../state/CupboardProvider";
 import { CupboardMesh, GhostCupboardMesh } from "./CupboardMesh";
 
 const CupboardRenderer = () => {
-  const { cupboards, placementPreview, selectedCupboardId, selectCupboard } = useCupboards();
+  const { activeMove, cupboards, placementPreview, selectedCupboardId, selectCupboard, startCupboardMove } =
+    useCupboards();
 
   return (
     <>
@@ -14,7 +15,9 @@ const CupboardRenderer = () => {
           position={cupboard.position}
           rotation={cupboard.rotation}
           size={cupboard.size}
+          isMoving={cupboard.id === activeMove?.cupboardId}
           isSelected={cupboard.id === selectedCupboardId}
+          onMoveStart={cupboard.id === selectedCupboardId ? () => startCupboardMove(cupboard.id) : undefined}
           onSelect={() => selectCupboard(cupboard.id)}
         />
       ))}

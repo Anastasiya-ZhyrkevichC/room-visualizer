@@ -33,12 +33,15 @@ const SelectionInspectorPanel = () => {
             <span className="selection-panel__tag">Selected in scene</span>
             <strong className="selection-panel__name">{selectedCupboard.name}</strong>
             <p className="selection-panel__copy">{selectedCupboard.description}</p>
+            <p className="selection-panel__copy">Drag this cabinet in the 3D room to move it along its current wall.</p>
           </div>
 
           <div className="selection-details">
             <div className="selection-details__item">
               <span className="selection-details__label">Cabinet size</span>
-              <strong className="selection-details__value">{formatMillimeterTuple(selectedCupboard.dimensionsMm)}</strong>
+              <strong className="selection-details__value">
+                {formatMillimeterTuple(selectedCupboard.dimensionsMm)}
+              </strong>
             </div>
             <div className="selection-details__item">
               <span className="selection-details__label">Current footprint</span>
@@ -83,7 +86,8 @@ const SelectionInspectorPanel = () => {
         <div className="empty-state">
           <strong className="empty-state__title">Nothing selected yet</strong>
           <p className="empty-state__copy">
-            Click a cabinet in the 3D room to inspect it here, rotate it 90 degrees, or delete it from the layout.
+            Click a cabinet in the 3D room to inspect it here, then drag it along its wall, rotate it 90 degrees, or
+            delete it from the layout.
           </p>
         </div>
       )}

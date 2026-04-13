@@ -3,13 +3,14 @@ import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
+import CupboardMoveController from "./CupboardMoveController";
 import { useRoomScene } from "../context/RoomSceneContext";
 import PlacementPreviewController from "./PlacementPreviewController";
 import RoomShell from "./RoomShell";
 import SceneAxes from "./SceneAxes";
 
 const RoomCanvas = () => {
-  const { clearSelection, isPlacementActive } = useCupboards();
+  const { clearSelection, isMoveActive, isPlacementActive } = useCupboards();
   const { dimensions } = useRoomScene();
 
   return (
@@ -19,7 +20,11 @@ const RoomCanvas = () => {
           position: [0, Math.max(dimensions.height / 2, 1.6), Math.max(dimensions.width * 2.4, 4.5)],
           fov: 45,
         }}
-        onPointerMissed={() => clearSelection()}
+        onPointerMissed={() => {
+          if (!isMoveActive && !isPlacementActive) {
+            clearSelection();
+          }
+        }}
       >
         <ambientLight intensity={0.5} />
         <directionalLight
@@ -27,7 +32,8 @@ const RoomCanvas = () => {
           intensity={1}
         />
 
-        <OrbitControls enabled={!isPlacementActive} />
+        <OrbitControls enabled={!isPlacementActive && !isMoveActive} />
+        <CupboardMoveController />
         <PlacementPreviewController />
         <SceneAxes />
         <RoomShell />
