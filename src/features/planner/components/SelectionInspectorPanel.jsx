@@ -4,7 +4,13 @@ import { Button } from "@mui/material";
 import { getCupboardFootprint, getCupboardRotationDegrees } from "../../cupboards/model/geometry";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { convertMetersToMillimeters } from "../../../lib/units";
-import { formatMillimeterTuple, formatSelectionPosition } from "../lib/roomFormatting";
+import {
+  formatMillimeterTuple,
+  formatModuleCategory,
+  formatModuleDimensions,
+  formatPrototypePrice,
+  formatSelectionPosition,
+} from "../lib/roomFormatting";
 
 const SelectionInspectorPanel = () => {
   const { selectedCupboard, clearSelection, rotateSelectedCupboard, deleteSelectedCupboard } = useCupboards();
@@ -32,16 +38,24 @@ const SelectionInspectorPanel = () => {
           <div className="selection-panel__hero">
             <span className="selection-panel__tag">Selected in scene</span>
             <strong className="selection-panel__name">{selectedCupboard.name}</strong>
-            <p className="selection-panel__copy">{selectedCupboard.description}</p>
+            <p className="selection-panel__meta">
+              {formatModuleCategory(selectedCupboard.category)} · {formatPrototypePrice(selectedCupboard.price)}
+            </p>
             <p className="selection-panel__copy">Drag this cabinet in the 3D room to move it along its current wall.</p>
           </div>
 
           <div className="selection-details">
             <div className="selection-details__item">
+              <span className="selection-details__label">Category</span>
+              <strong className="selection-details__value">{formatModuleCategory(selectedCupboard.category)}</strong>
+            </div>
+            <div className="selection-details__item">
               <span className="selection-details__label">Cabinet size</span>
-              <strong className="selection-details__value">
-                {formatMillimeterTuple(selectedCupboard.dimensionsMm)}
-              </strong>
+              <strong className="selection-details__value">{formatModuleDimensions(selectedCupboard)}</strong>
+            </div>
+            <div className="selection-details__item">
+              <span className="selection-details__label">Prototype price</span>
+              <strong className="selection-details__value">{formatPrototypePrice(selectedCupboard.price)}</strong>
             </div>
             <div className="selection-details__item">
               <span className="selection-details__label">Current footprint</span>

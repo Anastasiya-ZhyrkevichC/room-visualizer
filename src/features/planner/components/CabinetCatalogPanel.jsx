@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 
 import { starterCabinetCatalog } from "../../cupboards/model/catalog";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
-import { formatMillimeterTuple } from "../lib/roomFormatting";
+import { formatModuleCategory, formatModuleDimensions, formatPrototypePrice } from "../lib/roomFormatting";
 
 const CabinetCatalogPanel = () => {
   const { cancelPlacementPreview, finishPlacementPreview, placementPreview, startPlacementPreview } = useCupboards();
@@ -61,11 +61,11 @@ const CabinetCatalogPanel = () => {
   return (
     <section className="panel-card panel-card--secondary">
       <div className="panel-card__header">
-        <p className="panel-card__eyebrow">Starter Catalog</p>
-        <h2 className="panel-card__title">Drag a cabinet</h2>
+        <p className="panel-card__eyebrow">Kitchen Catalog</p>
+        <h2 className="panel-card__title">Drag a module</h2>
       </div>
       <p className="panel-card__copy">
-        Drag a cabinet card into the room and release on the back, left, or right wall to place it.
+        Drag a module card into the room and release on the back, left, or right wall to place it.
       </p>
 
       <div className="catalog-list">
@@ -76,9 +76,12 @@ const CabinetCatalogPanel = () => {
             onPointerDown={(event) => handleCatalogPointerDown(cabinet.id, event)}
           >
             <div className="catalog-card__content">
+              <div className="catalog-card__meta">
+                <span className="catalog-card__category">{formatModuleCategory(cabinet.category)}</span>
+                <strong className="catalog-card__price">{formatPrototypePrice(cabinet.price)}</strong>
+              </div>
               <strong className="catalog-card__title">{cabinet.name}</strong>
-              <span className="catalog-card__size">{formatMillimeterTuple(cabinet.dimensionsMm)}</span>
-              <p className="catalog-card__copy">{cabinet.description}</p>
+              <span className="catalog-card__size">{formatModuleDimensions(cabinet)}</span>
             </div>
           </article>
         ))}

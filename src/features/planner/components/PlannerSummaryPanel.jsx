@@ -30,7 +30,7 @@ const PlannerSummaryPanel = ({ appliedRoomDimensions }) => {
       </div>
 
       <div className="empty-state empty-state--compact">
-        Pricing, cabinet totals, and project notes can build on this selection flow in the next step.
+        Grouping, pricing totals, and project notes can build on this module data in the next steps.
       </div>
     </section>
   );

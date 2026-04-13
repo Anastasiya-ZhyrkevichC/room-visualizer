@@ -36,8 +36,33 @@
   gap: 8px;
 }
 
+.catalog-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.catalog-card__category {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(58, 109, 54, 0.12);
+  color: #2f6530;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .catalog-card__title {
   font-size: 1rem;
+}
+
+.catalog-card__price {
+  font-size: 0.95rem;
+  color: var(--planner-text);
 }
 
 .catalog-card__size {
@@ -46,10 +71,4 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--planner-highlight);
-}
-
-.catalog-card__copy {
-  margin: 0;
-  line-height: 1.55;
-  color: var(--planner-text-soft);
 }

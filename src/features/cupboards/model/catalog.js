@@ -1,39 +1,48 @@
 import { convertMillimetersToMeters } from "../../../lib/units";
 
+const createStarterCabinet = ({ id, name, category, width, height, depth, price }) => ({
+  id,
+  name,
+  category,
+  width,
+  height,
+  depth,
+  price,
+  size: [
+    convertMillimetersToMeters(width),
+    convertMillimetersToMeters(height),
+    convertMillimetersToMeters(depth),
+  ],
+});
+
 export const starterCabinetCatalog = [
-  {
+  createStarterCabinet({
     id: "base-600",
-    name: "Base cabinet 600",
-    description: "Compact two-door base unit for the starter layout.",
-    dimensionsMm: [600, 720, 560],
-    size: [
-      convertMillimetersToMeters(600),
-      convertMillimetersToMeters(720),
-      convertMillimetersToMeters(560),
-    ],
-  },
-  {
+    name: "Double-door base 600",
+    category: "base",
+    width: 600,
+    height: 720,
+    depth: 560,
+    price: 240,
+  }),
+  createStarterCabinet({
     id: "drawer-900",
-    name: "Drawer base 900",
-    description: "Wide drawer unit that makes rotation visibly obvious in the scene.",
-    dimensionsMm: [900, 720, 560],
-    size: [
-      convertMillimetersToMeters(900),
-      convertMillimetersToMeters(720),
-      convertMillimetersToMeters(560),
-    ],
-  },
-  {
+    name: "Three-drawer base 900",
+    category: "drawer",
+    width: 900,
+    height: 720,
+    depth: 560,
+    price: 390,
+  }),
+  createStarterCabinet({
     id: "tall-600",
-    name: "Tall pantry 600",
-    description: "Full-height pantry block that anchors the run of cabinets.",
-    dimensionsMm: [600, 2100, 600],
-    size: [
-      convertMillimetersToMeters(600),
-      convertMillimetersToMeters(2100),
-      convertMillimetersToMeters(600),
-    ],
-  },
+    name: "Pantry tower 600",
+    category: "tall",
+    width: 600,
+    height: 2100,
+    depth: 600,
+    price: 680,
+  }),
 ];
 
 export const defaultStarterCabinetId = starterCabinetCatalog[0].id;

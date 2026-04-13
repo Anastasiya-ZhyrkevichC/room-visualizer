@@ -24,6 +24,13 @@ To turn it into a working prototype, these are the 5 essential features to finis
    - Update the total immediately when cabinets are added, removed, or replaced.
    - This is the main product value described in the project idea: transparent kitchen pricing without contacting a manager first.
 
+Cases for Live pricing:
+- If the company updates prices and a customer already exported a file, the file itself should still represent the old snapshot. An exported file should not silently change after export.
+- If that file is later imported back into the tool, the user should see the new live price, plus a clear message that prices changed since export.
+- If a module no longer exists in the new catalog, mark it as unavailable and make the recalculated total partial until the user resolves it.
+
+
+
 5. **Project persistence with autosave and JSON import/export**
    - Save the working draft in the browser so a refresh does not destroy the layout.
    - Allow the user to export the project as JSON and import it later.

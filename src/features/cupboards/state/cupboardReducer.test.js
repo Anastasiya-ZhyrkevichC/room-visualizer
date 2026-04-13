@@ -35,7 +35,9 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.selectedCupboardId).toBeNull();
     expect(nextState.placementPreview).toMatchObject({
       catalogId: "base-600",
-      name: "Base cabinet 600",
+      name: "Double-door base 600",
+      category: "base",
+      price: 240,
       wall: null,
       isValid: false,
     });
@@ -180,6 +182,9 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.cupboards[0]).toMatchObject({
       id: 1,
       catalogId: "drawer-900",
+      name: "Three-drawer base 900",
+      category: "drawer",
+      price: 390,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -221,6 +226,9 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.cupboards[0]).toMatchObject({
       id: 1,
       catalogId: "drawer-900",
+      name: "Three-drawer base 900",
+      category: "drawer",
+      price: 390,
       wall: RIGHT_WALL_ID,
     });
     expect(nextState.cupboards[0].rotation).toBeCloseTo(Math.PI * 1.5);
@@ -274,9 +282,12 @@ describe("cupboard reducer placement preview", () => {
           {
             id: 1,
             catalogId: "drawer-900",
-            name: "Drawer base 900",
-            description: "Drawer",
-            dimensionsMm: [900, 720, 560],
+            name: "Three-drawer base 900",
+            category: "drawer",
+            width: 900,
+            height: 720,
+            depth: 560,
+            price: 390,
             size: [0.9, 0.72, 0.56],
             position: {
               x: -1.72,
@@ -313,9 +324,12 @@ describe("cupboard reducer moving placed cupboards", () => {
       {
         id: 1,
         catalogId: "drawer-900",
-        name: "Drawer base 900",
-        description: "Drawer",
-        dimensionsMm: [900, 720, 560],
+        name: "Three-drawer base 900",
+        category: "drawer",
+        width: 900,
+        height: 720,
+        depth: 560,
+        price: 390,
         size: [0.9, 0.72, 0.56],
         position: {
           x: 0.25,
@@ -328,9 +342,12 @@ describe("cupboard reducer moving placed cupboards", () => {
       {
         id: 2,
         catalogId: "base-600",
-        name: "Base cabinet 600",
-        description: "Base",
-        dimensionsMm: [600, 720, 560],
+        name: "Double-door base 600",
+        category: "base",
+        width: 600,
+        height: 720,
+        depth: 560,
+        price: 240,
         size: [0.6, 0.72, 0.56],
         position: {
           x: -1.72,

@@ -42,9 +42,12 @@ describe("cupboard placement", () => {
       id: 1,
       cabinet: {
         id: "base-600",
-        name: "Base",
-        description: "Base",
-        dimensionsMm: [600, 720, 560],
+        name: "Double-door base 600",
+        category: "base",
+        width: 600,
+        height: 720,
+        depth: 560,
+        price: 240,
         size: [0.6, 0.72, 0.56],
       },
       position: createInitialCupboardPosition([0.6, 0.72, 0.56], roomBounds),
@@ -79,9 +82,12 @@ describe("cupboard placement", () => {
     const preview = createPlacementPreview(
       {
         id: "drawer-900",
-        name: "Drawer base 900",
-        description: "Drawer",
-        dimensionsMm: [900, 720, 560],
+        name: "Three-drawer base 900",
+        category: "drawer",
+        width: 900,
+        height: 720,
+        depth: 560,
+        price: 390,
         size: [0.9, 0.72, 0.56],
       },
       roomBounds,
@@ -89,7 +95,9 @@ describe("cupboard placement", () => {
 
     expect(preview).toMatchObject({
       catalogId: "drawer-900",
-      name: "Drawer base 900",
+      name: "Three-drawer base 900",
+      category: "drawer",
+      price: 390,
       wall: null,
       isValid: false,
     });
