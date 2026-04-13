@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import { Plane, Raycaster, Vector2, Vector3 } from "three";
 
-import { BACK_WALL_ID } from "../../cupboards/model/placement";
+import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/placement";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { useRoomScene } from "../context/RoomSceneContext";
 
@@ -18,12 +18,36 @@ const PlacementPreviewController = () => {
 
     const raycaster = new Raycaster();
     const pointer = new Vector2();
-    const intersectionPoint = new Vector3();
     const domElement = gl.domElement;
     const backWallPlane = new Plane(new Vector3(0, 0, 1), -(roomPosition.z + bounds.back));
-    const isWithinBackWallBounds = (point) =>
-      point.x >= bounds.left && point.x <= bounds.right && point.y >= bounds.floor && point.y <= bounds.ceiling;
+    const leftWallPlane = new Plane(new Vector3(1, 0, 0), -(roomPosition.x + bounds.left));
+    const rightWallPlane = new Plane(new Vector3(1, 0, 0), -(roomPosition.x + bounds.right));
+    const wallTargets = [
+      {
+        id: LEFT_WALL_ID,
+        plane: leftWallPlane,
+        isWithinBounds: (point) =>
+          point.z >= bounds.back && point.z <= bounds.front && point.y >= bounds.floor && point.y <= bounds.ceiling,
+      },
+      {
+        id: RIGHT_WALL_ID,
+        plane: rightWallPlane,
+        isWithinBounds: (point) =>
+          point.z >= bounds.back && point.z <= bounds.front && point.y >= bounds.floor && point.y <= bounds.ceiling,
+      },
+      {
+        id: BACK_WALL_ID,
+        plane: backWallPlane,
+        isWithinBounds: (point) =>
+          point.x >= bounds.left && point.x <= bounds.right && point.y >= bounds.floor && point.y <= bounds.ceiling,
+      },
+    ];
     const invalidatePreview = () => updatePlacementPreview({ wall: null, point: null });
+    const toLocalPoint = (point) => ({
+      x: point.x - roomPosition.x,
+      y: point.y - roomPosition.y,
+      z: point.z - roomPosition.z,
+    });
 
     const handlePointerMove = (event) => {
       const rect = domElement.getBoundingClientRect();
@@ -44,21 +68,36 @@ const PlacementPreviewController = () => {
       );
       raycaster.setFromCamera(pointer, camera);
 
-      if (raycaster.ray.intersectPlane(backWallPlane, intersectionPoint)) {
-        const localPoint = {
-          x: intersectionPoint.x - roomPosition.x,
-          y: intersectionPoint.y - roomPosition.y,
-          z: intersectionPoint.z - roomPosition.z,
-        };
+      let closestWallTarget = null;
 
-        if (!isWithinBackWallBounds(localPoint)) {
-          invalidatePreview();
+      wallTargets.forEach((target) => {
+        const intersectionPoint = raycaster.ray.intersectPlane(target.plane, new Vector3());
+
+        if (!intersectionPoint) {
           return;
         }
 
+        const localPoint = toLocalPoint(intersectionPoint);
+
+        if (!target.isWithinBounds(localPoint)) {
+          return;
+        }
+
+        const distance = raycaster.ray.origin.distanceTo(intersectionPoint);
+
+        if (!closestWallTarget || distance < closestWallTarget.distance - 0.000001) {
+          closestWallTarget = {
+            wall: target.id,
+            point: localPoint,
+            distance,
+          };
+        }
+      });
+
+      if (closestWallTarget) {
         updatePlacementPreview({
-          wall: BACK_WALL_ID,
-          point: localPoint,
+          wall: closestWallTarget.wall,
+          point: closestWallTarget.point,
         });
         return;
       }
@@ -75,6 +114,7 @@ const PlacementPreviewController = () => {
     bounds.back,
     bounds.ceiling,
     bounds.floor,
+    bounds.front,
     bounds.left,
     bounds.right,
     camera,

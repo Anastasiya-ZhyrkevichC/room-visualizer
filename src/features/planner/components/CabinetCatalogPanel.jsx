@@ -64,7 +64,9 @@ const CabinetCatalogPanel = () => {
         <p className="panel-card__eyebrow">Starter Catalog</p>
         <h2 className="panel-card__title">Drag a cabinet</h2>
       </div>
-      <p className="panel-card__copy">Drag a cabinet card into the room and release on the back wall to place it.</p>
+      <p className="panel-card__copy">
+        Drag a cabinet card into the room and release on the back, left, or right wall to place it.
+      </p>
 
       <div className="catalog-list">
         {starterCabinetCatalog.map((cabinet) => (

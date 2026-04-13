@@ -1,5 +1,6 @@
 import React from "react";
 
+import { LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/placement";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import RoomCanvas from "../../room/components/RoomCanvas";
 
@@ -10,9 +11,15 @@ const PlannerStage = () => {
     : selectedCupboard
       ? `${selectedCupboard.name} selected`
       : "Click a cabinet to select it";
+  const placementWallLabel =
+    placementPreview?.wall === LEFT_WALL_ID
+      ? "left wall"
+      : placementPreview?.wall === RIGHT_WALL_ID
+        ? "right wall"
+        : "back wall";
   const placementHint = placementPreview?.isValid
-    ? "Release to place this cabinet on the back wall."
-    : "Move over the back wall to position the preview. Release elsewhere or press Escape to cancel.";
+    ? `Release to place this cabinet on the ${placementWallLabel}.`
+    : "Move over the back, left, or right wall to position the preview. Release elsewhere or press Escape to cancel.";
 
   return (
     <main className="planner-stage">

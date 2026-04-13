@@ -1,11 +1,12 @@
 import { defaultStarterCabinetId, getStarterCabinet } from "../model/catalog";
 import { ROTATION_STEP, getNormalizedRotation } from "../model/geometry";
 import {
-  BACK_WALL_ID,
-  alignCupboardToBackWall,
+  alignCupboardToWall,
   createPlacementPreview,
   createCupboard,
-  getBackWallAlignedPreviewPosition,
+  getWallAlignedPreviewPosition,
+  getWallAlignedRotation,
+  isPlacementWall,
 } from "../model/placement";
 
 export const initialCupboardState = {
@@ -32,7 +33,7 @@ export const cupboardReducer = (state, action) => {
         return state;
       }
 
-      if (action.payload.wall !== BACK_WALL_ID || !action.payload.point) {
+      if (!isPlacementWall(action.payload.wall) || !action.payload.point) {
         return {
           ...state,
           placementPreview: {
@@ -43,17 +44,21 @@ export const cupboardReducer = (state, action) => {
         };
       }
 
+      const nextRotation = getWallAlignedRotation(action.payload.wall);
+
       return {
         ...state,
         placementPreview: {
           ...state.placementPreview,
-          wall: BACK_WALL_ID,
+          wall: action.payload.wall,
+          rotation: nextRotation,
           isValid: true,
-          position: getBackWallAlignedPreviewPosition(
+          position: getWallAlignedPreviewPosition(
             state.placementPreview.size,
             action.payload.point,
             action.payload.roomBounds,
-            state.placementPreview.rotation,
+            action.payload.wall,
+            nextRotation,
           ),
         },
       };
@@ -64,7 +69,7 @@ export const cupboardReducer = (state, action) => {
         return state;
       }
 
-      if (!state.placementPreview.isValid || state.placementPreview.wall !== BACK_WALL_ID) {
+      if (!state.placementPreview.isValid || !isPlacementWall(state.placementPreview.wall)) {
         return {
           ...state,
           placementPreview: null,
@@ -128,7 +133,7 @@ export const cupboardReducer = (state, action) => {
           return {
             ...cupboard,
             rotation: nextRotation,
-            position: alignCupboardToBackWall(cupboard, nextRotation, action.payload.roomBounds),
+            position: alignCupboardToWall(cupboard, nextRotation, action.payload.roomBounds, cupboard.wall),
           };
         }),
       };

@@ -1,11 +1,16 @@
 import {
   alignCupboardToBackWall,
+  getWallAlignedRotation,
   createPlacementPreview,
   createCupboard,
   createInitialCupboardPosition,
   getBackWallAlignedPreviewPosition,
   getFloorAlignedPreviewPosition,
   getAttachedCupboardPosition,
+  getLeftWallAlignedPreviewPosition,
+  getRightWallAlignedPreviewPosition,
+  LEFT_WALL_ID,
+  RIGHT_WALL_ID,
 } from "./placement";
 
 const roomBounds = {
@@ -108,6 +113,27 @@ describe("cupboard placement", () => {
       x: 1.55,
       y: -1.14,
       z: -1.72,
+    });
+  });
+
+  it("rotates cupboards to face the left and right walls", () => {
+    expect(getWallAlignedRotation(LEFT_WALL_ID)).toBeCloseTo(Math.PI / 2);
+    expect(getWallAlignedRotation(RIGHT_WALL_ID)).toBeCloseTo(Math.PI * 1.5);
+  });
+
+  it("keeps the left-wall preview flush to the wall and within the wall span", () => {
+    expectPositionToMatch(getLeftWallAlignedPreviewPosition([0.9, 0.72, 0.56], { z: 5 }, roomBounds), {
+      x: -1.72,
+      y: -1.14,
+      z: 1.55,
+    });
+  });
+
+  it("keeps the right-wall preview flush to the wall and within the wall span", () => {
+    expectPositionToMatch(getRightWallAlignedPreviewPosition([0.9, 0.72, 0.56], { z: -5 }, roomBounds), {
+      x: 1.72,
+      y: -1.14,
+      z: -1.55,
     });
   });
 });
