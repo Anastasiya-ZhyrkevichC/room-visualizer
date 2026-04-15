@@ -115,15 +115,16 @@ const CabinetCatalogPanel = () => {
                 aria-expanded={isOpen}
                 aria-controls={groupPanelId}
               >
-                <div className="catalog-group__heading">
-                  <strong className="catalog-group__title">{group.label}</strong>
-                </div>
-                <div className="catalog-group__summary">
-                  <span className="catalog-group__count">{groupCountLabel}</span>
-                  <span className="catalog-group__icon" aria-hidden="true">
-                    {isOpen ? "-" : "+"}
-                  </span>
-                </div>
+                <strong className="catalog-group__title" title={group.label}>
+                  {group.label}
+                </strong>
+                <span className="catalog-group__count" aria-label={groupCountLabel} title={groupCountLabel}>
+                  {group.cabinets.length}
+                </span>
+                <span
+                  className={`catalog-group__icon${isOpen ? " catalog-group__icon--open" : ""}`}
+                  aria-hidden="true"
+                />
               </button>
 
               {isOpen ? (

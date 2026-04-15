@@ -28,7 +28,9 @@ export const getPlannerStageViewModel = ({
         : "Click a cabinet to select it";
 
   const placementHint = placementValidation?.isValid
-    ? `Release to place this cabinet on the ${placementWallLabel}.`
+    ? placementValidation?.isMagneticallySnapped
+      ? `Held flush against the neighboring cabinet on the ${placementWallLabel}. Release to place it there, or drag away to keep moving freely.`
+      : `Release to place this cabinet on the ${placementWallLabel}.`
     : placementReasonLabel
       ? `${placementReasonLabel}. Drag back over the back, left, or right wall to find a valid position. Release now to cancel this preview, or press Escape to cancel.`
       : "Move over the back, left, or right wall to position the preview. Release now to cancel this preview, or press Escape to cancel.";
@@ -36,7 +38,9 @@ export const getPlannerStageViewModel = ({
   const moveHint =
     isMoveActive && selectedCupboard
       ? moveValidation?.isValid
-        ? `Drag along the ${moveWallLabel} and release to keep the cabinet in its new position.`
+        ? moveValidation?.isMagneticallySnapped
+          ? `Held flush against the neighboring cabinet on the ${moveWallLabel}. Release to keep it there, or drag away to continue moving freely.`
+          : `Drag along the ${moveWallLabel} and release to keep the cabinet in its new position.`
         : moveReasonLabel
           ? `${moveReasonLabel}. Drag back to a valid position on the ${moveWallLabel}. Release now to restore the previous position, or press Escape to restore it.`
           : `Move back onto the ${moveWallLabel}. Release now to restore the previous position, or press Escape to restore it.`

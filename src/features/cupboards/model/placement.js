@@ -5,11 +5,16 @@ export const CABINET_GAP = 0.08;
 export const BACK_WALL_ID = "back";
 export const LEFT_WALL_ID = "left";
 export const RIGHT_WALL_ID = "right";
+export const SAME_WALL_MAGNETIC_TOLERANCE = 0.12;
 export const PLACEMENT_VALIDATION_REASONS = {
   UNSUPPORTED_WALL: "unsupported-wall",
   OVERLAP: "overlap",
   ADJACENCY_GAP: "adjacency-gap",
   CORNER_COLLISION: "corner-collision",
+};
+export const MAGNETIC_ATTACHMENT_EDGES = {
+  START: "start",
+  END: "end",
 };
 
 const createPosition = (x, y, z) => ({ x, y, z });
@@ -138,14 +143,20 @@ export const createPlacementValidationResult = ({
   wall = null,
   rotation = 0,
   snappedPosition = null,
+  rawSnappedPosition = snappedPosition,
   collidingCupboardIds = [],
+  isMagneticallySnapped = false,
+  magneticAttachment = null,
 } = {}) => ({
   isValid,
   reason,
   wall,
   rotation,
   snappedPosition: clonePosition(snappedPosition),
+  rawSnappedPosition: clonePosition(rawSnappedPosition),
   collidingCupboardIds,
+  isMagneticallySnapped,
+  magneticAttachment: magneticAttachment ? { ...magneticAttachment } : null,
 });
 
 const getWallSpanCenter = (position, wall) => {
@@ -156,6 +167,27 @@ const getWallSpanCenter = (position, wall) => {
     case BACK_WALL_ID:
     default:
       return position.x;
+  }
+};
+
+const setWallSpanCenter = (position, wall, spanCenter) => {
+  if (!position) {
+    return position;
+  }
+
+  switch (wall) {
+    case LEFT_WALL_ID:
+    case RIGHT_WALL_ID:
+      return {
+        ...position,
+        z: spanCenter,
+      };
+    case BACK_WALL_ID:
+    default:
+      return {
+        ...position,
+        x: spanCenter,
+      };
   }
 };
 
@@ -178,6 +210,35 @@ const getCupboardWallSpan = ({ size, rotation, position, wall }) => {
   return {
     start: spanCenter - spanLength / 2,
     end: spanCenter + spanLength / 2,
+  };
+};
+
+const getWallSpanLimits = (roomBounds, wall) => {
+  switch (wall) {
+    case LEFT_WALL_ID:
+    case RIGHT_WALL_ID:
+      return {
+        min: roomBounds.back,
+        max: roomBounds.front,
+      };
+    case BACK_WALL_ID:
+    default:
+      return {
+        min: roomBounds.left,
+        max: roomBounds.right,
+      };
+  }
+};
+
+const getWallAlignedSpanRange = ({ size, rotation, roomBounds, wall }) => {
+  const footprint = getCupboardFootprint(size, rotation);
+  const spanLength = getWallSpanLength(footprint, wall);
+  const wallSpanLimits = getWallSpanLimits(roomBounds, wall);
+
+  return {
+    spanLength,
+    minCenter: wallSpanLimits.min + spanLength / 2,
+    maxCenter: wallSpanLimits.max - spanLength / 2,
   };
 };
 
@@ -235,6 +296,173 @@ const getSameWallCollisionIds = ({ candidate, cupboards, snappedPosition, rotati
     .map((cupboard) => cupboard.id);
 };
 
+const getSameWallBlockedIntervals = ({ candidate, cupboards, roomBounds, rotation, wall }) => {
+  if (!Array.isArray(cupboards) || cupboards.length === 0) {
+    return [];
+  }
+
+  const { spanLength, minCenter, maxCenter } = getWallAlignedSpanRange({
+    size: candidate.size,
+    rotation,
+    roomBounds,
+    wall,
+  });
+
+  return cupboards
+    .filter((cupboard) => cupboard.wall === wall && cupboard.id !== candidate.id)
+    .map((cupboard) => {
+      const span = getCupboardWallSpan(cupboard);
+
+      return {
+        start: span.start - spanLength / 2,
+        end: span.end + spanLength / 2,
+        leftAttachment: {
+          cupboardId: cupboard.id,
+          edge: MAGNETIC_ATTACHMENT_EDGES.START,
+        },
+        rightAttachment: {
+          cupboardId: cupboard.id,
+          edge: MAGNETIC_ATTACHMENT_EDGES.END,
+        },
+      };
+    })
+    .filter((interval) => interval.end > minCenter + OVERLAP_EPSILON && interval.start < maxCenter - OVERLAP_EPSILON)
+    .sort((firstInterval, secondInterval) => firstInterval.start - secondInterval.start)
+    .reduce((mergedIntervals, interval) => {
+      const currentInterval = mergedIntervals[mergedIntervals.length - 1];
+
+      if (!currentInterval || interval.start >= currentInterval.end - OVERLAP_EPSILON) {
+        mergedIntervals.push(interval);
+        return mergedIntervals;
+      }
+
+      if (interval.end > currentInterval.end) {
+        currentInterval.end = interval.end;
+        currentInterval.rightAttachment = interval.rightAttachment;
+      }
+
+      return mergedIntervals;
+    }, []);
+};
+
+const getNearestMagneticSnapOption = ({ blockedInterval, candidate, rawSnappedPosition, roomBounds, rotation, wall }) => {
+  if (!blockedInterval) {
+    return null;
+  }
+
+  const rawSpanCenter = getWallSpanCenter(rawSnappedPosition, wall);
+  const previousSpanCenter = candidate.position ? getWallSpanCenter(candidate.position, wall) : rawSpanCenter;
+  const { minCenter, maxCenter } = getWallAlignedSpanRange({
+    size: candidate.size,
+    rotation,
+    roomBounds,
+    wall,
+  });
+  const snapOptions = [];
+
+  if (blockedInterval.start >= minCenter - OVERLAP_EPSILON) {
+    snapOptions.push({
+      center: clamp(blockedInterval.start, minCenter, maxCenter),
+      intrusionDistance: rawSpanCenter - blockedInterval.start,
+      attachment: {
+        ...blockedInterval.leftAttachment,
+        intrusionDistance: rawSpanCenter - blockedInterval.start,
+      },
+    });
+  }
+
+  if (blockedInterval.end <= maxCenter + OVERLAP_EPSILON) {
+    snapOptions.push({
+      center: clamp(blockedInterval.end, minCenter, maxCenter),
+      intrusionDistance: blockedInterval.end - rawSpanCenter,
+      attachment: {
+        ...blockedInterval.rightAttachment,
+        intrusionDistance: blockedInterval.end - rawSpanCenter,
+      },
+    });
+  }
+
+  if (snapOptions.length === 0) {
+    return null;
+  }
+
+  return snapOptions.sort((firstOption, secondOption) => {
+    if (Math.abs(firstOption.intrusionDistance - secondOption.intrusionDistance) > OVERLAP_EPSILON) {
+      return firstOption.intrusionDistance - secondOption.intrusionDistance;
+    }
+
+    const firstDistanceFromPrevious = Math.abs(firstOption.center - previousSpanCenter);
+    const secondDistanceFromPrevious = Math.abs(secondOption.center - previousSpanCenter);
+
+    if (Math.abs(firstDistanceFromPrevious - secondDistanceFromPrevious) > OVERLAP_EPSILON) {
+      return firstDistanceFromPrevious - secondDistanceFromPrevious;
+    }
+
+    return firstOption.center - secondOption.center;
+  })[0];
+};
+
+const getSameWallPlacementOutcome = ({ candidate, cupboards, rawSnappedPosition, roomBounds, rotation, wall }) => {
+  const sameWallCollisionIds = getSameWallCollisionIds({
+    candidate,
+    cupboards,
+    snappedPosition: rawSnappedPosition,
+    rotation,
+    wall,
+  });
+
+  if (sameWallCollisionIds.length === 0) {
+    return {
+      isValid: true,
+      snappedPosition: rawSnappedPosition,
+      collidingCupboardIds: [],
+      isMagneticallySnapped: false,
+      magneticAttachment: null,
+    };
+  }
+
+  const rawSpanCenter = getWallSpanCenter(rawSnappedPosition, wall);
+  const blockedInterval = getSameWallBlockedIntervals({
+    candidate,
+    cupboards,
+    roomBounds,
+    rotation,
+    wall,
+  }).find(
+    (interval) =>
+      rawSpanCenter > interval.start + OVERLAP_EPSILON && rawSpanCenter < interval.end - OVERLAP_EPSILON,
+  );
+  const magneticSnapOption = getNearestMagneticSnapOption({
+    blockedInterval,
+    candidate,
+    rawSnappedPosition,
+    roomBounds,
+    rotation,
+    wall,
+  });
+
+  if (
+    !magneticSnapOption ||
+    magneticSnapOption.intrusionDistance > SAME_WALL_MAGNETIC_TOLERANCE + OVERLAP_EPSILON
+  ) {
+    return {
+      isValid: false,
+      snappedPosition: rawSnappedPosition,
+      collidingCupboardIds: sameWallCollisionIds,
+      isMagneticallySnapped: false,
+      magneticAttachment: null,
+    };
+  }
+
+  return {
+    isValid: true,
+    snappedPosition: setWallSpanCenter(rawSnappedPosition, wall, magneticSnapOption.center),
+    collidingCupboardIds: [],
+    isMagneticallySnapped: true,
+    magneticAttachment: magneticSnapOption.attachment,
+  };
+};
+
 const getCornerCollisionIds = ({ candidate, cupboards, snappedPosition, rotation, wall }) => {
   if (!Array.isArray(cupboards) || cupboards.length === 0) {
     return [];
@@ -270,36 +498,40 @@ export const validatePlacementCandidate = ({ candidate, point, roomBounds, wall,
   }
 
   const rotation = getWallAlignedRotation(wall);
-  const snappedPosition = getWallAlignedPreviewPosition(candidate.size, point, roomBounds, wall, rotation);
-  const sameWallCollisionIds = getSameWallCollisionIds({
+  const rawSnappedPosition = getWallAlignedPreviewPosition(candidate.size, point, roomBounds, wall, rotation);
+  const sameWallPlacementOutcome = getSameWallPlacementOutcome({
     candidate,
     cupboards,
-    snappedPosition,
+    rawSnappedPosition,
+    roomBounds,
     rotation,
     wall,
   });
   const cornerCollisionIds = getCornerCollisionIds({
     candidate,
     cupboards,
-    snappedPosition,
+    snappedPosition: sameWallPlacementOutcome.snappedPosition,
     rotation,
     wall,
   });
-  const collidingCupboardIds = [...new Set([...sameWallCollisionIds, ...cornerCollisionIds])];
+  const collidingCupboardIds = [...new Set([...sameWallPlacementOutcome.collidingCupboardIds, ...cornerCollisionIds])];
   const reason =
-    sameWallCollisionIds.length > 0
+    !sameWallPlacementOutcome.isValid
       ? PLACEMENT_VALIDATION_REASONS.OVERLAP
       : cornerCollisionIds.length > 0
         ? PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION
         : null;
 
   return createPlacementValidationResult({
-    isValid: collidingCupboardIds.length === 0,
+    isValid: sameWallPlacementOutcome.isValid && cornerCollisionIds.length === 0,
     reason,
     wall,
     rotation,
-    snappedPosition,
+    snappedPosition: sameWallPlacementOutcome.snappedPosition,
+    rawSnappedPosition,
     collidingCupboardIds,
+    isMagneticallySnapped: sameWallPlacementOutcome.isMagneticallySnapped,
+    magneticAttachment: sameWallPlacementOutcome.magneticAttachment,
   });
 };
 

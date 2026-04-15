@@ -75,6 +75,57 @@ describe("planner stage messaging", () => {
     expect(viewModel.stageHint).toContain("Release now to cancel this preview");
   });
 
+  it("describes a placement preview that is being held flush by magnetic snapping", () => {
+    const viewModel = getPlannerStageViewModel({
+      activeMove: null,
+      isMoveActive: false,
+      isPlacementActive: true,
+      placementPreview: {
+        name: "Double-door base 600",
+        wall: BACK_WALL_ID,
+        validation: {
+          isValid: true,
+          reason: null,
+          isMagneticallySnapped: true,
+        },
+      },
+      selectedCupboard: null,
+    });
+
+    expect(viewModel).toMatchObject({
+      selectionBadge: "Previewing Double-door base 600",
+      isStageInvalid: false,
+    });
+    expect(viewModel.stageHint).toContain("Held flush against the neighboring cabinet");
+    expect(viewModel.stageHint).toContain("Release to place it there");
+  });
+
+  it("describes a move that is being held flush by magnetic snapping", () => {
+    const viewModel = getPlannerStageViewModel({
+      activeMove: {
+        validation: {
+          isValid: true,
+          reason: null,
+          isMagneticallySnapped: true,
+        },
+      },
+      isMoveActive: true,
+      isPlacementActive: false,
+      placementPreview: null,
+      selectedCupboard: {
+        name: "Three-drawer base 900",
+        wall: BACK_WALL_ID,
+      },
+    });
+
+    expect(viewModel).toMatchObject({
+      selectionBadge: "Moving Three-drawer base 900",
+      isStageInvalid: false,
+    });
+    expect(viewModel.stageHint).toContain("Held flush against the neighboring cabinet");
+    expect(viewModel.stageHint).toContain("Release to keep it there");
+  });
+
   it("keeps valid placement messaging unchanged", () => {
     const viewModel = getPlannerStageViewModel({
       activeMove: null,

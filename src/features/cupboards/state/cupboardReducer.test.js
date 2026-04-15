@@ -2,8 +2,10 @@ import { cupboardReducer, initialCupboardState } from "./cupboardReducer";
 import {
   BACK_WALL_ID,
   LEFT_WALL_ID,
+  MAGNETIC_ATTACHMENT_EDGES,
   PLACEMENT_VALIDATION_REASONS,
   RIGHT_WALL_ID,
+  SAME_WALL_MAGNETIC_TOLERANCE,
   getWallAlignedRotation,
 } from "../model/placement";
 
@@ -297,6 +299,72 @@ describe("cupboard reducer placement preview", () => {
       x: 1.72,
       y: -1.14,
       z: 0.75,
+    });
+  });
+
+  it("commits the held flush position when a same-wall preview is released inside the magnetic buffer", () => {
+    const startedState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [createPlacedCupboardFixture({ id: 10 })],
+        nextCupboardId: 11,
+      },
+      {
+        type: "START_PLACEMENT_PREVIEW",
+        payload: {
+          catalogId: "base-600",
+          roomBounds,
+        },
+      },
+    );
+
+    const overshoot = SAME_WALL_MAGNETIC_TOLERANCE / 2;
+    const heldState = cupboardReducer(startedState, {
+      type: "UPDATE_PLACEMENT_PREVIEW",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 0.75 - overshoot,
+          y: 0,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(heldState.placementPreview.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+      isMagneticallySnapped: true,
+      magneticAttachment: {
+        cupboardId: 10,
+        edge: MAGNETIC_ATTACHMENT_EDGES.END,
+      },
+    });
+    expectPositionToMatch(heldState.placementPreview.position, {
+      x: 0.75,
+      y: -1.14,
+      z: -1.72,
+    });
+    expectPositionToMatch(heldState.placementPreview.validation.rawSnappedPosition, {
+      x: 0.75 - overshoot,
+      y: -1.14,
+      z: -1.72,
+    });
+
+    const nextState = cupboardReducer(heldState, {
+      type: "FINISH_PLACEMENT_PREVIEW",
+    });
+
+    expect(nextState.placementPreview).toBeNull();
+    expect(nextState.selectedCupboardId).toBe(11);
+    expect(nextState.cupboards).toHaveLength(2);
+    expectPositionToMatch(nextState.cupboards[1].position, {
+      x: 0.75,
+      y: -1.14,
+      z: -1.72,
     });
   });
 
@@ -655,6 +723,84 @@ describe("cupboard reducer moving placed cupboards", () => {
     expect(nextState.activeMove).toBeNull();
     expectPositionToMatch(nextState.cupboards[0].position, {
       x: -0.8,
+      y: -1.14,
+      z: -1.72,
+    });
+    expectPositionToMatch(nextState.cupboards[1].position, {
+      x: 0.8,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("commits the held flush position when a moved cupboard is released inside the magnetic buffer", () => {
+    const magneticMoveState = {
+      ...initialCupboardState,
+      cupboards: [
+        createPlacedCupboardFixture({
+          id: 1,
+          position: { x: -0.8, y: -1.14, z: -1.72 },
+        }),
+        createPlacedCupboardFixture({
+          id: 2,
+          position: { x: 0.8, y: -1.14, z: -1.72 },
+        }),
+      ],
+      selectedCupboardId: 1,
+      nextCupboardId: 3,
+    };
+
+    const movingState = cupboardReducer(magneticMoveState, {
+      type: "START_CUPBOARD_MOVE",
+      payload: {
+        cupboardId: 1,
+      },
+    });
+
+    const overshoot = SAME_WALL_MAGNETIC_TOLERANCE / 2;
+    const heldMoveState = cupboardReducer(movingState, {
+      type: "UPDATE_CUPBOARD_MOVE",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: -0.1 + overshoot,
+          y: 0.2,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(heldMoveState.activeMove.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+      isMagneticallySnapped: true,
+      magneticAttachment: {
+        cupboardId: 2,
+        edge: MAGNETIC_ATTACHMENT_EDGES.START,
+      },
+    });
+    expectPositionToMatch(heldMoveState.cupboards[0].position, {
+      x: -0.1,
+      y: -1.14,
+      z: -1.72,
+    });
+    expectPositionToMatch(heldMoveState.activeMove.validation.rawSnappedPosition, {
+      x: -0.1 + overshoot,
+      y: -1.14,
+      z: -1.72,
+    });
+
+    const nextState = cupboardReducer(heldMoveState, {
+      type: "FINISH_CUPBOARD_MOVE",
+    });
+
+    expect(nextState.activeMove).toBeNull();
+    expect(nextState.selectedCupboardId).toBe(1);
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: -0.1,
       y: -1.14,
       z: -1.72,
     });

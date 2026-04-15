@@ -1,7 +1,9 @@
 import {
   alignCupboardToBackWall,
   BACK_WALL_ID,
+  MAGNETIC_ATTACHMENT_EDGES,
   PLACEMENT_VALIDATION_REASONS,
+  SAME_WALL_MAGNETIC_TOLERANCE,
   getWallAlignedRotation,
   createPlacementPreview,
   createPlacementValidationResult,
@@ -255,6 +257,142 @@ describe("cupboard placement", () => {
       y: -1.14,
       z: -1.72,
     });
+  });
+
+  it("magnetically holds a same-wall placement just past first contact", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.6, 0.72, 0.56],
+        position: { x: -1.7, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: 0.75 - SAME_WALL_MAGNETIC_TOLERANCE / 4,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [createPlacedCupboardFixture()],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+      isMagneticallySnapped: true,
+      magneticAttachment: {
+        cupboardId: 1,
+        edge: MAGNETIC_ATTACHMENT_EDGES.END,
+      },
+    });
+    expect(validation.magneticAttachment.intrusionDistance).toBeCloseTo(SAME_WALL_MAGNETIC_TOLERANCE / 4);
+    expectPositionToMatch(validation.snappedPosition, {
+      x: 0.75,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("keeps a same-wall placement valid while the pointer stays inside the magnetic buffer", () => {
+    const overshoot = SAME_WALL_MAGNETIC_TOLERANCE - 0.01;
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.6, 0.72, 0.56],
+        position: { x: -1.7, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: 0.75 - overshoot,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [createPlacedCupboardFixture()],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      collidingCupboardIds: [],
+      isMagneticallySnapped: true,
+      magneticAttachment: {
+        cupboardId: 1,
+        edge: MAGNETIC_ATTACHMENT_EDGES.END,
+      },
+    });
+    expect(validation.magneticAttachment.intrusionDistance).toBeCloseTo(overshoot);
+    expectPositionToMatch(validation.snappedPosition, {
+      x: 0.75,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("keeps both the raw and held positions available while magnetically snapped", () => {
+    const overshoot = SAME_WALL_MAGNETIC_TOLERANCE / 2;
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.6, 0.72, 0.56],
+        position: { x: -1.7, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: 0.75 - overshoot,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [createPlacedCupboardFixture()],
+    });
+
+    expect(validation.isValid).toBe(true);
+    expect(validation.isMagneticallySnapped).toBe(true);
+    expectPositionToMatch(validation.snappedPosition, {
+      x: 0.75,
+      y: -1.14,
+      z: -1.72,
+    });
+    expectPositionToMatch(validation.rawSnappedPosition, {
+      x: 0.75 - overshoot,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("rejects a same-wall overlap once the magnetic buffer is exceeded", () => {
+    const overshoot = SAME_WALL_MAGNETIC_TOLERANCE + 0.02;
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.6, 0.72, 0.56],
+        position: { x: -1.7, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: 0.75 - overshoot,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [createPlacedCupboardFixture()],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.OVERLAP,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [1],
+      isMagneticallySnapped: false,
+      magneticAttachment: null,
+    });
+    expectPositionToMatch(validation.snappedPosition, {
+      x: 0.75 - overshoot,
+      y: -1.14,
+      z: -1.72,
+    });
+    expectPositionToMatch(validation.rawSnappedPosition, validation.snappedPosition);
   });
 
   it("rejects a back-wall placement that intersects a side-wall cabinet near the corner", () => {
