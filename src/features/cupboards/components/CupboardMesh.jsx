@@ -1,8 +1,11 @@
 import { Edges } from "@react-three/drei";
 
+import { CABINET_RENDER_MODES, resolveCabinetRenderMode } from "../../../config/plannerConfig";
 import KitchenCabinetModel from "./KitchenCabinetModel";
+import SimpleCupboardModel from "./SimpleCupboardModel";
 
 const toPositionProp = (position) => (Array.isArray(position) ? position : [position.x, position.y, position.z]);
+const cabinetRenderMode = resolveCabinetRenderMode();
 
 const getOutlineColor = ({ isGhost = false, isMoving = false, isSelected = false }) => {
   if (isGhost) {
@@ -24,10 +27,24 @@ const CabinetOutline = ({ size, color, scale = 1.01 }) => (
   </mesh>
 );
 
+const RenderedCupboardBody = ({ size, category, model, isGhost = false, isMoving = false, isSelected = false }) =>
+  cabinetRenderMode === CABINET_RENDER_MODES.BOX ? (
+    <SimpleCupboardModel size={size} isGhost={isGhost} isMoving={isMoving} isSelected={isSelected} />
+  ) : (
+    <KitchenCabinetModel
+      size={size}
+      category={category}
+      model={model}
+      isGhost={isGhost}
+      isMoving={isMoving}
+      isSelected={isSelected}
+    />
+  );
+
 export const GhostCupboardMesh = ({ position, rotation = 0, size, category, model }) => {
   return (
     <group position={toPositionProp(position)} rotation={[0, rotation, 0]}>
-      <KitchenCabinetModel size={size} category={category} model={model} isGhost />
+      <RenderedCupboardBody size={size} category={category} model={model} isGhost />
       <CabinetOutline size={size} color={getOutlineColor({ isGhost: true })} scale={1.02} />
     </group>
   );
@@ -70,13 +87,7 @@ export const CupboardMesh = ({
         }
       }}
     >
-      <KitchenCabinetModel
-        size={size}
-        category={category}
-        model={model}
-        isMoving={isMoving}
-        isSelected={isSelected}
-      />
+      <RenderedCupboardBody size={size} category={category} model={model} isMoving={isMoving} isSelected={isSelected} />
       <CabinetOutline size={size} color={getOutlineColor({ isMoving, isSelected })} />
     </group>
   );
