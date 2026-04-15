@@ -51,6 +51,30 @@ describe("planner stage messaging", () => {
     expect(viewModel.stageHint).toContain("Release now to restore the previous position");
   });
 
+  it("surfaces the corner-collision reason through invalid placement messaging", () => {
+    const viewModel = getPlannerStageViewModel({
+      activeMove: null,
+      isMoveActive: false,
+      isPlacementActive: true,
+      placementPreview: {
+        name: "Double-door base 600",
+        wall: BACK_WALL_ID,
+        validation: {
+          isValid: false,
+          reason: PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION,
+        },
+      },
+      selectedCupboard: null,
+    });
+
+    expect(viewModel).toMatchObject({
+      selectionBadge: "Preview invalid Double-door base 600",
+      isStageInvalid: true,
+    });
+    expect(viewModel.stageHint).toContain("Intersects a cabinet near the corner.");
+    expect(viewModel.stageHint).toContain("Release now to cancel this preview");
+  });
+
   it("keeps valid placement messaging unchanged", () => {
     const viewModel = getPlannerStageViewModel({
       activeMove: null,

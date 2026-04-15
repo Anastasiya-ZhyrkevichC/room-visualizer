@@ -255,6 +255,80 @@ describe("cupboard placement", () => {
     });
   });
 
+  it("rejects a back-wall placement that intersects a side-wall cabinet near the corner", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.9, 0.72, 0.56],
+        position: { x: 0, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: -2,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [
+        createPlacedCupboardFixture({
+          id: 2,
+          wall: LEFT_WALL_ID,
+          position: { x: -1.72, y: -1.14, z: -1.55 },
+          rotation: getWallAlignedRotation(LEFT_WALL_ID),
+        }),
+      ],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [2],
+    });
+    expectPositionToMatch(validation.snappedPosition, {
+      x: -1.55,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("allows cross-wall edge contact without treating it as a corner collision", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.9, 0.72, 0.56],
+        position: { x: 0, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: -0.99,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [
+        createPlacedCupboardFixture({
+          id: 2,
+          wall: LEFT_WALL_ID,
+          position: { x: -1.72, y: -1.14, z: -1.55 },
+          rotation: getWallAlignedRotation(LEFT_WALL_ID),
+        }),
+      ],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(validation.snappedPosition, {
+      x: -0.99,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
   it("keeps the current candidate position visible when validation fails", () => {
     const validation = validatePlacementCandidate({
       candidate: {

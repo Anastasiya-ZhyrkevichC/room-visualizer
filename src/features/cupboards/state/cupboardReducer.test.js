@@ -348,6 +348,64 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.selectedCupboardId).toBeNull();
   });
 
+  it("rejects a cross-wall preview that intersects a cabinet at the corner", () => {
+    const startedState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [
+          createPlacedCupboardFixture({
+            id: 10,
+            wall: LEFT_WALL_ID,
+            position: { x: -1.72, y: -1.14, z: -1.55 },
+            rotation: getWallAlignedRotation(LEFT_WALL_ID),
+          }),
+        ],
+        nextCupboardId: 11,
+      },
+      {
+        type: "START_PLACEMENT_PREVIEW",
+        payload: {
+          catalogId: "drawer-900",
+          roomBounds,
+        },
+      },
+    );
+
+    const cornerCollisionState = cupboardReducer(startedState, {
+      type: "UPDATE_PLACEMENT_PREVIEW",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: -2,
+          y: 0,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(cornerCollisionState.placementPreview.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [10],
+    });
+    expectPositionToMatch(cornerCollisionState.placementPreview.position, {
+      x: -1.55,
+      y: -1.14,
+      z: -1.72,
+    });
+
+    const nextState = cupboardReducer(cornerCollisionState, {
+      type: "FINISH_PLACEMENT_PREVIEW",
+    });
+
+    expect(nextState.placementPreview).toBeNull();
+    expect(nextState.cupboards).toHaveLength(1);
+    expect(nextState.cupboards[0].id).toBe(10);
+    expect(nextState.selectedCupboardId).toBeNull();
+  });
+
   it("rejects an invalid preview on drop", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
@@ -599,6 +657,74 @@ describe("cupboard reducer moving placed cupboards", () => {
     });
     expectPositionToMatch(nextState.cupboards[1].position, {
       x: 0.8,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("reverts a moved side-wall cupboard when it intersects a back-wall cabinet at the corner", () => {
+    const cornerCollisionState = {
+      ...initialCupboardState,
+      cupboards: [
+        createPlacedCupboardFixture({
+          id: 1,
+          wall: LEFT_WALL_ID,
+          position: { x: -1.72, y: -1.14, z: 0.8 },
+          rotation: getWallAlignedRotation(LEFT_WALL_ID),
+        }),
+        createPlacedCupboardFixture({
+          id: 2,
+          position: { x: -1.55, y: -1.14, z: -1.72 },
+        }),
+      ],
+      selectedCupboardId: 1,
+      nextCupboardId: 3,
+    };
+
+    const movingState = cupboardReducer(cornerCollisionState, {
+      type: "START_CUPBOARD_MOVE",
+      payload: {
+        cupboardId: 1,
+      },
+    });
+
+    const invalidMoveState = cupboardReducer(movingState, {
+      type: "UPDATE_CUPBOARD_MOVE",
+      payload: {
+        wall: LEFT_WALL_ID,
+        point: {
+          z: -3,
+          y: 0.2,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(invalidMoveState.activeMove.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION,
+      wall: LEFT_WALL_ID,
+      rotation: Math.PI / 2,
+      collidingCupboardIds: [2],
+    });
+    expectPositionToMatch(invalidMoveState.cupboards[0].position, {
+      x: -1.72,
+      y: -1.14,
+      z: -1.55,
+    });
+
+    const nextState = cupboardReducer(invalidMoveState, {
+      type: "FINISH_CUPBOARD_MOVE",
+    });
+
+    expect(nextState.activeMove).toBeNull();
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: -1.72,
+      y: -1.14,
+      z: 0.8,
+    });
+    expectPositionToMatch(nextState.cupboards[1].position, {
+      x: -1.55,
       y: -1.14,
       z: -1.72,
     });

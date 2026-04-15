@@ -182,6 +182,39 @@ const getCupboardWallSpan = ({ size, rotation, position, wall }) => {
 const spansOverlap = (firstSpan, secondSpan) =>
   firstSpan.start < secondSpan.end - OVERLAP_EPSILON && firstSpan.end > secondSpan.start + OVERLAP_EPSILON;
 
+const getCupboardBounds = ({ size, rotation, position }) => {
+  const footprint = getCupboardFootprint(size, rotation);
+
+  return {
+    minX: position.x - footprint.width / 2,
+    maxX: position.x + footprint.width / 2,
+    minY: position.y - size[1] / 2,
+    maxY: position.y + size[1] / 2,
+    minZ: position.z - footprint.depth / 2,
+    maxZ: position.z + footprint.depth / 2,
+  };
+};
+
+const boxesIntersect = (firstBox, secondBox) =>
+  firstBox.minX < secondBox.maxX - OVERLAP_EPSILON &&
+  firstBox.maxX > secondBox.minX + OVERLAP_EPSILON &&
+  firstBox.minY < secondBox.maxY - OVERLAP_EPSILON &&
+  firstBox.maxY > secondBox.minY + OVERLAP_EPSILON &&
+  firstBox.minZ < secondBox.maxZ - OVERLAP_EPSILON &&
+  firstBox.maxZ > secondBox.minZ + OVERLAP_EPSILON;
+
+const getAdjacentWalls = (wall) => {
+  switch (wall) {
+    case LEFT_WALL_ID:
+    case RIGHT_WALL_ID:
+      return [BACK_WALL_ID];
+    case BACK_WALL_ID:
+      return [LEFT_WALL_ID, RIGHT_WALL_ID];
+    default:
+      return [];
+  }
+};
+
 const getSameWallCollisionIds = ({ candidate, cupboards, snappedPosition, rotation, wall }) => {
   if (!Array.isArray(cupboards) || cupboards.length === 0) {
     return [];
@@ -200,6 +233,29 @@ const getSameWallCollisionIds = ({ candidate, cupboards, snappedPosition, rotati
     .map((cupboard) => cupboard.id);
 };
 
+const getCornerCollisionIds = ({ candidate, cupboards, snappedPosition, rotation, wall }) => {
+  if (!Array.isArray(cupboards) || cupboards.length === 0) {
+    return [];
+  }
+
+  const adjacentWalls = getAdjacentWalls(wall);
+
+  if (adjacentWalls.length === 0) {
+    return [];
+  }
+
+  const candidateBounds = getCupboardBounds({
+    ...candidate,
+    position: snappedPosition,
+    rotation,
+  });
+
+  return cupboards
+    .filter((cupboard) => adjacentWalls.includes(cupboard.wall) && cupboard.id !== candidate.id)
+    .filter((cupboard) => boxesIntersect(candidateBounds, getCupboardBounds(cupboard)))
+    .map((cupboard) => cupboard.id);
+};
+
 export const validatePlacementCandidate = ({ candidate, point, roomBounds, wall, cupboards = [] }) => {
   if (!isPlacementWall(wall) || !point) {
     return createPlacementValidationResult({
@@ -213,17 +269,31 @@ export const validatePlacementCandidate = ({ candidate, point, roomBounds, wall,
 
   const rotation = getWallAlignedRotation(wall);
   const snappedPosition = getWallAlignedPreviewPosition(candidate.size, point, roomBounds, wall, rotation);
-  const collidingCupboardIds = getSameWallCollisionIds({
+  const sameWallCollisionIds = getSameWallCollisionIds({
     candidate,
     cupboards,
     snappedPosition,
     rotation,
     wall,
   });
+  const cornerCollisionIds = getCornerCollisionIds({
+    candidate,
+    cupboards,
+    snappedPosition,
+    rotation,
+    wall,
+  });
+  const collidingCupboardIds = [...new Set([...sameWallCollisionIds, ...cornerCollisionIds])];
+  const reason =
+    sameWallCollisionIds.length > 0
+      ? PLACEMENT_VALIDATION_REASONS.OVERLAP
+      : cornerCollisionIds.length > 0
+        ? PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION
+        : null;
 
   return createPlacementValidationResult({
     isValid: collidingCupboardIds.length === 0,
-    reason: collidingCupboardIds.length > 0 ? PLACEMENT_VALIDATION_REASONS.OVERLAP : null,
+    reason,
     wall,
     rotation,
     snappedPosition,

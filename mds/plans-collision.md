@@ -75,35 +75,6 @@ This is the core bug the user reported. For supported wall placement, the simple
 - Two cabinets can still sit flush against each other with no overlap.
 - Leaving the overlap area restores a valid state immediately.
 
-## Step 3. Enforce Zero-Gap Adjacency on the Same Wall
-
-**Goal**
-
-Require cabinets in the same run to sit flush together with no visible gap between neighbouring cabinets.
-
-**What is going to be implemented**
-
-Zero-gap snapping and adjacency validation for same-wall cabinet runs.
-
-**Description**
-
-The current code does not enforce this rule. There is a `CABINET_GAP` constant, but it is not part of the active placement flow, and the requested behavior is the opposite: no gaps. For this plan, the practical rule should be that the first cabinet on an empty wall may stand alone, but once a wall already contains cabinets, new placements and moves should snap to valid flush positions instead of allowing arbitrary spacing between modules.
-
-**Required work**
-
-- Remove the active dependence on any non-zero cabinet spacing rule for same-wall placement.
-- Define valid flush anchor positions against neighbouring cabinet edges on each wall.
-- Snap the candidate cabinet to the nearest zero-gap neighbour alignment when such an alignment is available.
-- Mark same-wall candidates invalid when they leave an unintended gap between neighbouring cabinets.
-- Decide and document how isolated first-cabinet placement works on an empty wall and how partially filled wall segments behave.
-- Keep the rule consistent for both placement preview and movement.
-
-**Manual testing criteria**
-
-- Placing a second cabinet next to an existing cabinet snaps it flush with no gap.
-- The user cannot leave a small free space between same-wall cabinets.
-- Moving a cabinet away from a neighbour into a gapped position becomes invalid.
-- The first cabinet on an empty wall still has a valid placement path.
 
 ## Step 4. Show Invalid Cabinets in Red and Block Invalid Commit
 
