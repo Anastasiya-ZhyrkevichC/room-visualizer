@@ -6,8 +6,8 @@ import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { convertMetersToMillimeters } from "../../../lib/units";
 import {
   formatMillimeterTuple,
-  formatModuleCategory,
   formatModuleDimensions,
+  formatModuleFamily,
   formatPrototypePrice,
   formatSelectionPosition,
 } from "../lib/roomFormatting";
@@ -39,15 +39,15 @@ const SelectionInspectorPanel = () => {
             <span className="selection-panel__tag">Selected in scene</span>
             <strong className="selection-panel__name">{selectedCupboard.name}</strong>
             <p className="selection-panel__meta">
-              {formatModuleCategory(selectedCupboard.category)} · {formatPrototypePrice(selectedCupboard.price)}
+              {formatModuleFamily(selectedCupboard)} · {formatPrototypePrice(selectedCupboard.price)}
             </p>
             <p className="selection-panel__copy">Drag this cabinet in the 3D room to move it along its current wall.</p>
           </div>
 
           <div className="selection-details">
             <div className="selection-details__item">
-              <span className="selection-details__label">Category</span>
-              <strong className="selection-details__value">{formatModuleCategory(selectedCupboard.category)}</strong>
+              <span className="selection-details__label">Cabinet family</span>
+              <strong className="selection-details__value">{formatModuleFamily(selectedCupboard)}</strong>
             </div>
             <div className="selection-details__item">
               <span className="selection-details__label">Cabinet size</span>

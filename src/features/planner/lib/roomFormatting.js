@@ -1,4 +1,5 @@
 import { convertMetersToMillimeters } from "../../../lib/units";
+import { getStarterCabinetFamilyLabel } from "../../cupboards/model/catalog";
 
 const usdFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -22,6 +23,9 @@ export const formatMillimeterTuple = (values) => values.map((value) => Math.roun
 export const formatModuleDimensions = (module) => formatMillimeterTuple([module.width, module.height, module.depth]);
 
 export const formatModuleCategory = (category) => moduleCategoryLabels[category] ?? category;
+
+export const formatModuleFamily = (module) =>
+  getStarterCabinetFamilyLabel(module) || formatModuleCategory(module?.category);
 
 export const formatPrototypePrice = (price) => usdFormatter.format(price);
 

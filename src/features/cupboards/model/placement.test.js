@@ -93,6 +93,7 @@ describe("cupboard placement", () => {
       y: -1.14,
       z: -1.72,
     });
+    expect(firstCupboard.catalogFamily).toBe("base-doors");
     expect(firstCupboard.model).toMatchObject({
       front: {
         type: "doubleDoor",
@@ -143,6 +144,7 @@ describe("cupboard placement", () => {
       catalogId: "drawer-900",
       name: "Three-drawer base 900",
       category: "drawer",
+      catalogFamily: "base-drawers",
       price: 390,
       wall: null,
     });

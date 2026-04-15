@@ -1,4 +1,5 @@
 import { getCupboardFootprint } from "./geometry";
+import { resolveStarterCabinetFamilyId } from "./catalog";
 
 export const CABINET_GAP = 0.08;
 export const BACK_WALL_ID = "back";
@@ -31,6 +32,7 @@ export const createCupboard = ({ id, cabinet, position, rotation = 0, wall = BAC
   catalogId: cabinet.catalogId ?? cabinet.id,
   name: cabinet.name,
   category: cabinet.category,
+  catalogFamily: resolveStarterCabinetFamilyId(cabinet),
   model: cabinet.model,
   width: cabinet.width,
   height: cabinet.height,
@@ -318,6 +320,7 @@ export const createPlacementPreview = (cabinet, roomBounds) => ({
   catalogId: cabinet.id,
   name: cabinet.name,
   category: cabinet.category,
+  catalogFamily: resolveStarterCabinetFamilyId(cabinet),
   model: cabinet.model,
   width: cabinet.width,
   height: cabinet.height,

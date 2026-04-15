@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import {
-  defaultOpenStarterCabinetGroupIds,
-  starterCabinetCatalogGroups,
-} from "../../cupboards/model/catalog";
+import { defaultOpenStarterCabinetGroupIds, starterCabinetCatalogGroups } from "../../cupboards/model/catalog";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { formatModuleDimensions, formatPrototypePrice } from "../lib/roomFormatting";
 
@@ -96,17 +93,18 @@ const CabinetCatalogPanel = () => {
     <section className="panel-card panel-card--secondary">
       <div className="panel-card__header">
         <p className="panel-card__eyebrow">Kitchen Catalog</p>
-        <h2 className="panel-card__title">Browse by cabinet type</h2>
+        <h2 className="panel-card__title">Browse by cabinet family</h2>
       </div>
       <p className="panel-card__copy">
-        Expand a cabinet family, then drag a module into the room or click Add and place it on the back, left, or
-        right wall.
+        Expand a cabinet family, then drag a module into the room or click Add and place it on the back, left, or right
+        wall.
       </p>
 
       <div className="catalog-tree">
         {starterCabinetCatalogGroups.map((group) => {
           const isOpen = openGroups[group.id];
           const groupCountLabel = `${group.cabinets.length} ${group.cabinets.length === 1 ? "module" : "modules"}`;
+          const groupPanelId = `catalog-group-${group.id}`;
 
           return (
             <section className={`catalog-group${isOpen ? " catalog-group--open" : ""}`} key={group.id}>
@@ -115,46 +113,63 @@ const CabinetCatalogPanel = () => {
                 className="catalog-group__toggle"
                 onClick={() => handleGroupToggle(group.id)}
                 aria-expanded={isOpen}
+                aria-controls={groupPanelId}
               >
                 <div className="catalog-group__heading">
                   <strong className="catalog-group__title">{group.label}</strong>
-                  <span className="catalog-group__count">{groupCountLabel}</span>
                 </div>
-                <span className="catalog-group__icon" aria-hidden="true">
-                  {isOpen ? "-" : "+"}
-                </span>
+                <div className="catalog-group__summary">
+                  <span className="catalog-group__count">{groupCountLabel}</span>
+                  <span className="catalog-group__icon" aria-hidden="true">
+                    {isOpen ? "-" : "+"}
+                  </span>
+                </div>
               </button>
 
               {isOpen ? (
-                <div className="catalog-list" id={`catalog-group-${group.id}`}>
+                <div className="catalog-list" id={groupPanelId}>
                   {group.cabinets.length > 0 ? (
-                    group.cabinets.map((cabinet) => (
-                      <article
-                        className={`catalog-card${
-                          placementPreview?.catalogId === cabinet.id ? " catalog-card--dragging" : ""
-                        }`}
-                        key={cabinet.id}
-                        onPointerDown={(event) => handleCatalogPointerDown(cabinet.id, event)}
-                      >
-                        <div className="catalog-card__content">
-                          <strong className="catalog-card__title">{cabinet.name}</strong>
-                          <span className="catalog-card__size">{formatModuleDimensions(cabinet)}</span>
-                          <strong className="catalog-card__price">{formatPrototypePrice(cabinet.price)}</strong>
-                        </div>
-                        <div className="catalog-card__actions">
-                          <button
-                            type="button"
-                            className="catalog-card__add"
-                            onPointerDown={(event) => {
-                              event.stopPropagation();
-                            }}
-                            onClick={() => handleCatalogAddClick(cabinet.id)}
-                          >
-                            Add
-                          </button>
-                        </div>
-                      </article>
-                    ))
+                    group.cabinets.map((cabinet) => {
+                      const dimensionLabel = formatModuleDimensions(cabinet);
+                      const priceLabel = formatPrototypePrice(cabinet.price);
+
+                      return (
+                        <article
+                          className={`catalog-row${
+                            placementPreview?.catalogId === cabinet.id ? " catalog-row--dragging" : ""
+                          }`}
+                          key={cabinet.id}
+                          onPointerDown={(event) => handleCatalogPointerDown(cabinet.id, event)}
+                        >
+                          <div className="catalog-row__content">
+                            <strong className="catalog-row__title" title={cabinet.name}>
+                              {cabinet.name}
+                            </strong>
+                            <div className="catalog-row__details">
+                              <span className="catalog-row__dimensions" title={dimensionLabel}>
+                                {dimensionLabel}
+                              </span>
+                              <span className="catalog-row__separator" aria-hidden="true">
+                                •
+                              </span>
+                              <strong className="catalog-row__price">{priceLabel}</strong>
+                            </div>
+                          </div>
+                          <div className="catalog-row__actions">
+                            <button
+                              type="button"
+                              className="catalog-row__add"
+                              onPointerDown={(event) => {
+                                event.stopPropagation();
+                              }}
+                              onClick={() => handleCatalogAddClick(cabinet.id)}
+                            >
+                              Add
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })
                   ) : (
                     <p className="catalog-group__empty">No starter modules in this family yet.</p>
                   )}

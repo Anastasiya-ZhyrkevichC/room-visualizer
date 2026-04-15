@@ -69,6 +69,7 @@ describe("cupboard reducer placement preview", () => {
       catalogId: "base-600",
       name: "Double-door base 600",
       category: "base",
+      catalogFamily: "base-doors",
       price: 240,
       wall: null,
     });
@@ -242,6 +243,7 @@ describe("cupboard reducer placement preview", () => {
       catalogId: "drawer-900",
       name: "Three-drawer base 900",
       category: "drawer",
+      catalogFamily: "base-drawers",
       price: 390,
       wall: BACK_WALL_ID,
     });
@@ -286,6 +288,7 @@ describe("cupboard reducer placement preview", () => {
       catalogId: "drawer-900",
       name: "Three-drawer base 900",
       category: "drawer",
+      catalogFamily: "base-drawers",
       price: 390,
       wall: RIGHT_WALL_ID,
     });

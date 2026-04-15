@@ -1,38 +1,26 @@
 import { convertMillimetersToMeters } from "../../../lib/units";
 import { resolveCabinetModel } from "./renderModel";
 
-const createStarterCabinet = ({ id, name, category, width, height, depth, price, model }) => ({
-  id,
-  name,
-  category,
-  width,
-  height,
-  depth,
-  price,
-  model: resolveCabinetModel(category, model),
-  size: [
-    convertMillimetersToMeters(width),
-    convertMillimetersToMeters(height),
-    convertMillimetersToMeters(depth),
-  ],
-});
-
-export const starterCabinetUsageGroups = [
+export const starterCabinetCatalogFamilies = [
   {
-    id: "base",
-    label: "Base cabinets",
+    id: "base-doors",
+    label: "Base cabinets with doors",
   },
   {
-    id: "drawer",
-    label: "Drawer units",
+    id: "base-drawers",
+    label: "Base cabinets with drawers",
   },
   {
-    id: "wall",
-    label: "Wall cabinets",
+    id: "wall-doors",
+    label: "Wall cabinets with doors",
+  },
+  {
+    id: "wall-lift-up",
+    label: "Lift-up wall cabinets",
   },
   {
     id: "tall",
-    label: "Tall units",
+    label: "Tall cabinets",
   },
   {
     id: "corner",
@@ -40,11 +28,47 @@ export const starterCabinetUsageGroups = [
   },
 ];
 
+const legacyCategoryFamilyMap = Object.freeze({
+  base: "base-doors",
+  drawer: "base-drawers",
+  wall: "wall-doors",
+  tall: "tall",
+  corner: "corner",
+});
+
+const starterCabinetFamilyLookup = starterCabinetCatalogFamilies.reduce((lookup, family) => {
+  lookup[family.id] = family;
+  return lookup;
+}, {});
+
+export const resolveStarterCabinetFamilyId = ({ catalogFamily, category } = {}) =>
+  catalogFamily ?? legacyCategoryFamilyMap[category] ?? category ?? null;
+
+export const getStarterCabinetFamilyLabel = (cabinet) => {
+  const familyId = resolveStarterCabinetFamilyId(cabinet);
+
+  return starterCabinetFamilyLookup[familyId]?.label ?? cabinet?.category ?? familyId ?? "";
+};
+
+const createStarterCabinet = ({ id, name, category, catalogFamily, width, height, depth, price, model }) => ({
+  id,
+  name,
+  category,
+  catalogFamily: resolveStarterCabinetFamilyId({ catalogFamily, category }),
+  width,
+  height,
+  depth,
+  price,
+  model: resolveCabinetModel(category, model),
+  size: [convertMillimetersToMeters(width), convertMillimetersToMeters(height), convertMillimetersToMeters(depth)],
+});
+
 export const starterCabinetCatalog = [
   createStarterCabinet({
     id: "base-600",
     name: "Double-door base 600",
     category: "base",
+    catalogFamily: "base-doors",
     width: 600,
     height: 720,
     depth: 560,
@@ -66,6 +90,7 @@ export const starterCabinetCatalog = [
     id: "drawer-900",
     name: "Three-drawer base 900",
     category: "drawer",
+    catalogFamily: "base-drawers",
     width: 900,
     height: 720,
     depth: 560,
@@ -89,6 +114,7 @@ export const starterCabinetCatalog = [
     id: "tall-600",
     name: "Pantry tower 600",
     category: "tall",
+    catalogFamily: "tall",
     width: 600,
     height: 2100,
     depth: 600,
@@ -108,18 +134,20 @@ export const starterCabinetCatalog = [
 
 export const defaultStarterCabinetId = starterCabinetCatalog[0].id;
 
-const starterCabinetsByCategory = starterCabinetCatalog.reduce((lookup, cabinet) => {
-  if (!lookup[cabinet.category]) {
-    lookup[cabinet.category] = [];
+const starterCabinetsByFamily = starterCabinetCatalog.reduce((lookup, cabinet) => {
+  const familyId = resolveStarterCabinetFamilyId(cabinet);
+
+  if (!lookup[familyId]) {
+    lookup[familyId] = [];
   }
 
-  lookup[cabinet.category].push(cabinet);
+  lookup[familyId].push(cabinet);
   return lookup;
 }, {});
 
-export const starterCabinetCatalogGroups = starterCabinetUsageGroups.map((group) => ({
-  ...group,
-  cabinets: starterCabinetsByCategory[group.id] ?? [],
+export const starterCabinetCatalogGroups = starterCabinetCatalogFamilies.map((family) => ({
+  ...family,
+  cabinets: starterCabinetsByFamily[family.id] ?? [],
 }));
 
 export const defaultOpenStarterCabinetGroupIds = starterCabinetCatalogGroups

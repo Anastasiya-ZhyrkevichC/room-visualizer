@@ -24,7 +24,7 @@ export const getCabinetOutlineScale = ({ isGhost = false, isInvalid = false }) =
     return isGhost ? 1.035 : 1.025;
   }
 
-  return isGhost ? 1.02 : 1.01;
+  return isGhost ? 1.02 : 1.001;
 };
 
 export const getSimpleCupboardMaterialProps = ({
