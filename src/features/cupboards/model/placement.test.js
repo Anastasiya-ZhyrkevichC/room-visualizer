@@ -1,7 +1,10 @@
 import {
   alignCupboardToBackWall,
+  BACK_WALL_ID,
+  PLACEMENT_VALIDATION_REASONS,
   getWallAlignedRotation,
   createPlacementPreview,
+  createPlacementValidationResult,
   createCupboard,
   createInitialCupboardPosition,
   getBackWallAlignedPreviewPosition,
@@ -11,6 +14,7 @@ import {
   getRightWallAlignedPreviewPosition,
   LEFT_WALL_ID,
   RIGHT_WALL_ID,
+  validatePlacementCandidate,
 } from "./placement";
 
 const roomBounds = {
@@ -27,6 +31,32 @@ const expectPositionToMatch = (receivedPosition, expectedPosition) => {
   expect(receivedPosition.y).toBeCloseTo(expectedPosition.y);
   expect(receivedPosition.z).toBeCloseTo(expectedPosition.z);
 };
+
+const createPlacedCupboardFixture = ({
+  id = 1,
+  size = [0.9, 0.72, 0.56],
+  position = { x: 0, y: -1.14, z: -1.72 },
+  wall = BACK_WALL_ID,
+  rotation = getWallAlignedRotation(wall),
+} = {}) => ({
+  id,
+  catalogId: `fixture-${id}`,
+  name: `Fixture cabinet ${id}`,
+  category: "base",
+  model: {
+    front: {
+      type: "doubleDoor",
+    },
+  },
+  width: size[0] * 1000,
+  height: size[1] * 1000,
+  depth: size[2] * 1000,
+  price: 0,
+  size,
+  position,
+  rotation,
+  wall,
+});
 
 describe("cupboard placement", () => {
   it("places the first cupboard on the floor against the back wall", () => {
@@ -115,18 +145,137 @@ describe("cupboard placement", () => {
       category: "drawer",
       price: 390,
       wall: null,
-      isValid: false,
     });
     expectPositionToMatch(preview.position, {
       x: 0,
       y: -1.14,
       z: -1.72,
     });
+    expect(preview.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+      wall: null,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(preview.validation.snappedPosition, preview.position);
     expect(preview.model).toMatchObject({
       front: {
         type: "drawers",
       },
     });
+  });
+
+  it("validates a supported wall candidate with snapped placement metadata", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.9, 0.72, 0.56],
+        position: { x: 0, y: -1.14, z: -1.72 },
+        rotation: 0,
+      },
+      wall: LEFT_WALL_ID,
+      point: {
+        z: 4,
+        y: 0.2,
+      },
+      roomBounds,
+    });
+
+    expect(validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: LEFT_WALL_ID,
+      rotation: Math.PI / 2,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(validation.snappedPosition, {
+      x: -1.72,
+      y: -1.14,
+      z: 1.55,
+    });
+  });
+
+  it("rejects a same-wall placement that overlaps another cabinet", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.9, 0.72, 0.56],
+        position: { x: -1.55, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: 0.2,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [createPlacedCupboardFixture()],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.OVERLAP,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [1],
+    });
+    expectPositionToMatch(validation.snappedPosition, {
+      x: 0.2,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("allows same-wall edge contact without treating it as overlap", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.6, 0.72, 0.56],
+        position: { x: -1.7, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: 0.75,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [createPlacedCupboardFixture()],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(validation.snappedPosition, {
+      x: 0.75,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("keeps the current candidate position visible when validation fails", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        size: [0.9, 0.72, 0.56],
+        position: { x: 0.4, y: -1.14, z: -1.72 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: null,
+      point: null,
+      roomBounds,
+    });
+
+    expect(validation).toEqual(
+      createPlacementValidationResult({
+        isValid: false,
+        reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+        wall: null,
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+        snappedPosition: { x: 0.4, y: -1.14, z: -1.72 },
+      }),
+    );
   });
 
   it("keeps the floor preview within the room bounds while the pointer moves", () => {

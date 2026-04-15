@@ -4,9 +4,17 @@ export const CABINET_GAP = 0.08;
 export const BACK_WALL_ID = "back";
 export const LEFT_WALL_ID = "left";
 export const RIGHT_WALL_ID = "right";
+export const PLACEMENT_VALIDATION_REASONS = {
+  UNSUPPORTED_WALL: "unsupported-wall",
+  OVERLAP: "overlap",
+  ADJACENCY_GAP: "adjacency-gap",
+  CORNER_COLLISION: "corner-collision",
+};
 
 const createPosition = (x, y, z) => ({ x, y, z });
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const clonePosition = (position) => (position ? { ...position } : position);
+const OVERLAP_EPSILON = 1e-6;
 
 const getBottomRight = (cupboard) => {
   const footprint = getCupboardFootprint(cupboard.size, cupboard.rotation);
@@ -122,6 +130,120 @@ export const getWallAlignedPreviewPosition = (
   }
 };
 
+export const createPlacementValidationResult = ({
+  isValid = false,
+  reason = null,
+  wall = null,
+  rotation = 0,
+  snappedPosition = null,
+  collidingCupboardIds = [],
+} = {}) => ({
+  isValid,
+  reason,
+  wall,
+  rotation,
+  snappedPosition: clonePosition(snappedPosition),
+  collidingCupboardIds,
+});
+
+const getWallSpanCenter = (position, wall) => {
+  switch (wall) {
+    case LEFT_WALL_ID:
+    case RIGHT_WALL_ID:
+      return position.z;
+    case BACK_WALL_ID:
+    default:
+      return position.x;
+  }
+};
+
+const getWallSpanLength = (footprint, wall) => {
+  switch (wall) {
+    case LEFT_WALL_ID:
+    case RIGHT_WALL_ID:
+      return footprint.depth;
+    case BACK_WALL_ID:
+    default:
+      return footprint.width;
+  }
+};
+
+const getCupboardWallSpan = ({ size, rotation, position, wall }) => {
+  const footprint = getCupboardFootprint(size, rotation);
+  const spanCenter = getWallSpanCenter(position, wall);
+  const spanLength = getWallSpanLength(footprint, wall);
+
+  return {
+    start: spanCenter - spanLength / 2,
+    end: spanCenter + spanLength / 2,
+  };
+};
+
+const spansOverlap = (firstSpan, secondSpan) =>
+  firstSpan.start < secondSpan.end - OVERLAP_EPSILON && firstSpan.end > secondSpan.start + OVERLAP_EPSILON;
+
+const getSameWallCollisionIds = ({ candidate, cupboards, snappedPosition, rotation, wall }) => {
+  if (!Array.isArray(cupboards) || cupboards.length === 0) {
+    return [];
+  }
+
+  const candidateSpan = getCupboardWallSpan({
+    ...candidate,
+    position: snappedPosition,
+    rotation,
+    wall,
+  });
+
+  return cupboards
+    .filter((cupboard) => cupboard.wall === wall && cupboard.id !== candidate.id)
+    .filter((cupboard) => spansOverlap(candidateSpan, getCupboardWallSpan(cupboard)))
+    .map((cupboard) => cupboard.id);
+};
+
+export const validatePlacementCandidate = ({ candidate, point, roomBounds, wall, cupboards = [] }) => {
+  if (!isPlacementWall(wall) || !point) {
+    return createPlacementValidationResult({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+      wall: null,
+      rotation: candidate.rotation ?? getWallAlignedRotation(BACK_WALL_ID),
+      snappedPosition: candidate.position,
+    });
+  }
+
+  const rotation = getWallAlignedRotation(wall);
+  const snappedPosition = getWallAlignedPreviewPosition(candidate.size, point, roomBounds, wall, rotation);
+  const collidingCupboardIds = getSameWallCollisionIds({
+    candidate,
+    cupboards,
+    snappedPosition,
+    rotation,
+    wall,
+  });
+
+  return createPlacementValidationResult({
+    isValid: collidingCupboardIds.length === 0,
+    reason: collidingCupboardIds.length > 0 ? PLACEMENT_VALIDATION_REASONS.OVERLAP : null,
+    wall,
+    rotation,
+    snappedPosition,
+    collidingCupboardIds,
+  });
+};
+
+export const getPlacementValidationReasonLabel = (reason) => {
+  switch (reason) {
+    case PLACEMENT_VALIDATION_REASONS.OVERLAP:
+      return "Overlaps another cabinet";
+    case PLACEMENT_VALIDATION_REASONS.ADJACENCY_GAP:
+      return "Leave no gap between cabinets";
+    case PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION:
+      return "Intersects a cabinet near the corner";
+    default:
+      return null;
+  }
+};
+
 export const createPlacementPreview = (cabinet, roomBounds) => ({
   catalogId: cabinet.id,
   name: cabinet.name,
@@ -134,8 +256,14 @@ export const createPlacementPreview = (cabinet, roomBounds) => ({
   size: cabinet.size,
   rotation: getWallAlignedRotation(BACK_WALL_ID),
   wall: null,
-  isValid: false,
   position: getWallAlignedPreviewPosition(cabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
+  validation: createPlacementValidationResult({
+    isValid: false,
+    reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+    wall: null,
+    rotation: getWallAlignedRotation(BACK_WALL_ID),
+    snappedPosition: getWallAlignedPreviewPosition(cabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
+  }),
 });
 
 export const getAttachedCupboardPosition = (lastCupboard, nextSize) => {

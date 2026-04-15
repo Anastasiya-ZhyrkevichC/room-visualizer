@@ -2,11 +2,11 @@ import { defaultStarterCabinetId, getStarterCabinet } from "../model/catalog";
 import { ROTATION_STEP, getNormalizedRotation } from "../model/geometry";
 import {
   alignCupboardToWall,
+  createPlacementValidationResult,
   createPlacementPreview,
   createCupboard,
-  getWallAlignedPreviewPosition,
   getWallAlignedRotation,
-  isPlacementWall,
+  validatePlacementCandidate,
 } from "../model/placement";
 
 export const initialCupboardState = {
@@ -21,6 +21,14 @@ const findCupboardById = (cupboards, cupboardId) => cupboards.find((cupboard) =>
 
 const updateCupboardById = (cupboards, cupboardId, updater) =>
   cupboards.map((cupboard) => (cupboard.id === cupboardId ? updater(cupboard) : cupboard));
+
+const applyValidationToPlacementPreview = (placementPreview, validation) => ({
+  ...placementPreview,
+  wall: validation.wall,
+  rotation: validation.rotation,
+  position: validation.snappedPosition,
+  validation,
+});
 
 const clearActiveMove = (state) => {
   if (!state.activeMove) {
@@ -66,34 +74,17 @@ export const cupboardReducer = (state, action) => {
         return state;
       }
 
-      if (!isPlacementWall(action.payload.wall) || !action.payload.point) {
-        return {
-          ...state,
-          placementPreview: {
-            ...state.placementPreview,
-            wall: null,
-            isValid: false,
-          },
-        };
-      }
-
-      const nextRotation = getWallAlignedRotation(action.payload.wall);
+      const validation = validatePlacementCandidate({
+        candidate: state.placementPreview,
+        point: action.payload.point,
+        roomBounds: action.payload.roomBounds,
+        wall: action.payload.wall,
+        cupboards: state.cupboards,
+      });
 
       return {
         ...state,
-        placementPreview: {
-          ...state.placementPreview,
-          wall: action.payload.wall,
-          rotation: nextRotation,
-          isValid: true,
-          position: getWallAlignedPreviewPosition(
-            state.placementPreview.size,
-            action.payload.point,
-            action.payload.roomBounds,
-            action.payload.wall,
-            nextRotation,
-          ),
-        },
+        placementPreview: applyValidationToPlacementPreview(state.placementPreview, validation),
       };
     }
 
@@ -102,7 +93,7 @@ export const cupboardReducer = (state, action) => {
         return state;
       }
 
-      if (!state.placementPreview.isValid || !isPlacementWall(state.placementPreview.wall)) {
+      if (!state.placementPreview.validation?.isValid) {
         return {
           ...state,
           placementPreview: null,
@@ -170,7 +161,13 @@ export const cupboardReducer = (state, action) => {
           cupboardId: cupboard.id,
           wall: cupboard.wall,
           initialPosition: { ...cupboard.position },
-          isValid: true,
+          validation: createPlacementValidationResult({
+            isValid: true,
+            reason: null,
+            wall: cupboard.wall,
+            rotation: cupboard.rotation,
+            snappedPosition: cupboard.position,
+          }),
         },
         selectedCupboardId: cupboard.id,
       };
@@ -187,31 +184,24 @@ export const cupboardReducer = (state, action) => {
         return clearActiveMove(state);
       }
 
-      if (state.activeMove.wall !== action.payload.wall || !action.payload.point) {
-        return {
-          ...state,
-          activeMove: {
-            ...state.activeMove,
-            isValid: false,
-          },
-        };
-      }
+      const validation = validatePlacementCandidate({
+        candidate: cupboard,
+        point: action.payload.point,
+        roomBounds: action.payload.roomBounds,
+        wall: action.payload.wall,
+        cupboards: state.cupboards,
+      });
 
       return {
         ...state,
         cupboards: updateCupboardById(state.cupboards, cupboard.id, (currentCupboard) => ({
           ...currentCupboard,
-          position: getWallAlignedPreviewPosition(
-            currentCupboard.size,
-            action.payload.point,
-            action.payload.roomBounds,
-            currentCupboard.wall,
-            currentCupboard.rotation,
-          ),
+          position: validation.snappedPosition,
+          rotation: validation.rotation,
         })),
         activeMove: {
           ...state.activeMove,
-          isValid: true,
+          validation,
         },
       };
     }
@@ -221,7 +211,7 @@ export const cupboardReducer = (state, action) => {
         return state;
       }
 
-      return state.activeMove.isValid ? clearActiveMove(state) : cancelActiveMove(state);
+      return state.activeMove.validation?.isValid ? clearActiveMove(state) : cancelActiveMove(state);
     }
 
     case "CANCEL_CUPBOARD_MOVE":

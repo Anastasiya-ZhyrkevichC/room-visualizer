@@ -1,6 +1,6 @@
 import React from "react";
 
-import { LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/placement";
+import { LEFT_WALL_ID, RIGHT_WALL_ID, getPlacementValidationReasonLabel } from "../../cupboards/model/placement";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import RoomCanvas from "../../room/components/RoomCanvas";
 
@@ -9,6 +9,8 @@ const getWallLabel = (wall) =>
 
 const PlannerStage = () => {
   const { activeMove, isMoveActive, isPlacementActive, placementPreview, selectedCupboard } = useCupboards();
+  const placementValidation = placementPreview?.validation;
+  const moveValidation = activeMove?.validation;
   const selectionBadge = isPlacementActive
     ? `Previewing ${placementPreview.name}`
     : isMoveActive && selectedCupboard
@@ -17,15 +19,21 @@ const PlannerStage = () => {
         ? `${selectedCupboard.name} selected`
         : "Click a cabinet to select it";
   const placementWallLabel = getWallLabel(placementPreview?.wall);
-  const placementHint = placementPreview?.isValid
+  const placementReasonLabel = getPlacementValidationReasonLabel(placementValidation?.reason);
+  const placementHint = placementValidation?.isValid
     ? `Release to place this cabinet on the ${placementWallLabel}.`
-    : "Move over the back, left, or right wall to position the preview. Release elsewhere or press Escape to cancel.";
+    : placementReasonLabel
+      ? `${placementReasonLabel}. Move over the back, left, or right wall to find a valid position, or press Escape to cancel.`
+      : "Move over the back, left, or right wall to position the preview. Release elsewhere or press Escape to cancel.";
   const moveWallLabel = getWallLabel(selectedCupboard?.wall);
+  const moveReasonLabel = getPlacementValidationReasonLabel(moveValidation?.reason);
   const moveHint =
     isMoveActive && selectedCupboard
-      ? activeMove?.isValid
+      ? moveValidation?.isValid
         ? `Drag along the ${moveWallLabel} and release to keep the cabinet in its new position.`
-        : `Move back onto the ${moveWallLabel} before releasing, or press Escape to restore the previous position.`
+        : moveReasonLabel
+          ? `${moveReasonLabel}. Drag back to a valid position on the ${moveWallLabel}, or press Escape to restore the previous position.`
+          : `Move back onto the ${moveWallLabel} before releasing, or press Escape to restore the previous position.`
       : selectedCupboard
         ? `Drag the selected cabinet in the scene to reposition it along the ${moveWallLabel}.`
         : null;

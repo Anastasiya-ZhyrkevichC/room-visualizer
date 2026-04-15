@@ -1,5 +1,11 @@
 import { cupboardReducer, initialCupboardState } from "./cupboardReducer";
-import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../model/placement";
+import {
+  BACK_WALL_ID,
+  LEFT_WALL_ID,
+  PLACEMENT_VALIDATION_REASONS,
+  RIGHT_WALL_ID,
+  getWallAlignedRotation,
+} from "../model/placement";
 
 const roomBounds = {
   left: -2,
@@ -15,6 +21,32 @@ const expectPositionToMatch = (receivedPosition, expectedPosition) => {
   expect(receivedPosition.y).toBeCloseTo(expectedPosition.y);
   expect(receivedPosition.z).toBeCloseTo(expectedPosition.z);
 };
+
+const createPlacedCupboardFixture = ({
+  id = 1,
+  size = [0.9, 0.72, 0.56],
+  position = { x: 0, y: -1.14, z: -1.72 },
+  wall = BACK_WALL_ID,
+  rotation = getWallAlignedRotation(wall),
+} = {}) => ({
+  id,
+  catalogId: `fixture-${id}`,
+  name: `Fixture cabinet ${id}`,
+  category: "base",
+  model: {
+    front: {
+      type: "doubleDoor",
+    },
+  },
+  width: size[0] * 1000,
+  height: size[1] * 1000,
+  depth: size[2] * 1000,
+  price: 0,
+  size,
+  position,
+  rotation,
+  wall,
+});
 
 describe("cupboard reducer placement preview", () => {
   it("starts preview mode with a ghost cabinet and clears selection", () => {
@@ -39,12 +71,18 @@ describe("cupboard reducer placement preview", () => {
       category: "base",
       price: 240,
       wall: null,
-      isValid: false,
     });
     expectPositionToMatch(nextState.placementPreview.position, {
       x: 0,
       y: -1.14,
       z: -1.72,
+    });
+    expect(nextState.placementPreview.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+      wall: null,
+      rotation: 0,
+      collidingCupboardIds: [],
     });
   });
 
@@ -76,8 +114,15 @@ describe("cupboard reducer placement preview", () => {
     });
     expect(nextState.placementPreview).toMatchObject({
       wall: BACK_WALL_ID,
-      isValid: true,
     });
+    expect(nextState.placementPreview.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(nextState.placementPreview.validation.snappedPosition, nextState.placementPreview.position);
   });
 
   it("updates the preview position and rotation from valid left-wall pointer movement", () => {
@@ -108,9 +153,15 @@ describe("cupboard reducer placement preview", () => {
     });
     expect(nextState.placementPreview).toMatchObject({
       wall: LEFT_WALL_ID,
-      isValid: true,
     });
     expect(nextState.placementPreview.rotation).toBeCloseTo(Math.PI / 2);
+    expect(nextState.placementPreview.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: LEFT_WALL_ID,
+      rotation: Math.PI / 2,
+      collidingCupboardIds: [],
+    });
   });
 
   it("marks the preview invalid when the pointer leaves the back wall", () => {
@@ -145,9 +196,16 @@ describe("cupboard reducer placement preview", () => {
 
     expect(nextState.placementPreview).toMatchObject({
       wall: null,
-      isValid: false,
     });
     expectPositionToMatch(nextState.placementPreview.position, validState.placementPreview.position);
+    expect(nextState.placementPreview.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+      wall: null,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(nextState.placementPreview.validation.snappedPosition, validState.placementPreview.position);
   });
 
   it("commits a valid preview into a placed back-wall cupboard on drop", () => {
@@ -237,6 +295,57 @@ describe("cupboard reducer placement preview", () => {
       y: -1.14,
       z: 0.75,
     });
+  });
+
+  it("rejects an overlapping same-wall preview and does not place it on drop", () => {
+    const startedState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [createPlacedCupboardFixture({ id: 10 })],
+        nextCupboardId: 11,
+      },
+      {
+        type: "START_PLACEMENT_PREVIEW",
+        payload: {
+          catalogId: "base-600",
+          roomBounds,
+        },
+      },
+    );
+
+    const overlappingState = cupboardReducer(startedState, {
+      type: "UPDATE_PLACEMENT_PREVIEW",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 0.5,
+          y: 0,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(overlappingState.placementPreview.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.OVERLAP,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [10],
+    });
+    expectPositionToMatch(overlappingState.placementPreview.position, {
+      x: 0.5,
+      y: -1.14,
+      z: -1.72,
+    });
+
+    const nextState = cupboardReducer(overlappingState, {
+      type: "FINISH_PLACEMENT_PREVIEW",
+    });
+
+    expect(nextState.placementPreview).toBeNull();
+    expect(nextState.cupboards).toHaveLength(1);
+    expect(nextState.cupboards[0].id).toBe(10);
+    expect(nextState.selectedCupboardId).toBeNull();
   });
 
   it("rejects an invalid preview on drop", () => {
@@ -374,12 +483,18 @@ describe("cupboard reducer moving placed cupboards", () => {
     expect(nextState.activeMove).toMatchObject({
       cupboardId: 1,
       wall: BACK_WALL_ID,
-      isValid: true,
     });
     expectPositionToMatch(nextState.activeMove.initialPosition, {
       x: 0.25,
       y: -1.14,
       z: -1.72,
+    });
+    expect(nextState.activeMove.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
     });
   });
 
@@ -406,13 +521,86 @@ describe("cupboard reducer moving placed cupboards", () => {
     expect(nextState.activeMove).toMatchObject({
       cupboardId: 2,
       wall: LEFT_WALL_ID,
-      isValid: true,
     });
     expect(nextState.cupboards[1].rotation).toBeCloseTo(Math.PI / 2);
     expectPositionToMatch(nextState.cupboards[1].position, {
       x: -1.72,
       y: -1.14,
       z: 1.7,
+    });
+    expect(nextState.activeMove.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: LEFT_WALL_ID,
+      rotation: Math.PI / 2,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(nextState.activeMove.validation.snappedPosition, nextState.cupboards[1].position);
+  });
+
+  it("reverts a moved cupboard when released overlapping another cupboard on the same wall", () => {
+    const overlappingState = {
+      ...initialCupboardState,
+      cupboards: [
+        createPlacedCupboardFixture({
+          id: 1,
+          position: { x: -0.8, y: -1.14, z: -1.72 },
+        }),
+        createPlacedCupboardFixture({
+          id: 2,
+          position: { x: 0.8, y: -1.14, z: -1.72 },
+        }),
+      ],
+      selectedCupboardId: 1,
+      nextCupboardId: 3,
+    };
+
+    const movingState = cupboardReducer(overlappingState, {
+      type: "START_CUPBOARD_MOVE",
+      payload: {
+        cupboardId: 1,
+      },
+    });
+
+    const invalidMoveState = cupboardReducer(movingState, {
+      type: "UPDATE_CUPBOARD_MOVE",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 0.4,
+          y: 0.2,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(invalidMoveState.activeMove.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.OVERLAP,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [2],
+    });
+    expectPositionToMatch(invalidMoveState.cupboards[0].position, {
+      x: 0.4,
+      y: -1.14,
+      z: -1.72,
+    });
+
+    const nextState = cupboardReducer(invalidMoveState, {
+      type: "FINISH_CUPBOARD_MOVE",
+    });
+
+    expect(nextState.activeMove).toBeNull();
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: -0.8,
+      y: -1.14,
+      z: -1.72,
+    });
+    expectPositionToMatch(nextState.cupboards[1].position, {
+      x: 0.8,
+      y: -1.14,
+      z: -1.72,
     });
   });
 
@@ -447,9 +635,20 @@ describe("cupboard reducer moving placed cupboards", () => {
 
     expect(invalidMoveState.activeMove).toMatchObject({
       cupboardId: 1,
-      isValid: false,
     });
     expectPositionToMatch(invalidMoveState.cupboards[0].position, {
+      x: 1.4,
+      y: -1.14,
+      z: -1.72,
+    });
+    expect(invalidMoveState.activeMove.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+      wall: null,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(invalidMoveState.activeMove.validation.snappedPosition, {
       x: 1.4,
       y: -1.14,
       z: -1.72,
