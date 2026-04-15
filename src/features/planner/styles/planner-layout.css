@@ -179,6 +179,11 @@
   color: #2f6530;
 }
 
+.planner-stage__badge--invalid {
+  background: rgba(174, 46, 46, 0.14);
+  color: #8f1f25;
+}
+
 .planner-stage__canvas {
   position: relative;
   flex: 1;
@@ -205,6 +210,13 @@
   line-height: 1.45;
   box-shadow: 0 18px 40px rgba(116, 81, 47, 0.12);
   pointer-events: none;
+}
+
+.planner-stage__hint--invalid {
+  border-color: rgba(180, 52, 39, 0.28);
+  background: rgba(255, 240, 238, 0.96);
+  color: #8a1c1c;
+  box-shadow: 0 18px 40px rgba(142, 31, 37, 0.16);
 }
 
 .room-canvas-shell {

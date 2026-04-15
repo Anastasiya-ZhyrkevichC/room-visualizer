@@ -1,65 +1,10 @@
 import React from "react";
 
 import { convertMillimetersToMeters } from "../../../lib/units";
+import { getKitchenCabinetTheme } from "../lib/cabinetAppearance";
 import { resolveCabinetModel } from "../model/renderModel";
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-const getCabinetTheme = ({ isGhost = false, isMoving = false, isSelected = false }) => {
-  if (isGhost) {
-    return {
-      bodyColor: "#df9b63",
-      frontColor: "#f6d7b4",
-      interiorColor: "#c07e47",
-      handleColor: "#fff0dc",
-      legColor: "#8d5f35",
-      emissiveColor: "#8f471d",
-      emissiveIntensity: 0.22,
-      opacity: 0.38,
-      transparent: true,
-    };
-  }
-
-  if (isMoving) {
-    return {
-      bodyColor: "#c18f64",
-      frontColor: "#eed0b0",
-      interiorColor: "#a67145",
-      handleColor: "#fff2df",
-      legColor: "#6d503b",
-      emissiveColor: "#8b411d",
-      emissiveIntensity: 0.18,
-      opacity: 1,
-      transparent: false,
-    };
-  }
-
-  if (isSelected) {
-    return {
-      bodyColor: "#c9a37f",
-      frontColor: "#f4e2cf",
-      interiorColor: "#af835f",
-      handleColor: "#fff5e8",
-      legColor: "#664f40",
-      emissiveColor: "#7a351a",
-      emissiveIntensity: 0.16,
-      opacity: 1,
-      transparent: false,
-    };
-  }
-
-  return {
-    bodyColor: "#b89b78",
-    frontColor: "#efe1cf",
-    interiorColor: "#9d7c5d",
-    handleColor: "#5d564e",
-    legColor: "#4b4036",
-    emissiveColor: "#2f2015",
-    emissiveIntensity: 0.03,
-    opacity: 1,
-    transparent: false,
-  };
-};
 
 const getPanelMaterialProps = (theme, tone) => {
   const colorByTone = {
@@ -96,17 +41,13 @@ const getCabinetMetrics = (size, category, model) => {
     0.008,
     Math.min(width, height, depth) / 4,
   );
-  const backPanelThickness = clamp(
-    convertMillimetersToMeters(resolvedModel.backPanelThicknessMm),
-    0.004,
-    depth / 6,
+  const backPanelThickness = clamp(convertMillimetersToMeters(resolvedModel.backPanelThicknessMm), 0.004, depth / 6);
+  const frontThickness = clamp(convertMillimetersToMeters(resolvedModel.frontThicknessMm), 0.008, depth / 3);
+  const gap = clamp(
+    convertMillimetersToMeters(resolvedModel.front?.gapMm ?? 4),
+    0.0015,
+    Math.min(width, height) * 0.05,
   );
-  const frontThickness = clamp(
-    convertMillimetersToMeters(resolvedModel.frontThicknessMm),
-    0.008,
-    depth / 3,
-  );
-  const gap = clamp(convertMillimetersToMeters(resolvedModel.front?.gapMm ?? 4), 0.0015, Math.min(width, height) * 0.05);
   const legHeight =
     resolvedModel.legs?.enabled === true
       ? clamp(convertMillimetersToMeters(resolvedModel.legs.heightMm), 0.04, height * 0.28)
@@ -166,8 +107,16 @@ const getCabinetMetrics = (size, category, model) => {
 };
 
 const getCabinetBodyParts = (metrics) => {
-  const { width, depth, shellThickness, shellBottom, carcassHeight, carcassCenterY, interiorWidth, backPanelThickness } =
-    metrics;
+  const {
+    width,
+    depth,
+    shellThickness,
+    shellBottom,
+    carcassHeight,
+    carcassCenterY,
+    interiorWidth,
+    backPanelThickness,
+  } = metrics;
 
   return [
     {
@@ -209,11 +158,7 @@ const getShelfParts = (metrics) => {
 
   return Array.from({ length: shelfCount }, (_, index) => ({
     key: `shelf-${index + 1}`,
-    position: [
-      0,
-      shellBottom + shellThickness + (interiorHeight * (index + 1)) / (shelfCount + 1),
-      interiorCenterZ,
-    ],
+    position: [0, shellBottom + shellThickness + (interiorHeight * (index + 1)) / (shelfCount + 1), interiorCenterZ],
     args: [interiorWidth, shellThickness * 0.88, interiorDepth],
     tone: "interior",
   }));
@@ -267,8 +212,7 @@ const getDoubleDoorFrontParts = (metrics) => {
       Math.max(0.01, doorWidth / 2 - 0.01),
     );
     const handleDirection = doorCount === 1 ? 1 : index === 0 ? 1 : -1;
-    const handleX =
-      centerX + handleDirection * Math.max(doorWidth / 2 - handleInset, convertMillimetersToMeters(16));
+    const handleX = centerX + handleDirection * Math.max(doorWidth / 2 - handleInset, convertMillimetersToMeters(16));
 
     const handlePart = getHandlePart({
       key: `door-handle-${index + 1}`,
@@ -298,8 +242,7 @@ const getDrawerFrontParts = (metrics) => {
   const parts = [];
 
   for (let index = 0; index < drawerCount; index += 1) {
-    const centerY =
-      shellBottom + carcassHeight - frontReveal - drawerHeight / 2 - index * (drawerHeight + gap);
+    const centerY = shellBottom + carcassHeight - frontReveal - drawerHeight / 2 - index * (drawerHeight + gap);
 
     parts.push({
       key: `drawer-front-${index + 1}`,
@@ -378,8 +321,16 @@ const getLegParts = (metrics) => {
   ];
 };
 
-export const KitchenCabinetModel = ({ size, category, model, isGhost = false, isMoving = false, isSelected = false }) => {
-  const theme = getCabinetTheme({ isGhost, isMoving, isSelected });
+export const KitchenCabinetModel = ({
+  size,
+  category,
+  model,
+  isGhost = false,
+  isMoving = false,
+  isSelected = false,
+  isInvalid = false,
+}) => {
+  const theme = getKitchenCabinetTheme({ isGhost, isMoving, isSelected, isInvalid });
   const metrics = getCabinetMetrics(size, category, model);
   const parts = [
     ...getCabinetBodyParts(metrics),

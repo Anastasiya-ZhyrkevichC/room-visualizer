@@ -6,6 +6,9 @@ import { CupboardMesh, GhostCupboardMesh } from "./CupboardMesh";
 const CupboardRenderer = () => {
   const { activeMove, cupboards, placementPreview, selectedCupboardId, selectCupboard, startCupboardMove } =
     useCupboards();
+  const activeMoveCupboardId = activeMove?.cupboardId ?? null;
+  const isActiveMoveInvalid = Boolean(activeMove && activeMove.validation?.isValid === false);
+  const isPlacementPreviewInvalid = Boolean(placementPreview && placementPreview.validation?.isValid === false);
 
   return (
     <>
@@ -17,8 +20,9 @@ const CupboardRenderer = () => {
           size={cupboard.size}
           category={cupboard.category}
           model={cupboard.model}
-          isMoving={cupboard.id === activeMove?.cupboardId}
+          isMoving={cupboard.id === activeMoveCupboardId}
           isSelected={cupboard.id === selectedCupboardId}
+          isInvalid={cupboard.id === activeMoveCupboardId && isActiveMoveInvalid}
           onMoveStart={cupboard.id === selectedCupboardId ? () => startCupboardMove(cupboard.id) : undefined}
           onSelect={() => selectCupboard(cupboard.id)}
         />
@@ -31,6 +35,7 @@ const CupboardRenderer = () => {
           size={placementPreview.size}
           category={placementPreview.category}
           model={placementPreview.model}
+          isInvalid={isPlacementPreviewInvalid}
         />
       ) : null}
     </>

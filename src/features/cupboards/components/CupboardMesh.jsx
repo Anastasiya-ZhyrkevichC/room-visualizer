@@ -1,23 +1,12 @@
 import { Edges } from "@react-three/drei";
 
 import { CABINET_RENDER_MODES, resolveCabinetRenderMode } from "../../../config/plannerConfig";
+import { getCabinetOutlineColor, getCabinetOutlineScale } from "../lib/cabinetAppearance";
 import KitchenCabinetModel from "./KitchenCabinetModel";
 import SimpleCupboardModel from "./SimpleCupboardModel";
 
 const toPositionProp = (position) => (Array.isArray(position) ? position : [position.x, position.y, position.z]);
 const cabinetRenderMode = resolveCabinetRenderMode();
-
-const getOutlineColor = ({ isGhost = false, isMoving = false, isSelected = false }) => {
-  if (isGhost) {
-    return "#fff5dc";
-  }
-
-  if (isMoving || isSelected) {
-    return "#fff7dc";
-  }
-
-  return "#2a3c53";
-};
 
 const CabinetOutline = ({ size, color, scale = 1.01 }) => (
   <mesh>
@@ -27,9 +16,23 @@ const CabinetOutline = ({ size, color, scale = 1.01 }) => (
   </mesh>
 );
 
-const RenderedCupboardBody = ({ size, category, model, isGhost = false, isMoving = false, isSelected = false }) =>
+const RenderedCupboardBody = ({
+  size,
+  category,
+  model,
+  isGhost = false,
+  isMoving = false,
+  isSelected = false,
+  isInvalid = false,
+}) =>
   cabinetRenderMode === CABINET_RENDER_MODES.BOX ? (
-    <SimpleCupboardModel size={size} isGhost={isGhost} isMoving={isMoving} isSelected={isSelected} />
+    <SimpleCupboardModel
+      size={size}
+      isGhost={isGhost}
+      isMoving={isMoving}
+      isSelected={isSelected}
+      isInvalid={isInvalid}
+    />
   ) : (
     <KitchenCabinetModel
       size={size}
@@ -38,14 +41,19 @@ const RenderedCupboardBody = ({ size, category, model, isGhost = false, isMoving
       isGhost={isGhost}
       isMoving={isMoving}
       isSelected={isSelected}
+      isInvalid={isInvalid}
     />
   );
 
-export const GhostCupboardMesh = ({ position, rotation = 0, size, category, model }) => {
+export const GhostCupboardMesh = ({ position, rotation = 0, size, category, model, isInvalid = false }) => {
   return (
     <group position={toPositionProp(position)} rotation={[0, rotation, 0]}>
-      <RenderedCupboardBody size={size} category={category} model={model} isGhost />
-      <CabinetOutline size={size} color={getOutlineColor({ isGhost: true })} scale={1.02} />
+      <RenderedCupboardBody size={size} category={category} model={model} isGhost isInvalid={isInvalid} />
+      <CabinetOutline
+        size={size}
+        color={getCabinetOutlineColor({ isGhost: true, isInvalid })}
+        scale={getCabinetOutlineScale({ isGhost: true, isInvalid })}
+      />
     </group>
   );
 };
@@ -58,6 +66,7 @@ export const CupboardMesh = ({
   model,
   isMoving = false,
   isSelected = false,
+  isInvalid = false,
   onMoveStart,
   onSelect,
 }) => {
@@ -87,8 +96,19 @@ export const CupboardMesh = ({
         }
       }}
     >
-      <RenderedCupboardBody size={size} category={category} model={model} isMoving={isMoving} isSelected={isSelected} />
-      <CabinetOutline size={size} color={getOutlineColor({ isMoving, isSelected })} />
+      <RenderedCupboardBody
+        size={size}
+        category={category}
+        model={model}
+        isMoving={isMoving}
+        isSelected={isSelected}
+        isInvalid={isInvalid}
+      />
+      <CabinetOutline
+        size={size}
+        color={getCabinetOutlineColor({ isMoving, isSelected, isInvalid })}
+        scale={getCabinetOutlineScale({ isInvalid })}
+      />
     </group>
   );
 };
