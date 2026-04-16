@@ -50,29 +50,151 @@ export const getStarterCabinetFamilyLabel = (cabinet) => {
   return starterCabinetFamilyLookup[familyId]?.label ?? cabinet?.category ?? familyId ?? "";
 };
 
-const createStarterCabinet = ({ id, name, category, catalogFamily, width, height, depth, price, model }) => ({
-  id,
-  name,
-  category,
-  catalogFamily: resolveStarterCabinetFamilyId({ catalogFamily, category }),
+const compareStarterCabinetVariants = (firstVariant, secondVariant) =>
+  firstVariant.width - secondVariant.width ||
+  firstVariant.height - secondVariant.height ||
+  firstVariant.depth - secondVariant.depth ||
+  firstVariant.price - secondVariant.price ||
+  firstVariant.id.localeCompare(secondVariant.id);
+
+const getSortedUniqueValues = (values) =>
+  [...new Set(values)].sort((firstValue, secondValue) => firstValue - secondValue);
+
+const createStarterCabinetVariant = ({ id, width, height, depth, price }) => ({
+  id: id ?? `${width}x${height}x${depth}`,
   width,
   height,
   depth,
   price,
-  model: resolveCabinetModel(category, model),
   size: [convertMillimetersToMeters(width), convertMillimetersToMeters(height), convertMillimetersToMeters(depth)],
 });
 
+export const resolveStarterCabinetVariant = (cabinetDefinition, variantId = null) => {
+  if (!cabinetDefinition?.variants?.length) {
+    return null;
+  }
+
+  if (variantId) {
+    const matchingVariant = cabinetDefinition.variants.find((variant) => variant.id === variantId);
+
+    if (matchingVariant) {
+      return matchingVariant;
+    }
+  }
+
+  return cabinetDefinition.variants[0];
+};
+
+export const resolveDefaultStarterCabinetVariant = (cabinetDefinition) =>
+  resolveStarterCabinetVariant(cabinetDefinition, cabinetDefinition?.defaultVariantId);
+
+export const resolveStarterCabinetActiveVariant = (cabinetDefinition) =>
+  resolveStarterCabinetVariant(
+    cabinetDefinition,
+    cabinetDefinition?.activeVariantId ?? cabinetDefinition?.defaultVariantId,
+  );
+
+export const resolveStarterCabinetDefinitionSnapshot = (cabinetDefinition, variantId = null) => {
+  if (!cabinetDefinition) {
+    return null;
+  }
+
+  const resolvedVariant = resolveStarterCabinetVariant(
+    cabinetDefinition,
+    variantId ?? cabinetDefinition.activeVariantId ?? cabinetDefinition.defaultVariantId,
+  );
+
+  if (!resolvedVariant) {
+    return cabinetDefinition;
+  }
+
+  return {
+    ...cabinetDefinition,
+    activeVariantId: resolvedVariant.id,
+    width: resolvedVariant.width,
+    height: resolvedVariant.height,
+    depth: resolvedVariant.depth,
+    price: resolvedVariant.price,
+    size: resolvedVariant.size,
+  };
+};
+
+const createStarterCabinetDefinition = ({
+  id,
+  name,
+  category,
+  catalogFamily,
+  model,
+  variants,
+  activeVariantId = null,
+}) => {
+  const normalizedVariants = variants
+    .map((variant) => createStarterCabinetVariant(variant))
+    .sort(compareStarterCabinetVariants);
+
+  if (normalizedVariants.length === 0) {
+    throw new Error(`Starter cabinet "${id}" must define at least one size variant.`);
+  }
+
+  const defaultVariant = normalizedVariants[0];
+  const resolvedActiveVariant = normalizedVariants.find((variant) => variant.id === activeVariantId) ?? defaultVariant;
+  const prices = normalizedVariants.map((variant) => variant.price);
+
+  return resolveStarterCabinetDefinitionSnapshot({
+    id,
+    name,
+    category,
+    catalogFamily: resolveStarterCabinetFamilyId({ catalogFamily, category }),
+    model: resolveCabinetModel(category, model),
+    variants: normalizedVariants,
+    availableWidths: getSortedUniqueValues(normalizedVariants.map((variant) => variant.width)),
+    availableHeights: getSortedUniqueValues(normalizedVariants.map((variant) => variant.height)),
+    defaultVariantId: defaultVariant?.id ?? null,
+    activeVariantId: resolvedActiveVariant?.id ?? null,
+    startingPrice: prices.length > 0 ? Math.min(...prices) : null,
+    maxPrice: prices.length > 0 ? Math.max(...prices) : null,
+  });
+};
+
 export const starterCabinetCatalog = [
-  createStarterCabinet({
-    id: "base-600",
-    name: "Double-door base 600",
+  createStarterCabinetDefinition({
+    id: "base-double-door",
+    name: "Double-door base cabinet",
     category: "base",
     catalogFamily: "base-doors",
-    width: 600,
-    height: 720,
-    depth: 560,
-    price: 240,
+    activeVariantId: "600x720x560",
+    variants: [
+      {
+        width: 300,
+        height: 720,
+        depth: 560,
+        price: 160,
+      },
+      {
+        width: 350,
+        height: 720,
+        depth: 560,
+        price: 175,
+      },
+      {
+        width: 400,
+        height: 720,
+        depth: 560,
+        price: 190,
+      },
+      {
+        width: 450,
+        height: 720,
+        depth: 560,
+        price: 205,
+      },
+      {
+        width: 600,
+        height: 720,
+        depth: 560,
+        price: 240,
+      },
+    ],
     model: {
       shelfCount: 1,
       front: {
@@ -86,15 +208,32 @@ export const starterCabinetCatalog = [
       },
     },
   }),
-  createStarterCabinet({
-    id: "drawer-900",
-    name: "Three-drawer base 900",
+  createStarterCabinetDefinition({
+    id: "base-three-drawer",
+    name: "Three-drawer base cabinet",
     category: "drawer",
     catalogFamily: "base-drawers",
-    width: 900,
-    height: 720,
-    depth: 560,
-    price: 390,
+    activeVariantId: "900x720x560",
+    variants: [
+      {
+        width: 600,
+        height: 720,
+        depth: 560,
+        price: 290,
+      },
+      {
+        width: 800,
+        height: 720,
+        depth: 560,
+        price: 350,
+      },
+      {
+        width: 900,
+        height: 720,
+        depth: 560,
+        price: 390,
+      },
+    ],
     model: {
       shelfCount: 0,
       front: {
@@ -110,15 +249,26 @@ export const starterCabinetCatalog = [
       },
     },
   }),
-  createStarterCabinet({
-    id: "tall-600",
-    name: "Pantry tower 600",
+  createStarterCabinetDefinition({
+    id: "tall-pantry",
+    name: "Pantry tower",
     category: "tall",
     catalogFamily: "tall",
-    width: 600,
-    height: 2100,
-    depth: 600,
-    price: 680,
+    activeVariantId: "600x2100x600",
+    variants: [
+      {
+        width: 600,
+        height: 2100,
+        depth: 600,
+        price: 680,
+      },
+      {
+        width: 600,
+        height: 2300,
+        depth: 600,
+        price: 760,
+      },
+    ],
     model: {
       shelfCount: 4,
       legs: null,

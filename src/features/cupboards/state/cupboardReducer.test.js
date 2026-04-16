@@ -60,7 +60,7 @@ describe("cupboard reducer placement preview", () => {
       {
         type: "START_PLACEMENT_PREVIEW",
         payload: {
-          catalogId: "base-600",
+          catalogId: "base-double-door",
           roomBounds,
         },
       },
@@ -68,8 +68,9 @@ describe("cupboard reducer placement preview", () => {
 
     expect(nextState.selectedCupboardId).toBeNull();
     expect(nextState.placementPreview).toMatchObject({
-      catalogId: "base-600",
-      name: "Double-door base 600",
+      catalogId: "base-double-door",
+      activeVariantId: "600x720x560",
+      name: "Double-door base cabinet",
       category: "base",
       catalogFamily: "base-doors",
       price: 240,
@@ -93,7 +94,7 @@ describe("cupboard reducer placement preview", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
       payload: {
-        catalogId: "drawer-900",
+        catalogId: "base-three-drawer",
         roomBounds,
       },
     });
@@ -132,7 +133,7 @@ describe("cupboard reducer placement preview", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
       payload: {
-        catalogId: "drawer-900",
+        catalogId: "base-three-drawer",
         roomBounds,
       },
     });
@@ -171,7 +172,7 @@ describe("cupboard reducer placement preview", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
       payload: {
-        catalogId: "drawer-900",
+        catalogId: "base-three-drawer",
         roomBounds,
       },
     });
@@ -215,7 +216,7 @@ describe("cupboard reducer placement preview", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
       payload: {
-        catalogId: "drawer-900",
+        catalogId: "base-three-drawer",
         roomBounds,
       },
     });
@@ -242,8 +243,9 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.cupboards).toHaveLength(1);
     expect(nextState.cupboards[0]).toMatchObject({
       id: 1,
-      catalogId: "drawer-900",
-      name: "Three-drawer base 900",
+      catalogId: "base-three-drawer",
+      activeVariantId: "900x720x560",
+      name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
       price: 390,
@@ -260,7 +262,7 @@ describe("cupboard reducer placement preview", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
       payload: {
-        catalogId: "drawer-900",
+        catalogId: "base-three-drawer",
         roomBounds,
       },
     });
@@ -287,8 +289,9 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.cupboards).toHaveLength(1);
     expect(nextState.cupboards[0]).toMatchObject({
       id: 1,
-      catalogId: "drawer-900",
-      name: "Three-drawer base 900",
+      catalogId: "base-three-drawer",
+      activeVariantId: "900x720x560",
+      name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
       price: 390,
@@ -312,7 +315,7 @@ describe("cupboard reducer placement preview", () => {
       {
         type: "START_PLACEMENT_PREVIEW",
         payload: {
-          catalogId: "base-600",
+          catalogId: "base-double-door",
           roomBounds,
         },
       },
@@ -378,7 +381,7 @@ describe("cupboard reducer placement preview", () => {
       {
         type: "START_PLACEMENT_PREVIEW",
         payload: {
-          catalogId: "base-600",
+          catalogId: "base-double-door",
           roomBounds,
         },
       },
@@ -436,7 +439,7 @@ describe("cupboard reducer placement preview", () => {
       {
         type: "START_PLACEMENT_PREVIEW",
         payload: {
-          catalogId: "drawer-900",
+          catalogId: "base-three-drawer",
           roomBounds,
         },
       },
@@ -481,7 +484,7 @@ describe("cupboard reducer placement preview", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
       payload: {
-        catalogId: "base-600",
+        catalogId: "base-double-door",
         roomBounds,
       },
     });
@@ -499,7 +502,7 @@ describe("cupboard reducer placement preview", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
       payload: {
-        catalogId: "tall-600",
+        catalogId: "tall-pantry",
         roomBounds,
       },
     });
@@ -519,8 +522,8 @@ describe("cupboard reducer placement preview", () => {
         cupboards: [
           {
             id: 1,
-            catalogId: "drawer-900",
-            name: "Three-drawer base 900",
+            catalogId: "base-three-drawer",
+            name: "Three-drawer base cabinet",
             category: "drawer",
             width: 900,
             height: 720,
@@ -561,8 +564,8 @@ describe("cupboard reducer moving placed cupboards", () => {
     cupboards: [
       {
         id: 1,
-        catalogId: "drawer-900",
-        name: "Three-drawer base 900",
+        catalogId: "base-three-drawer",
+        name: "Three-drawer base cabinet",
         category: "drawer",
         width: 900,
         height: 720,
@@ -579,8 +582,8 @@ describe("cupboard reducer moving placed cupboards", () => {
       },
       {
         id: 2,
-        catalogId: "base-600",
-        name: "Double-door base 600",
+        catalogId: "base-double-door",
+        name: "Double-door base cabinet",
         category: "base",
         width: 600,
         height: 720,

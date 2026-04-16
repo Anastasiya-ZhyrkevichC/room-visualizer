@@ -1,5 +1,5 @@
 import { getCupboardFootprint } from "./geometry";
-import { resolveStarterCabinetFamilyId } from "./catalog";
+import { resolveStarterCabinetDefinitionSnapshot, resolveStarterCabinetFamilyId } from "./catalog";
 
 export const CABINET_GAP = 0.08;
 export const BACK_WALL_ID = "back";
@@ -35,10 +35,13 @@ const getBottomRight = (cupboard) => {
 export const createCupboard = ({ id, cabinet, position, rotation = 0, wall = BACK_WALL_ID }) => ({
   id,
   catalogId: cabinet.catalogId ?? cabinet.id,
+  activeVariantId: cabinet.activeVariantId ?? null,
   name: cabinet.name,
   category: cabinet.category,
   catalogFamily: resolveStarterCabinetFamilyId(cabinet),
   model: cabinet.model,
+  availableWidths: cabinet.availableWidths ?? [],
+  availableHeights: cabinet.availableHeights ?? [],
   width: cabinet.width,
   height: cabinet.height,
   depth: cabinet.depth,
@@ -345,7 +348,14 @@ const getSameWallBlockedIntervals = ({ candidate, cupboards, roomBounds, rotatio
     }, []);
 };
 
-const getNearestMagneticSnapOption = ({ blockedInterval, candidate, rawSnappedPosition, roomBounds, rotation, wall }) => {
+const getNearestMagneticSnapOption = ({
+  blockedInterval,
+  candidate,
+  rawSnappedPosition,
+  roomBounds,
+  rotation,
+  wall,
+}) => {
   if (!blockedInterval) {
     return null;
   }
@@ -429,8 +439,7 @@ const getSameWallPlacementOutcome = ({ candidate, cupboards, rawSnappedPosition,
     rotation,
     wall,
   }).find(
-    (interval) =>
-      rawSpanCenter > interval.start + OVERLAP_EPSILON && rawSpanCenter < interval.end - OVERLAP_EPSILON,
+    (interval) => rawSpanCenter > interval.start + OVERLAP_EPSILON && rawSpanCenter < interval.end - OVERLAP_EPSILON,
   );
   const magneticSnapOption = getNearestMagneticSnapOption({
     blockedInterval,
@@ -441,10 +450,7 @@ const getSameWallPlacementOutcome = ({ candidate, cupboards, rawSnappedPosition,
     wall,
   });
 
-  if (
-    !magneticSnapOption ||
-    magneticSnapOption.intrusionDistance > SAME_WALL_MAGNETIC_TOLERANCE + OVERLAP_EPSILON
-  ) {
+  if (!magneticSnapOption || magneticSnapOption.intrusionDistance > SAME_WALL_MAGNETIC_TOLERANCE + OVERLAP_EPSILON) {
     return {
       isValid: false,
       snappedPosition: rawSnappedPosition,
@@ -515,12 +521,11 @@ export const validatePlacementCandidate = ({ candidate, point, roomBounds, wall,
     wall,
   });
   const collidingCupboardIds = [...new Set([...sameWallPlacementOutcome.collidingCupboardIds, ...cornerCollisionIds])];
-  const reason =
-    !sameWallPlacementOutcome.isValid
-      ? PLACEMENT_VALIDATION_REASONS.OVERLAP
-      : cornerCollisionIds.length > 0
-        ? PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION
-        : null;
+  const reason = !sameWallPlacementOutcome.isValid
+    ? PLACEMENT_VALIDATION_REASONS.OVERLAP
+    : cornerCollisionIds.length > 0
+      ? PLACEMENT_VALIDATION_REASONS.CORNER_COLLISION
+      : null;
 
   return createPlacementValidationResult({
     isValid: sameWallPlacementOutcome.isValid && cornerCollisionIds.length === 0,
@@ -548,28 +553,35 @@ export const getPlacementValidationReasonLabel = (reason) => {
   }
 };
 
-export const createPlacementPreview = (cabinet, roomBounds) => ({
-  catalogId: cabinet.id,
-  name: cabinet.name,
-  category: cabinet.category,
-  catalogFamily: resolveStarterCabinetFamilyId(cabinet),
-  model: cabinet.model,
-  width: cabinet.width,
-  height: cabinet.height,
-  depth: cabinet.depth,
-  price: cabinet.price,
-  size: cabinet.size,
-  rotation: getWallAlignedRotation(BACK_WALL_ID),
-  wall: null,
-  position: getWallAlignedPreviewPosition(cabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
-  validation: createPlacementValidationResult({
-    isValid: false,
-    reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
-    wall: null,
+export const createPlacementPreview = (cabinet, roomBounds) => {
+  const resolvedCabinet = resolveStarterCabinetDefinitionSnapshot(cabinet) ?? cabinet;
+
+  return {
+    catalogId: resolvedCabinet.id,
+    activeVariantId: resolvedCabinet.activeVariantId ?? null,
+    name: resolvedCabinet.name,
+    category: resolvedCabinet.category,
+    catalogFamily: resolveStarterCabinetFamilyId(resolvedCabinet),
+    model: resolvedCabinet.model,
+    availableWidths: resolvedCabinet.availableWidths ?? [],
+    availableHeights: resolvedCabinet.availableHeights ?? [],
+    width: resolvedCabinet.width,
+    height: resolvedCabinet.height,
+    depth: resolvedCabinet.depth,
+    price: resolvedCabinet.price,
+    size: resolvedCabinet.size,
     rotation: getWallAlignedRotation(BACK_WALL_ID),
-    snappedPosition: getWallAlignedPreviewPosition(cabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
-  }),
-});
+    wall: null,
+    position: getWallAlignedPreviewPosition(resolvedCabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
+    validation: createPlacementValidationResult({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
+      wall: null,
+      rotation: getWallAlignedRotation(BACK_WALL_ID),
+      snappedPosition: getWallAlignedPreviewPosition(resolvedCabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
+    }),
+  };
+};
 
 export const getAttachedCupboardPosition = (lastCupboard, nextSize) => {
   const nextFootprint = getCupboardFootprint(nextSize, 0);

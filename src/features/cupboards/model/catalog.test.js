@@ -1,6 +1,8 @@
 import {
   defaultOpenStarterCabinetGroupIds,
+  getStarterCabinet,
   getStarterCabinetFamilyLabel,
+  resolveDefaultStarterCabinetVariant,
   starterCabinetCatalogGroups,
   starterCabinetCatalogFamilies,
 } from "./catalog";
@@ -37,11 +39,11 @@ describe("starter cabinet catalog grouping", () => {
     ).toEqual([
       {
         id: "base-doors",
-        cabinetIds: ["base-600"],
+        cabinetIds: ["base-double-door"],
       },
       {
         id: "base-drawers",
-        cabinetIds: ["drawer-900"],
+        cabinetIds: ["base-three-drawer"],
       },
       {
         id: "wall-doors",
@@ -53,7 +55,7 @@ describe("starter cabinet catalog grouping", () => {
       },
       {
         id: "tall",
-        cabinetIds: ["tall-600"],
+        cabinetIds: ["tall-pantry"],
       },
       {
         id: "corner",
@@ -69,5 +71,33 @@ describe("starter cabinet catalog grouping", () => {
   it("falls back from legacy category ids to the matching visible family label", () => {
     expect(getStarterCabinetFamilyLabel({ category: "drawer" })).toBe("Base cabinets with drawers");
     expect(getStarterCabinetFamilyLabel({ category: "wall" })).toBe("Wall cabinets with doors");
+  });
+
+  it("stores width and height options on one cabinet definition without duplicating catalog rows", () => {
+    const cabinet = getStarterCabinet("base-double-door");
+
+    expect(cabinet.name).toBe("Double-door base cabinet");
+    expect(cabinet.availableWidths).toEqual([300, 350, 400, 450, 600]);
+    expect(cabinet.availableHeights).toEqual([720]);
+    expect(cabinet.variants).toHaveLength(5);
+    expect(cabinet.activeVariantId).toBe("600x720x560");
+  });
+
+  it("resolves the smallest valid size variant deterministically for each cabinet definition", () => {
+    expect(resolveDefaultStarterCabinetVariant(getStarterCabinet("base-double-door"))).toMatchObject({
+      id: "300x720x560",
+      width: 300,
+      height: 720,
+      depth: 560,
+      price: 160,
+    });
+
+    expect(resolveDefaultStarterCabinetVariant(getStarterCabinet("tall-pantry"))).toMatchObject({
+      id: "600x2100x600",
+      width: 600,
+      height: 2100,
+      depth: 600,
+      price: 680,
+    });
   });
 });

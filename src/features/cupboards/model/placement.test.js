@@ -73,14 +73,17 @@ describe("cupboard placement", () => {
     const firstCupboard = createCupboard({
       id: 1,
       cabinet: {
-        id: "base-600",
-        name: "Double-door base 600",
+        id: "base-double-door",
+        activeVariantId: "600x720x560",
+        name: "Double-door base cabinet",
         category: "base",
         model: {
           front: {
             type: "doubleDoor",
           },
         },
+        availableWidths: [300, 350, 400, 450, 600],
+        availableHeights: [720],
         width: 600,
         height: 720,
         depth: 560,
@@ -101,6 +104,7 @@ describe("cupboard placement", () => {
         type: "doubleDoor",
       },
     });
+    expect(firstCupboard.activeVariantId).toBe("600x720x560");
   });
 
   it("realigns a rotated cupboard to the back wall", () => {
@@ -124,8 +128,9 @@ describe("cupboard placement", () => {
   it("creates an invalid centered back-wall preview for a dragged cabinet", () => {
     const preview = createPlacementPreview(
       {
-        id: "drawer-900",
-        name: "Three-drawer base 900",
+        id: "base-three-drawer",
+        activeVariantId: "900x720x560",
+        name: "Three-drawer base cabinet",
         category: "drawer",
         model: {
           front: {
@@ -133,6 +138,8 @@ describe("cupboard placement", () => {
             drawerCount: 3,
           },
         },
+        availableWidths: [600, 800, 900],
+        availableHeights: [720],
         width: 900,
         height: 720,
         depth: 560,
@@ -143,8 +150,9 @@ describe("cupboard placement", () => {
     );
 
     expect(preview).toMatchObject({
-      catalogId: "drawer-900",
-      name: "Three-drawer base 900",
+      catalogId: "base-three-drawer",
+      activeVariantId: "900x720x560",
+      name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
       price: 390,

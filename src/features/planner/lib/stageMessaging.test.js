@@ -8,7 +8,7 @@ describe("planner stage messaging", () => {
       isMoveActive: false,
       isPlacementActive: true,
       placementPreview: {
-        name: "Double-door base 600",
+        name: "Double-door base cabinet",
         wall: BACK_WALL_ID,
         validation: {
           isValid: false,
@@ -19,7 +19,7 @@ describe("planner stage messaging", () => {
     });
 
     expect(viewModel).toMatchObject({
-      selectionBadge: "Preview invalid Double-door base 600",
+      selectionBadge: "Preview invalid Double-door base cabinet",
       isStageInvalid: true,
     });
     expect(viewModel.stageHint).toContain("Overlaps another cabinet.");
@@ -38,13 +38,13 @@ describe("planner stage messaging", () => {
       isPlacementActive: false,
       placementPreview: null,
       selectedCupboard: {
-        name: "Three-drawer base 900",
+        name: "Three-drawer base cabinet",
         wall: BACK_WALL_ID,
       },
     });
 
     expect(viewModel).toMatchObject({
-      selectionBadge: "Invalid move Three-drawer base 900",
+      selectionBadge: "Invalid move Three-drawer base cabinet",
       isStageInvalid: true,
     });
     expect(viewModel.stageHint).toContain("Leave no gap between cabinets.");
@@ -57,7 +57,7 @@ describe("planner stage messaging", () => {
       isMoveActive: false,
       isPlacementActive: true,
       placementPreview: {
-        name: "Double-door base 600",
+        name: "Double-door base cabinet",
         wall: BACK_WALL_ID,
         validation: {
           isValid: false,
@@ -68,7 +68,7 @@ describe("planner stage messaging", () => {
     });
 
     expect(viewModel).toMatchObject({
-      selectionBadge: "Preview invalid Double-door base 600",
+      selectionBadge: "Preview invalid Double-door base cabinet",
       isStageInvalid: true,
     });
     expect(viewModel.stageHint).toContain("Intersects a cabinet near the corner.");
@@ -81,7 +81,7 @@ describe("planner stage messaging", () => {
       isMoveActive: false,
       isPlacementActive: true,
       placementPreview: {
-        name: "Double-door base 600",
+        name: "Double-door base cabinet",
         wall: BACK_WALL_ID,
         validation: {
           isValid: true,
@@ -93,7 +93,7 @@ describe("planner stage messaging", () => {
     });
 
     expect(viewModel).toMatchObject({
-      selectionBadge: "Previewing Double-door base 600",
+      selectionBadge: "Previewing Double-door base cabinet",
       isStageInvalid: false,
     });
     expect(viewModel.stageHint).toContain("Held flush against the neighboring cabinet");
@@ -113,13 +113,13 @@ describe("planner stage messaging", () => {
       isPlacementActive: false,
       placementPreview: null,
       selectedCupboard: {
-        name: "Three-drawer base 900",
+        name: "Three-drawer base cabinet",
         wall: BACK_WALL_ID,
       },
     });
 
     expect(viewModel).toMatchObject({
-      selectionBadge: "Moving Three-drawer base 900",
+      selectionBadge: "Moving Three-drawer base cabinet",
       isStageInvalid: false,
     });
     expect(viewModel.stageHint).toContain("Held flush against the neighboring cabinet");
@@ -132,7 +132,7 @@ describe("planner stage messaging", () => {
       isMoveActive: false,
       isPlacementActive: true,
       placementPreview: {
-        name: "Double-door base 600",
+        name: "Double-door base cabinet",
         wall: BACK_WALL_ID,
         validation: {
           isValid: true,
@@ -143,7 +143,7 @@ describe("planner stage messaging", () => {
     });
 
     expect(viewModel).toEqual({
-      selectionBadge: "Previewing Double-door base 600",
+      selectionBadge: "Previewing Double-door base cabinet",
       stageHint: "Release to place this cabinet on the back wall.",
       isStageInvalid: false,
     });
