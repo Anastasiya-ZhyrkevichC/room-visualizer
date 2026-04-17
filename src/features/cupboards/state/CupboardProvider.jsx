@@ -11,8 +11,8 @@ export const CupboardProvider = ({ children }) => {
   const { bounds } = useRoomScene();
   const [state, dispatch] = useReducer(cupboardReducer, initialCupboardState);
 
-  const selectedCupboard = useMemo(() => selectSelectedCupboard(state), [state.cupboards, state.selectedCupboardId]);
-  const pricingSummary = useMemo(() => selectPricingSummary(state), [state.cupboards, state.selectedCupboardId]);
+  const selectedCupboard = selectSelectedCupboard(state);
+  const pricingSummary = selectPricingSummary(state);
   const actions = useMemo(
     () => ({
       startPlacementPreview: (catalogId) =>
@@ -36,6 +36,8 @@ export const CupboardProvider = ({ children }) => {
       cancelCupboardResize: () => dispatch({ type: "CANCEL_CUPBOARD_RESIZE" }),
       stepSelectedCupboardWidth: (direction, side) =>
         dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction, side, roomBounds: bounds } }),
+      replaceSelectedCupboard: (catalogId) =>
+        dispatch({ type: "REPLACE_SELECTED_CUPBOARD", payload: { catalogId, roomBounds: bounds } }),
       decreaseSelectedCupboardWidth: (side = CUPBOARD_RESIZE_SIDES.LEFT) =>
         dispatch({
           type: "STEP_SELECTED_CUPBOARD_WIDTH",

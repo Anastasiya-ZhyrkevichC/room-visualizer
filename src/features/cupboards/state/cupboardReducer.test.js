@@ -688,6 +688,51 @@ describe("cupboard reducer width stepping", () => {
   });
 });
 
+describe("cupboard reducer cabinet replacement", () => {
+  it("replaces the selected cabinet with a new catalog module while keeping the same scene slot", () => {
+    const selectedCupboard = createResizableCupboardFixture({
+      id: 5,
+      activeVariantId: "350x720x560",
+      position: { x: 0.3, y: -1.14, z: -1.72 },
+    });
+
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [selectedCupboard],
+        selectedCupboardId: 5,
+        nextCupboardId: 6,
+      },
+      {
+        type: "REPLACE_SELECTED_CUPBOARD",
+        payload: {
+          catalogId: "tall-pantry",
+          roomBounds,
+        },
+      },
+    );
+
+    expect(nextState.selectedCupboardId).toBe(5);
+    expect(nextState.cupboards).toHaveLength(1);
+    expect(nextState.cupboards[0]).toMatchObject({
+      id: 5,
+      catalogId: "tall-pantry",
+      activeVariantId: "600x2100x600",
+      name: "Pantry tower",
+      width: 600,
+      height: 2100,
+      depth: 600,
+      price: 680,
+      wall: BACK_WALL_ID,
+    });
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: 0.3,
+      y: -0.45,
+      z: -1.7,
+    });
+  });
+});
+
 describe("cupboard reducer resize mode", () => {
   it("starts resize mode with the selected cupboard snapshot and active side", () => {
     const nextState = cupboardReducer(

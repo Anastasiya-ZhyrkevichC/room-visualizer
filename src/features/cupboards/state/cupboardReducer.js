@@ -1,4 +1,4 @@
-import { defaultStarterCabinetId, getStarterCabinet } from "../model/catalog";
+import { defaultStarterCabinetId, getStarterCabinet, resolveStarterCabinetInstance } from "../model/catalog";
 import { ROTATION_STEP, getNormalizedRotation } from "../model/geometry";
 import {
   alignCupboardToWall,
@@ -374,6 +374,55 @@ export const cupboardReducer = (state, action) => {
         activeResize: null,
         placementPreview: null,
         selectedCupboardId: null,
+      };
+    }
+
+    case "REPLACE_SELECTED_CUPBOARD": {
+      if (state.selectedCupboardId === null || state.activeMove || state.activeResize || state.placementPreview) {
+        return state;
+      }
+
+      const selectedCupboard = findCupboardById(state.cupboards, state.selectedCupboardId);
+
+      if (!selectedCupboard) {
+        return state;
+      }
+
+      const replacementSource = resolveStarterCabinetInstance(getStarterCabinet(action.payload.catalogId), {
+        useDefaultVariant: true,
+      });
+
+      if (!replacementSource) {
+        return state;
+      }
+
+      const replacementCupboard = createCupboard({
+        id: selectedCupboard.id,
+        cabinet: replacementSource,
+        position: selectedCupboard.position,
+        rotation: getWallAlignedRotation(selectedCupboard.wall),
+        wall: selectedCupboard.wall,
+      });
+      const validation = validatePlacementCandidate({
+        candidate: replacementCupboard,
+        point: replacementCupboard.position,
+        roomBounds: action.payload.roomBounds,
+        wall: selectedCupboard.wall,
+        cupboards: state.cupboards,
+      });
+
+      if (!validation.isValid || !validation.wall || !validation.snappedPosition) {
+        return state;
+      }
+
+      return {
+        ...state,
+        cupboards: updateCupboardById(state.cupboards, selectedCupboard.id, () => ({
+          ...replacementCupboard,
+          position: validation.snappedPosition,
+          rotation: validation.rotation,
+          wall: validation.wall,
+        })),
       };
     }
 

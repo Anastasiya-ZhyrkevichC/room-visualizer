@@ -209,15 +209,16 @@
 
 .catalog-row__actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 8px;
 }
 
-.catalog-row__add {
+.catalog-row__add,
+.catalog-row__replace {
   border: 1px solid rgba(182, 89, 50, 0.16);
   border-radius: 999px;
   padding: 7px 12px;
-  background: rgba(182, 89, 50, 0.1);
-  color: var(--planner-highlight);
   font: inherit;
   font-size: 0.78rem;
   font-weight: 700;
@@ -228,13 +229,30 @@
     background-color 180ms ease;
 }
 
+.catalog-row__add {
+  background: rgba(182, 89, 50, 0.1);
+  color: var(--planner-highlight);
+}
+
 .catalog-row__add:hover {
   background: rgba(182, 89, 50, 0.16);
   transform: translateY(-1px);
   box-shadow: 0 8px 18px rgba(132, 86, 41, 0.12);
 }
 
+.catalog-row__replace {
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--planner-text);
+}
+
+.catalog-row__replace:hover {
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(132, 86, 41, 0.1);
+}
+
 .catalog-row__add:focus-visible,
+.catalog-row__replace:focus-visible,
 .catalog-group__toggle:focus-visible {
   outline: 2px solid rgba(182, 89, 50, 0.45);
   outline-offset: 2px;

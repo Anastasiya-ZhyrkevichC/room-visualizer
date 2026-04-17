@@ -35,6 +35,8 @@ describe("CabinetCatalogPanel", () => {
       cancelPlacementPreview: jest.fn(),
       finishPlacementPreview: jest.fn(),
       placementPreview: null,
+      replaceSelectedCupboard: jest.fn(),
+      selectedCupboard: null,
       startPlacementPreview: jest.fn(),
     });
   });
@@ -75,5 +77,25 @@ describe("CabinetCatalogPanel", () => {
       Heights: "2100 / 2300 mm",
     });
     expect(pantryRow.textContent).toContain("From $680");
+  });
+
+  it("shows replace actions when a cabinet is already selected in the scene", () => {
+    useCupboards.mockReturnValue({
+      cancelPlacementPreview: jest.fn(),
+      finishPlacementPreview: jest.fn(),
+      placementPreview: null,
+      replaceSelectedCupboard: jest.fn(),
+      selectedCupboard: {
+        id: 11,
+        catalogId: "base-double-door",
+      },
+      startPlacementPreview: jest.fn(),
+    });
+
+    const container = renderCatalogPanel();
+    const replaceButtons = [...container.querySelectorAll(".catalog-row__replace")];
+
+    expect(replaceButtons.length).toBe(starterCabinetCatalog.length - 1);
+    expect(replaceButtons.every((button) => button.textContent === "Replace")).toBe(true);
   });
 });

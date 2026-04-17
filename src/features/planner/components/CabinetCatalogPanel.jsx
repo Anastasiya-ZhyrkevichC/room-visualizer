@@ -22,7 +22,14 @@ const createInitialOpenGroups = () =>
   }, {});
 
 const CabinetCatalogPanel = () => {
-  const { cancelPlacementPreview, finishPlacementPreview, placementPreview, startPlacementPreview } = useCupboards();
+  const {
+    cancelPlacementPreview,
+    finishPlacementPreview,
+    placementPreview,
+    replaceSelectedCupboard,
+    selectedCupboard,
+    startPlacementPreview,
+  } = useCupboards();
   const [openGroups, setOpenGroups] = useState(createInitialOpenGroups);
   const placementCleanupRef = useRef(null);
 
@@ -93,6 +100,10 @@ const CabinetCatalogPanel = () => {
     startPlacementSession(catalogId);
   };
 
+  const handleCatalogReplaceClick = (catalogId) => {
+    replaceSelectedCupboard(catalogId);
+  };
+
   const handleGroupToggle = (groupId) => {
     setOpenGroups((currentOpenGroups) => ({
       ...currentOpenGroups,
@@ -108,7 +119,8 @@ const CabinetCatalogPanel = () => {
       </div>
       <p className="panel-card__copy">
         Expand a cabinet family, then drag a cabinet into the room or click Add. Each row places the smallest size
-        first, and you can resize it after selecting it.
+        first, and you can resize it after selecting it. When a cabinet is selected in the scene, Replace swaps in a new
+        module on the same wall.
       </p>
 
       <div className="catalog-tree">
@@ -148,6 +160,7 @@ const CabinetCatalogPanel = () => {
                       const depthLabel = formatModuleDepth(defaultVariant);
                       const priceLabel = formatCatalogModulePrice(cabinet);
                       const placementHint = formatCatalogPlacementHint(defaultVariant);
+                      const canReplaceSelected = selectedCupboard && selectedCupboard.catalogId !== cabinet.id;
 
                       return (
                         <article
@@ -199,6 +212,18 @@ const CabinetCatalogPanel = () => {
                             >
                               Add
                             </button>
+                            {canReplaceSelected ? (
+                              <button
+                                type="button"
+                                className="catalog-row__replace"
+                                onPointerDown={(event) => {
+                                  event.stopPropagation();
+                                }}
+                                onClick={() => handleCatalogReplaceClick(cabinet.id)}
+                              >
+                                Replace
+                              </button>
+                            ) : null}
                           </div>
                         </article>
                       );
