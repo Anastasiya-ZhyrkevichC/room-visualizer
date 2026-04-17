@@ -1,6 +1,7 @@
 import React from "react";
 
 import CupboardRenderer from "./CupboardRenderer";
+import SelectedCupboardWidthControls from "./SelectedCupboardWidthControls";
 import { useCupboards } from "../state/CupboardProvider";
 
 jest.mock("../state/CupboardProvider", () => ({
@@ -95,5 +96,25 @@ describe("CupboardRenderer", () => {
 
     expect(movingCupboard.props.isInvalid).toBe(false);
     expect(preview.props.isInvalid).toBe(false);
+  });
+
+  it("renders width controls for the selected cupboard", () => {
+    const selectedCupboard = createCupboardFixture(1);
+
+    useCupboards.mockReturnValue({
+      activeMove: null,
+      cupboards: [selectedCupboard],
+      placementPreview: null,
+      selectedCupboard,
+      selectedCupboardId: 1,
+      selectCupboard: jest.fn(),
+      startCupboardMove: jest.fn(),
+    });
+
+    const [cupboard, controls] = getRenderedElements();
+
+    expect(cupboard.props.isSelected).toBe(true);
+    expect(controls.type).toBe(SelectedCupboardWidthControls);
+    expect(controls.props.cupboard).toBe(selectedCupboard);
   });
 });

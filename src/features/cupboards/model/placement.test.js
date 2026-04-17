@@ -1,6 +1,7 @@
 import {
   alignCupboardToBackWall,
   BACK_WALL_ID,
+  getCupboardWidthStepOutcome,
   MAGNETIC_ATTACHMENT_EDGES,
   PLACEMENT_VALIDATION_REASONS,
   SAME_WALL_MAGNETIC_TOLERANCE,
@@ -18,6 +19,7 @@ import {
   RIGHT_WALL_ID,
   validatePlacementCandidate,
 } from "./placement";
+import { resolveStarterCabinetInstance } from "./catalog";
 
 const roomBounds = {
   left: -2,
@@ -55,6 +57,23 @@ const createPlacedCupboardFixture = ({
   depth: size[2] * 1000,
   price: 0,
   size,
+  position,
+  rotation,
+  wall,
+});
+
+const createResizableCupboardFixture = ({
+  id = 1,
+  activeVariantId = "300x720x560",
+  position = { x: 0, y: -1.14, z: -1.72 },
+  wall = BACK_WALL_ID,
+  rotation = getWallAlignedRotation(wall),
+} = {}) => ({
+  id,
+  ...resolveStarterCabinetInstance({
+    catalogId: "base-double-door",
+    activeVariantId,
+  }),
   position,
   rotation,
   wall,
@@ -107,6 +126,33 @@ describe("cupboard placement", () => {
     expect(firstCupboard.activeVariantId).toBe("600x720x560");
   });
 
+  it("normalizes a placed cupboard from its source cabinet definition and active size", () => {
+    const firstCupboard = createCupboard({
+      id: 1,
+      cabinet: {
+        catalogId: "base-three-drawer",
+        activeVariantId: "600x720x560",
+      },
+      position: createInitialCupboardPosition([0.6, 0.72, 0.56], roomBounds),
+    });
+
+    expect(firstCupboard).toMatchObject({
+      catalogId: "base-three-drawer",
+      defaultVariantId: "600x720x560",
+      activeVariantId: "600x720x560",
+      name: "Three-drawer base cabinet",
+      category: "drawer",
+      catalogFamily: "base-drawers",
+      availableWidths: [600, 800, 900],
+      availableHeights: [720],
+      width: 600,
+      height: 720,
+      depth: 560,
+      price: 290,
+      size: [0.6, 0.72, 0.56],
+    });
+  });
+
   it("realigns a rotated cupboard to the back wall", () => {
     expectPositionToMatch(
       alignCupboardToBackWall(
@@ -151,11 +197,14 @@ describe("cupboard placement", () => {
 
     expect(preview).toMatchObject({
       catalogId: "base-three-drawer",
-      activeVariantId: "900x720x560",
+      defaultVariantId: "600x720x560",
+      activeVariantId: "600x720x560",
       name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
-      price: 390,
+      availableWidths: [600, 800, 900],
+      availableHeights: [720],
+      price: 290,
       wall: null,
     });
     expectPositionToMatch(preview.position, {
@@ -175,6 +224,98 @@ describe("cupboard placement", () => {
       front: {
         type: "drawers",
       },
+    });
+  });
+
+  it("evaluates the next width step as available when the resized cabinet still fits in place", () => {
+    const resizeOutcome = getCupboardWidthStepOutcome({
+      cupboard: createResizableCupboardFixture(),
+      direction: "next",
+      roomBounds,
+      cupboards: [],
+    });
+
+    expect(resizeOutcome.isAvailable).toBe(true);
+    expect(resizeOutcome.cupboard).toMatchObject({
+      activeVariantId: "350x720x560",
+      width: 350,
+      height: 720,
+      depth: 560,
+      wall: BACK_WALL_ID,
+    });
+    expect(resizeOutcome.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(resizeOutcome.cupboard.position, {
+      x: 0,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("marks the next width step unavailable when it would only fit by shifting away from a neighbor", () => {
+    const resizeOutcome = getCupboardWidthStepOutcome({
+      cupboard: createResizableCupboardFixture({
+        id: 10,
+        activeVariantId: "300x720x560",
+        position: { x: -0.6, y: -1.14, z: -1.72 },
+      }),
+      direction: "next",
+      roomBounds,
+      cupboards: [
+        createResizableCupboardFixture({
+          id: 11,
+          activeVariantId: "300x720x560",
+          position: { x: -0.3, y: -1.14, z: -1.72 },
+        }),
+      ],
+    });
+
+    expect(resizeOutcome.isAvailable).toBe(false);
+    expect(resizeOutcome.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      isMagneticallySnapped: true,
+      magneticAttachment: {
+        cupboardId: 11,
+        edge: MAGNETIC_ATTACHMENT_EDGES.START,
+      },
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(resizeOutcome.validation.snappedPosition, {
+      x: -0.625,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("marks the next width step unavailable when expanding would push the cabinet off its current wall span", () => {
+    const resizeOutcome = getCupboardWidthStepOutcome({
+      cupboard: createResizableCupboardFixture({
+        id: 12,
+        activeVariantId: "300x720x560",
+        position: { x: 1.85, y: -1.14, z: -1.72 },
+      }),
+      direction: "next",
+      roomBounds,
+      cupboards: [],
+    });
+
+    expect(resizeOutcome.isAvailable).toBe(false);
+    expect(resizeOutcome.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(resizeOutcome.validation.snappedPosition, {
+      x: 1.825,
+      y: -1.14,
+      z: -1.72,
     });
   });
 

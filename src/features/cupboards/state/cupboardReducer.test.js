@@ -8,6 +8,7 @@ import {
   SAME_WALL_MAGNETIC_TOLERANCE,
   getWallAlignedRotation,
 } from "../model/placement";
+import { resolveStarterCabinetInstance } from "../model/catalog";
 
 const roomBounds = {
   left: -2,
@@ -50,6 +51,23 @@ const createPlacedCupboardFixture = ({
   wall,
 });
 
+const createResizableCupboardFixture = ({
+  id = 1,
+  activeVariantId = "300x720x560",
+  position = { x: 0, y: -1.14, z: -1.72 },
+  wall = BACK_WALL_ID,
+  rotation = getWallAlignedRotation(wall),
+} = {}) => ({
+  id,
+  ...resolveStarterCabinetInstance({
+    catalogId: "base-double-door",
+    activeVariantId,
+  }),
+  position,
+  rotation,
+  wall,
+});
+
 describe("cupboard reducer placement preview", () => {
   it("starts preview mode with a ghost cabinet and clears selection", () => {
     const nextState = cupboardReducer(
@@ -69,11 +87,15 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.selectedCupboardId).toBeNull();
     expect(nextState.placementPreview).toMatchObject({
       catalogId: "base-double-door",
-      activeVariantId: "600x720x560",
+      defaultVariantId: "300x720x560",
+      activeVariantId: "300x720x560",
       name: "Double-door base cabinet",
       category: "base",
       catalogFamily: "base-doors",
-      price: 240,
+      availableWidths: [300, 350, 400, 450, 600],
+      availableHeights: [720],
+      width: 300,
+      price: 160,
       wall: null,
     });
     expectPositionToMatch(nextState.placementPreview.position, {
@@ -112,7 +134,7 @@ describe("cupboard reducer placement preview", () => {
     });
 
     expectPositionToMatch(nextState.placementPreview.position, {
-      x: -1.55,
+      x: -1.7,
       y: -1.14,
       z: -1.72,
     });
@@ -153,7 +175,7 @@ describe("cupboard reducer placement preview", () => {
     expectPositionToMatch(nextState.placementPreview.position, {
       x: -1.72,
       y: -1.14,
-      z: -1.55,
+      z: -1.7,
     });
     expect(nextState.placementPreview).toMatchObject({
       wall: LEFT_WALL_ID,
@@ -244,11 +266,15 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.cupboards[0]).toMatchObject({
       id: 1,
       catalogId: "base-three-drawer",
-      activeVariantId: "900x720x560",
+      defaultVariantId: "600x720x560",
+      activeVariantId: "600x720x560",
       name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
-      price: 390,
+      availableWidths: [600, 800, 900],
+      availableHeights: [720],
+      width: 600,
+      price: 290,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -290,11 +316,15 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.cupboards[0]).toMatchObject({
       id: 1,
       catalogId: "base-three-drawer",
-      activeVariantId: "900x720x560",
+      defaultVariantId: "600x720x560",
+      activeVariantId: "600x720x560",
       name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
-      price: 390,
+      availableWidths: [600, 800, 900],
+      availableHeights: [720],
+      width: 600,
+      price: 290,
       wall: RIGHT_WALL_ID,
     });
     expect(nextState.cupboards[0].rotation).toBeCloseTo(Math.PI * 1.5);
@@ -327,7 +357,7 @@ describe("cupboard reducer placement preview", () => {
       payload: {
         wall: BACK_WALL_ID,
         point: {
-          x: 0.75 - overshoot,
+          x: 0.6 - overshoot,
           y: 0,
         },
         roomBounds,
@@ -347,12 +377,12 @@ describe("cupboard reducer placement preview", () => {
       },
     });
     expectPositionToMatch(heldState.placementPreview.position, {
-      x: 0.75,
+      x: 0.6,
       y: -1.14,
       z: -1.72,
     });
     expectPositionToMatch(heldState.placementPreview.validation.rawSnappedPosition, {
-      x: 0.75 - overshoot,
+      x: 0.6 - overshoot,
       y: -1.14,
       z: -1.72,
     });
@@ -365,7 +395,7 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.selectedCupboardId).toBe(11);
     expect(nextState.cupboards).toHaveLength(2);
     expectPositionToMatch(nextState.cupboards[1].position, {
-      x: 0.75,
+      x: 0.6,
       y: -1.14,
       z: -1.72,
     });
@@ -392,7 +422,7 @@ describe("cupboard reducer placement preview", () => {
       payload: {
         wall: BACK_WALL_ID,
         point: {
-          x: 0.5,
+          x: 0.4,
           y: 0,
         },
         roomBounds,
@@ -407,7 +437,7 @@ describe("cupboard reducer placement preview", () => {
       collidingCupboardIds: [10],
     });
     expectPositionToMatch(overlappingState.placementPreview.position, {
-      x: 0.5,
+      x: 0.4,
       y: -1.14,
       z: -1.72,
     });
@@ -465,7 +495,7 @@ describe("cupboard reducer placement preview", () => {
       collidingCupboardIds: [10],
     });
     expectPositionToMatch(cornerCollisionState.placementPreview.position, {
-      x: -1.55,
+      x: -1.7,
       y: -1.14,
       z: -1.72,
     });
@@ -555,6 +585,102 @@ describe("cupboard reducer placement preview", () => {
       y: -1.14,
       z: 0.25,
     });
+  });
+});
+
+describe("cupboard reducer width stepping", () => {
+  it("updates the selected cabinet to the next supported width when the resized cabinet fits in place", () => {
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [createResizableCupboardFixture()],
+        selectedCupboardId: 1,
+        nextCupboardId: 2,
+      },
+      {
+        type: "STEP_SELECTED_CUPBOARD_WIDTH",
+        payload: {
+          direction: "next",
+          roomBounds,
+        },
+      },
+    );
+
+    expect(nextState.selectedCupboardId).toBe(1);
+    expect(nextState.cupboards[0]).toMatchObject({
+      id: 1,
+      catalogId: "base-double-door",
+      activeVariantId: "350x720x560",
+      width: 350,
+      height: 720,
+      depth: 560,
+      price: 175,
+      wall: BACK_WALL_ID,
+    });
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: 0,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("keeps the selected cabinet unchanged when the next width would require shifting into a neighbor", () => {
+    const selectedCupboard = createResizableCupboardFixture({
+      id: 10,
+      activeVariantId: "300x720x560",
+      position: { x: -0.6, y: -1.14, z: -1.72 },
+    });
+    const blockingNeighbor = createResizableCupboardFixture({
+      id: 11,
+      activeVariantId: "300x720x560",
+      position: { x: -0.3, y: -1.14, z: -1.72 },
+    });
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [selectedCupboard, blockingNeighbor],
+        selectedCupboardId: 10,
+        nextCupboardId: 12,
+      },
+      {
+        type: "STEP_SELECTED_CUPBOARD_WIDTH",
+        payload: {
+          direction: "next",
+          roomBounds,
+        },
+      },
+    );
+
+    expect(nextState.cupboards).toHaveLength(2);
+    expect(nextState.cupboards[0]).toEqual(selectedCupboard);
+    expect(nextState.cupboards[1]).toEqual(blockingNeighbor);
+  });
+
+  it("keeps the selected cabinet unchanged when the next width would require shifting inside room bounds", () => {
+    const selectedCupboard = createResizableCupboardFixture({
+      id: 12,
+      activeVariantId: "300x720x560",
+      position: { x: 1.85, y: -1.14, z: -1.72 },
+    });
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [selectedCupboard],
+        selectedCupboardId: 12,
+        nextCupboardId: 13,
+      },
+      {
+        type: "STEP_SELECTED_CUPBOARD_WIDTH",
+        payload: {
+          direction: "next",
+          roomBounds,
+        },
+      },
+    );
+
+    expect(nextState.cupboards).toHaveLength(1);
+    expect(nextState.cupboards[0]).toEqual(selectedCupboard);
+    expect(nextState.selectedCupboardId).toBe(12);
   });
 });
 

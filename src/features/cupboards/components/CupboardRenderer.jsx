@@ -2,10 +2,18 @@ import React from "react";
 
 import { useCupboards } from "../state/CupboardProvider";
 import { CupboardMesh, GhostCupboardMesh } from "./CupboardMesh";
+import SelectedCupboardWidthControls from "./SelectedCupboardWidthControls";
 
 const CupboardRenderer = () => {
-  const { activeMove, cupboards, placementPreview, selectedCupboardId, selectCupboard, startCupboardMove } =
-    useCupboards();
+  const {
+    activeMove,
+    cupboards,
+    placementPreview,
+    selectedCupboard,
+    selectedCupboardId,
+    selectCupboard,
+    startCupboardMove,
+  } = useCupboards();
   const activeMoveCupboardId = activeMove?.cupboardId ?? null;
   const isActiveMoveInvalid = Boolean(activeMove && activeMove.validation?.isValid === false);
   const isPlacementPreviewInvalid = Boolean(placementPreview && placementPreview.validation?.isValid === false);
@@ -38,6 +46,8 @@ const CupboardRenderer = () => {
           isInvalid={isPlacementPreviewInvalid}
         />
       ) : null}
+
+      {selectedCupboard ? <SelectedCupboardWidthControls cupboard={selectedCupboard} /> : null}
     </>
   );
 };

@@ -3,6 +3,7 @@ import {
   getStarterCabinet,
   getStarterCabinetFamilyLabel,
   resolveDefaultStarterCabinetVariant,
+  resolveStarterCabinetWidthStep,
   starterCabinetCatalogGroups,
   starterCabinetCatalogFamilies,
 } from "./catalog";
@@ -99,5 +100,53 @@ describe("starter cabinet catalog grouping", () => {
       depth: 600,
       price: 680,
     });
+  });
+
+  it("steps width options in order while keeping the current height and depth fixed", () => {
+    expect(
+      resolveStarterCabinetWidthStep(
+        {
+          catalogId: "base-double-door",
+          activeVariantId: "350x720x560",
+        },
+        "previous",
+      ),
+    ).toMatchObject({
+      catalogId: "base-double-door",
+      activeVariantId: "300x720x560",
+      width: 300,
+      height: 720,
+      depth: 560,
+      price: 160,
+    });
+
+    expect(
+      resolveStarterCabinetWidthStep(
+        {
+          catalogId: "base-double-door",
+          activeVariantId: "350x720x560",
+        },
+        "next",
+      ),
+    ).toMatchObject({
+      catalogId: "base-double-door",
+      activeVariantId: "400x720x560",
+      width: 400,
+      height: 720,
+      depth: 560,
+      price: 190,
+    });
+  });
+
+  it("returns no width step when the current cabinet has no alternate widths at its active height", () => {
+    expect(
+      resolveStarterCabinetWidthStep(
+        {
+          catalogId: "tall-pantry",
+          activeVariantId: "600x2100x600",
+        },
+        "next",
+      ),
+    ).toBeNull();
   });
 });

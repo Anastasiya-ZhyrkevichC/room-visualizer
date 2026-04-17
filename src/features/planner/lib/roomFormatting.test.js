@@ -1,9 +1,13 @@
 import {
+  CATALOG_PLACEMENT_CUE,
+  HEIGHT_OPTIONS_REFERENCE_NOTE,
   formatCatalogModulePrice,
+  formatCatalogPlacementHint,
   formatModuleDepth,
   formatModuleFamily,
   formatModuleHeightOptions,
   formatModuleWidthOptions,
+  formatSelectionResizeHint,
 } from "./roomFormatting";
 
 describe("room formatting", () => {
@@ -60,5 +64,20 @@ describe("room formatting", () => {
         price: 680,
       }),
     ).toBe("$680");
+  });
+
+  it("shares variable-size guidance copy between catalog, stage messaging, and selection details", () => {
+    expect(CATALOG_PLACEMENT_CUE).toBe("Places smallest first, resize after selection");
+    expect(HEIGHT_OPTIONS_REFERENCE_NOTE).toBe("Height options are display-only for now");
+    expect(
+      formatCatalogPlacementHint({
+        width: 300,
+        height: 720,
+        depth: 560,
+      }),
+    ).toBe("Default placement size 300 x 720 x 560 mm. Places smallest first, resize after selection.");
+    expect(formatSelectionResizeHint("back wall")).toBe(
+      "Use the in-scene width arrows to step through supported widths, or drag it in the scene to reposition it along the back wall.",
+    );
   });
 });

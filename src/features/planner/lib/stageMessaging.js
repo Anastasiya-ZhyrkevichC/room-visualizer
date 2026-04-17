@@ -1,4 +1,5 @@
 import { LEFT_WALL_ID, RIGHT_WALL_ID, getPlacementValidationReasonLabel } from "../../cupboards/model/placement";
+import { formatSelectionResizeHint } from "./roomFormatting";
 
 export const getWallLabel = (wall) =>
   wall === LEFT_WALL_ID ? "left wall" : wall === RIGHT_WALL_ID ? "right wall" : "back wall";
@@ -45,7 +46,7 @@ export const getPlannerStageViewModel = ({
           ? `${moveReasonLabel}. Drag back to a valid position on the ${moveWallLabel}. Release now to restore the previous position, or press Escape to restore it.`
           : `Move back onto the ${moveWallLabel}. Release now to restore the previous position, or press Escape to restore it.`
       : selectedCupboard
-        ? `Drag the selected cabinet in the scene to reposition it along the ${moveWallLabel}.`
+        ? formatSelectionResizeHint(moveWallLabel)
         : null;
 
   return {

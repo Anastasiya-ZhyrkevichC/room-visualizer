@@ -15,6 +15,9 @@ const moduleCategoryLabels = {
   corner: "Corner cabinet",
 };
 
+export const CATALOG_PLACEMENT_CUE = "Places smallest first, resize after selection";
+export const HEIGHT_OPTIONS_REFERENCE_NOTE = "Height options are display-only for now";
+
 export const formatRoomDimensions = (dimensions) =>
   `${dimensions.length} x ${dimensions.width} x ${dimensions.height} mm`;
 
@@ -58,6 +61,14 @@ export const formatCatalogModulePrice = (module) => {
 
   return maxPrice > startingPrice ? `From ${formatPrototypePrice(startingPrice)}` : formatPrototypePrice(startingPrice);
 };
+
+export const formatCatalogPlacementHint = (module) =>
+  `Default placement size ${formatModuleDimensions(module)}. ${CATALOG_PLACEMENT_CUE}.`;
+
+export const formatSelectionResizeHint = (wallLabel = null) =>
+  wallLabel
+    ? `Use the in-scene width arrows to step through supported widths, or drag it in the scene to reposition it along the ${wallLabel}.`
+    : "Use the in-scene width arrows to step through supported widths.";
 
 export const formatSelectionPosition = (position) =>
   `X ${Math.round(convertMetersToMillimeters(position.x))} mm · Z ${Math.round(convertMetersToMillimeters(position.z))} mm`;

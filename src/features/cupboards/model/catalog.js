@@ -309,4 +309,97 @@ const starterCabinetLookup = starterCabinetCatalog.reduce((lookup, cabinet) => {
   return lookup;
 }, {});
 
+const getStarterCabinetDefinitionId = (cabinet) => cabinet?.catalogId ?? cabinet?.id ?? null;
+
+const resolveStarterCabinetDefinition = (cabinet) => {
+  if (!cabinet) {
+    return null;
+  }
+
+  if (cabinet.variants?.length) {
+    return cabinet;
+  }
+
+  const definitionId = getStarterCabinetDefinitionId(cabinet);
+
+  return definitionId ? (starterCabinetLookup[definitionId] ?? null) : null;
+};
+
+export const resolveStarterCabinetInstance = (cabinet, { variantId = null, useDefaultVariant = false } = {}) => {
+  if (!cabinet) {
+    return null;
+  }
+
+  const sourceDefinition = resolveStarterCabinetDefinition(cabinet);
+  const resolvedVariantId =
+    variantId ??
+    (useDefaultVariant
+      ? (sourceDefinition?.defaultVariantId ?? cabinet?.defaultVariantId ?? null)
+      : (cabinet?.activeVariantId ??
+        sourceDefinition?.activeVariantId ??
+        sourceDefinition?.defaultVariantId ??
+        cabinet?.defaultVariantId ??
+        null));
+  const resolvedCabinet = sourceDefinition
+    ? resolveStarterCabinetDefinitionSnapshot(sourceDefinition, resolvedVariantId)
+    : cabinet;
+
+  return {
+    catalogId: getStarterCabinetDefinitionId(cabinet),
+    defaultVariantId: sourceDefinition?.defaultVariantId ?? cabinet?.defaultVariantId ?? null,
+    activeVariantId: resolvedCabinet?.activeVariantId ?? resolvedVariantId ?? cabinet?.activeVariantId ?? null,
+    name: resolvedCabinet?.name ?? cabinet?.name ?? "",
+    category: resolvedCabinet?.category ?? cabinet?.category ?? null,
+    catalogFamily: resolveStarterCabinetFamilyId(resolvedCabinet ?? sourceDefinition ?? cabinet),
+    model: resolvedCabinet?.model ?? sourceDefinition?.model ?? cabinet?.model ?? null,
+    availableWidths: sourceDefinition?.availableWidths ?? cabinet?.availableWidths ?? [],
+    availableHeights: sourceDefinition?.availableHeights ?? cabinet?.availableHeights ?? [],
+    width: resolvedCabinet?.width ?? cabinet?.width ?? null,
+    height: resolvedCabinet?.height ?? cabinet?.height ?? null,
+    depth: resolvedCabinet?.depth ?? cabinet?.depth ?? null,
+    price: resolvedCabinet?.price ?? cabinet?.price ?? null,
+    size: resolvedCabinet?.size ?? cabinet?.size ?? null,
+  };
+};
+
+const getWidthStepVariants = (cabinet) => {
+  const sourceDefinition = resolveStarterCabinetDefinition(cabinet);
+  const resolvedInstance = resolveStarterCabinetInstance(cabinet);
+
+  if (!sourceDefinition || !resolvedInstance) {
+    return [];
+  }
+
+  return sourceDefinition.variants.filter(
+    (variant) => variant.height === resolvedInstance.height && variant.depth === resolvedInstance.depth,
+  );
+};
+
+export const resolveStarterCabinetWidthStep = (cabinet, direction) => {
+  const resolvedInstance = resolveStarterCabinetInstance(cabinet);
+  const widthStepVariants = getWidthStepVariants(cabinet);
+
+  if (!resolvedInstance || widthStepVariants.length === 0) {
+    return null;
+  }
+
+  const currentVariantIndex = widthStepVariants.findIndex(
+    (variant) =>
+      variant.id === resolvedInstance.activeVariantId ||
+      (variant.width === resolvedInstance.width &&
+        variant.height === resolvedInstance.height &&
+        variant.depth === resolvedInstance.depth),
+  );
+
+  if (currentVariantIndex === -1) {
+    return null;
+  }
+
+  const nextVariantIndex =
+    direction === "previous" ? currentVariantIndex - 1 : direction === "next" ? currentVariantIndex + 1 : -1;
+  const nextVariant = widthStepVariants[nextVariantIndex];
+
+  return nextVariant ? resolveStarterCabinetInstance(cabinet, { variantId: nextVariant.id }) : null;
+};
+
 export const getStarterCabinet = (catalogId) => starterCabinetLookup[catalogId] ?? starterCabinetCatalog[0];

@@ -5,6 +5,7 @@ import {
   createPlacementValidationResult,
   createPlacementPreview,
   createCupboard,
+  getCupboardWidthStepOutcome,
   getWallAlignedRotation,
   validatePlacementCandidate,
 } from "../model/placement";
@@ -251,6 +252,34 @@ export const cupboardReducer = (state, action) => {
         activeMove: null,
         placementPreview: null,
         selectedCupboardId: null,
+      };
+    }
+
+    case "STEP_SELECTED_CUPBOARD_WIDTH": {
+      if (state.selectedCupboardId === null || state.activeMove || state.placementPreview) {
+        return state;
+      }
+
+      const selectedCupboard = findCupboardById(state.cupboards, state.selectedCupboardId);
+
+      if (!selectedCupboard) {
+        return state;
+      }
+
+      const widthStepOutcome = getCupboardWidthStepOutcome({
+        cupboard: selectedCupboard,
+        direction: action.payload.direction,
+        roomBounds: action.payload.roomBounds,
+        cupboards: state.cupboards,
+      });
+
+      if (!widthStepOutcome.isAvailable || !widthStepOutcome.cupboard) {
+        return state;
+      }
+
+      return {
+        ...state,
+        cupboards: updateCupboardById(state.cupboards, selectedCupboard.id, () => widthStepOutcome.cupboard),
       };
     }
 

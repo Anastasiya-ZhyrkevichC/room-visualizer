@@ -26,6 +26,12 @@ export const CupboardProvider = ({ children }) => {
         dispatch({ type: "UPDATE_CUPBOARD_MOVE", payload: { ...movement, roomBounds: bounds } }),
       finishCupboardMove: () => dispatch({ type: "FINISH_CUPBOARD_MOVE" }),
       cancelCupboardMove: () => dispatch({ type: "CANCEL_CUPBOARD_MOVE" }),
+      stepSelectedCupboardWidth: (direction) =>
+        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction, roomBounds: bounds } }),
+      decreaseSelectedCupboardWidth: () =>
+        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction: "previous", roomBounds: bounds } }),
+      increaseSelectedCupboardWidth: () =>
+        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction: "next", roomBounds: bounds } }),
       rotateSelectedCupboard: () => dispatch({ type: "ROTATE_SELECTED_CUPBOARD", payload: { roomBounds: bounds } }),
       deleteSelectedCupboard: () => dispatch({ type: "DELETE_SELECTED_CUPBOARD" }),
     }),

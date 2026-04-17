@@ -7,9 +7,10 @@ import {
 } from "../../cupboards/model/catalog";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import {
+  CATALOG_PLACEMENT_CUE,
   formatCatalogModulePrice,
+  formatCatalogPlacementHint,
   formatModuleDepth,
-  formatModuleDimensions,
   formatModuleHeightOptions,
   formatModuleWidthOptions,
 } from "../lib/roomFormatting";
@@ -146,9 +147,7 @@ const CabinetCatalogPanel = () => {
                       const heightOptionsLabel = formatModuleHeightOptions(cabinet);
                       const depthLabel = formatModuleDepth(defaultVariant);
                       const priceLabel = formatCatalogModulePrice(cabinet);
-                      const placementHint = `Places as ${formatModuleDimensions(
-                        defaultVariant,
-                      )}. Resize after selection.`;
+                      const placementHint = formatCatalogPlacementHint(defaultVariant);
 
                       return (
                         <article
@@ -185,7 +184,7 @@ const CabinetCatalogPanel = () => {
                                 •
                               </span>
                               <span className="catalog-row__placement-cue" title={placementHint}>
-                                Places smallest first, resize after selection
+                                {CATALOG_PLACEMENT_CUE}
                               </span>
                             </div>
                           </div>

@@ -5,10 +5,14 @@ import { getCupboardFootprint, getCupboardRotationDegrees } from "../../cupboard
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { convertMetersToMillimeters } from "../../../lib/units";
 import {
+  HEIGHT_OPTIONS_REFERENCE_NOTE,
   formatMillimeterTuple,
   formatModuleDimensions,
   formatModuleFamily,
+  formatModuleHeightOptions,
+  formatModuleWidthOptions,
   formatPrototypePrice,
+  formatSelectionResizeHint,
   formatSelectionPosition,
 } from "../lib/roomFormatting";
 
@@ -25,6 +29,8 @@ const SelectionInspectorPanel = () => {
         convertMetersToMillimeters(selectedCupboardFootprint.depth),
       ]
     : null;
+  const supportedWidthsLabel = selectedCupboard ? formatModuleWidthOptions(selectedCupboard) : "";
+  const supportedHeightsLabel = selectedCupboard ? formatModuleHeightOptions(selectedCupboard) : "";
 
   return (
     <section className="panel-card">
@@ -41,7 +47,9 @@ const SelectionInspectorPanel = () => {
             <p className="selection-panel__meta">
               {formatModuleFamily(selectedCupboard)} · {formatPrototypePrice(selectedCupboard.price)}
             </p>
-            <p className="selection-panel__copy">Drag this cabinet in the 3D room to move it along its current wall.</p>
+            <p className="selection-panel__copy">
+              {formatSelectionResizeHint()} {HEIGHT_OPTIONS_REFERENCE_NOTE}. Drag this cabinet along its current wall.
+            </p>
           </div>
 
           <div className="selection-details">
@@ -50,8 +58,20 @@ const SelectionInspectorPanel = () => {
               <strong className="selection-details__value">{formatModuleFamily(selectedCupboard)}</strong>
             </div>
             <div className="selection-details__item">
-              <span className="selection-details__label">Cabinet size</span>
+              <span className="selection-details__label">Active cabinet size</span>
               <strong className="selection-details__value">{formatModuleDimensions(selectedCupboard)}</strong>
+            </div>
+            <div className="selection-details__item">
+              <span className="selection-details__label">Supported widths</span>
+              <strong className="selection-details__value">{supportedWidthsLabel}</strong>
+            </div>
+            <div className="selection-details__item">
+              <span className="selection-details__label">Supported heights</span>
+              <strong className="selection-details__value">{supportedHeightsLabel}</strong>
+            </div>
+            <div className="selection-details__item">
+              <span className="selection-details__label">Height editing</span>
+              <strong className="selection-details__value">{HEIGHT_OPTIONS_REFERENCE_NOTE}</strong>
             </div>
             <div className="selection-details__item">
               <span className="selection-details__label">Prototype price</span>

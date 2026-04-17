@@ -148,4 +148,24 @@ describe("planner stage messaging", () => {
       isStageInvalid: false,
     });
   });
+
+  it("uses the shared width-resize guidance when a cabinet is selected but not moving", () => {
+    const viewModel = getPlannerStageViewModel({
+      activeMove: null,
+      isMoveActive: false,
+      isPlacementActive: false,
+      placementPreview: null,
+      selectedCupboard: {
+        name: "Double-door base cabinet",
+        wall: BACK_WALL_ID,
+      },
+    });
+
+    expect(viewModel).toEqual({
+      selectionBadge: "Double-door base cabinet selected",
+      stageHint:
+        "Use the in-scene width arrows to step through supported widths, or drag it in the scene to reposition it along the back wall.",
+      isStageInvalid: false,
+    });
+  });
 });

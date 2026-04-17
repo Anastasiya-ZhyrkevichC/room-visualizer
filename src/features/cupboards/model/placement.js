@@ -1,5 +1,5 @@
 import { getCupboardFootprint } from "./geometry";
-import { resolveStarterCabinetDefinitionSnapshot, resolveStarterCabinetFamilyId } from "./catalog";
+import { resolveStarterCabinetInstance, resolveStarterCabinetWidthStep } from "./catalog";
 
 export const CABINET_GAP = 0.08;
 export const BACK_WALL_ID = "back";
@@ -34,19 +34,9 @@ const getBottomRight = (cupboard) => {
 
 export const createCupboard = ({ id, cabinet, position, rotation = 0, wall = BACK_WALL_ID }) => ({
   id,
-  catalogId: cabinet.catalogId ?? cabinet.id,
-  activeVariantId: cabinet.activeVariantId ?? null,
-  name: cabinet.name,
-  category: cabinet.category,
-  catalogFamily: resolveStarterCabinetFamilyId(cabinet),
-  model: cabinet.model,
-  availableWidths: cabinet.availableWidths ?? [],
-  availableHeights: cabinet.availableHeights ?? [],
-  width: cabinet.width,
-  height: cabinet.height,
-  depth: cabinet.depth,
-  price: cabinet.price,
-  size: cabinet.size,
+  ...resolveStarterCabinetInstance(cabinet, {
+    variantId: cabinet?.activeVariantId ?? null,
+  }),
   position,
   rotation,
   wall,
@@ -554,32 +544,68 @@ export const getPlacementValidationReasonLabel = (reason) => {
 };
 
 export const createPlacementPreview = (cabinet, roomBounds) => {
-  const resolvedCabinet = resolveStarterCabinetDefinitionSnapshot(cabinet) ?? cabinet;
+  const resolvedCabinet =
+    resolveStarterCabinetInstance(cabinet, {
+      useDefaultVariant: true,
+    }) ?? cabinet;
+  const initialRotation = getWallAlignedRotation(BACK_WALL_ID);
+  const initialPosition = getWallAlignedPreviewPosition(resolvedCabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID);
 
   return {
-    catalogId: resolvedCabinet.id,
-    activeVariantId: resolvedCabinet.activeVariantId ?? null,
-    name: resolvedCabinet.name,
-    category: resolvedCabinet.category,
-    catalogFamily: resolveStarterCabinetFamilyId(resolvedCabinet),
-    model: resolvedCabinet.model,
-    availableWidths: resolvedCabinet.availableWidths ?? [],
-    availableHeights: resolvedCabinet.availableHeights ?? [],
-    width: resolvedCabinet.width,
-    height: resolvedCabinet.height,
-    depth: resolvedCabinet.depth,
-    price: resolvedCabinet.price,
-    size: resolvedCabinet.size,
-    rotation: getWallAlignedRotation(BACK_WALL_ID),
+    ...resolvedCabinet,
+    rotation: initialRotation,
     wall: null,
-    position: getWallAlignedPreviewPosition(resolvedCabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
+    position: initialPosition,
     validation: createPlacementValidationResult({
       isValid: false,
       reason: PLACEMENT_VALIDATION_REASONS.UNSUPPORTED_WALL,
       wall: null,
-      rotation: getWallAlignedRotation(BACK_WALL_ID),
-      snappedPosition: getWallAlignedPreviewPosition(resolvedCabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID),
+      rotation: initialRotation,
+      snappedPosition: initialPosition,
     }),
+  };
+};
+
+export const getCupboardWidthStepOutcome = ({ cupboard, direction, roomBounds, cupboards = [] }) => {
+  const resizedCabinet = resolveStarterCabinetWidthStep(cupboard, direction);
+
+  if (!resizedCabinet) {
+    return {
+      cupboard: null,
+      validation: null,
+      isAvailable: false,
+    };
+  }
+
+  const resizedCandidate = {
+    ...cupboard,
+    ...resizedCabinet,
+  };
+  const validation = validatePlacementCandidate({
+    candidate: resizedCandidate,
+    point: cupboard.position,
+    roomBounds,
+    wall: cupboard.wall,
+    cupboards,
+  });
+  const currentSpanCenter = getWallSpanCenter(cupboard.position, cupboard.wall);
+  const resizedSpanCenter = validation?.snappedPosition
+    ? getWallSpanCenter(validation.snappedPosition, cupboard.wall)
+    : null;
+  const keepsCurrentSpanCenter =
+    Number.isFinite(currentSpanCenter) &&
+    Number.isFinite(resizedSpanCenter) &&
+    Math.abs(currentSpanCenter - resizedSpanCenter) <= OVERLAP_EPSILON;
+
+  return {
+    cupboard: {
+      ...resizedCandidate,
+      position: validation?.snappedPosition ?? cupboard.position,
+      rotation: validation?.rotation ?? cupboard.rotation,
+      wall: validation?.wall ?? cupboard.wall,
+    },
+    validation,
+    isAvailable: Boolean(validation?.isValid && keepsCurrentSpanCenter),
   };
 };
 
