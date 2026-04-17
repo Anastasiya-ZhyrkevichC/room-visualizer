@@ -1,11 +1,22 @@
 import { convertMetersToMillimeters } from "../../../lib/units";
 import { getStarterCabinetFamilyLabel } from "../../cupboards/model/catalog";
 
-const usdFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-});
+const currencyFormatterCache = new Map();
+
+const getCurrencyFormatter = (currency = "USD") => {
+  if (!currencyFormatterCache.has(currency)) {
+    currencyFormatterCache.set(
+      currency,
+      new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency,
+        maximumFractionDigits: 0,
+      }),
+    );
+  }
+
+  return currencyFormatterCache.get(currency);
+};
 
 const moduleCategoryLabels = {
   base: "Base cabinet",
@@ -49,17 +60,21 @@ export const formatModuleCategory = (category) => moduleCategoryLabels[category]
 export const formatModuleFamily = (module) =>
   getStarterCabinetFamilyLabel(module) || formatModuleCategory(module?.category);
 
-export const formatPrototypePrice = (price) => usdFormatter.format(price);
+export const formatPrototypePrice = (price, currency = "USD") =>
+  getCurrencyFormatter(currency).format(Number.isFinite(price) ? price : 0);
 
 export const formatCatalogModulePrice = (module) => {
   const startingPrice = Number.isFinite(module?.startingPrice) ? module.startingPrice : module?.price;
   const maxPrice = Number.isFinite(module?.maxPrice) ? module.maxPrice : startingPrice;
+  const currency = module?.currency ?? "USD";
 
   if (!Number.isFinite(startingPrice)) {
     return "";
   }
 
-  return maxPrice > startingPrice ? `From ${formatPrototypePrice(startingPrice)}` : formatPrototypePrice(startingPrice);
+  return maxPrice > startingPrice
+    ? `From ${formatPrototypePrice(startingPrice, currency)}`
+    : formatPrototypePrice(startingPrice, currency);
 };
 
 export const formatCatalogPlacementHint = (module) =>

@@ -4,9 +4,159 @@
   margin-top: 18px;
 }
 
+.summary-list__item strong {
+  line-height: 1.45;
+}
+
 .summary-list__item span {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--planner-text-soft);
+}
+
+.pricing-summary {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.pricing-summary__stats {
+  margin-top: 18px;
+}
+
+.pricing-summary__empty {
+  margin-top: 0;
+}
+
+.pricing-summary__list {
+  display: grid;
+  gap: 12px;
+  max-height: min(42vh, 360px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.pricing-summary__item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid var(--planner-border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.48);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.pricing-summary__item:hover,
+.pricing-summary__item:focus-visible {
+  border-color: rgba(182, 89, 50, 0.34);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 14px 32px rgba(118, 83, 49, 0.12);
+  transform: translateY(-1px);
+}
+
+.pricing-summary__item:focus-visible {
+  outline: 2px solid rgba(182, 89, 50, 0.3);
+  outline-offset: 2px;
+}
+
+.pricing-summary__item--selected {
+  border-color: rgba(162, 76, 41, 0.42);
+  background: rgba(255, 248, 240, 0.94);
+  box-shadow: 0 18px 38px rgba(126, 82, 44, 0.14);
+}
+
+.pricing-summary__item-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.pricing-summary__instance {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--planner-highlight);
+}
+
+.pricing-summary__name {
+  line-height: 1.45;
+}
+
+.pricing-summary__dimensions {
+  font-size: 0.88rem;
+  color: var(--planner-text-soft);
+}
+
+.pricing-summary__price {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.pricing-summary__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid rgba(162, 76, 41, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(255, 247, 238, 0.96) 0%, rgba(246, 231, 214, 0.92) 100%);
+}
+
+.pricing-summary__footer-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--planner-text-soft);
+}
+
+.pricing-summary__footer-note {
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--planner-text-soft);
+}
+
+.pricing-summary__footer-value {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+  line-height: 1;
+}
+
+@media (max-width: 960px) {
+  .pricing-summary__list {
+    max-height: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .pricing-summary__item,
+  .pricing-summary__footer {
+    padding: 16px;
+  }
+
+  .pricing-summary__item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pricing-summary__price {
+    flex-shrink: 1;
+  }
 }

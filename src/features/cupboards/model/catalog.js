@@ -1,5 +1,8 @@
 import { convertMillimetersToMeters } from "../../../lib/units";
 import { resolveCabinetModel } from "./renderModel";
+import { STRAIGHT_RUN_TABLE_TOP_PROFILE } from "./tableTop";
+
+export const STARTER_CABINET_PRICE_CURRENCY = "USD";
 
 export const starterCabinetCatalogFamilies = [
   {
@@ -125,6 +128,8 @@ const createStarterCabinetDefinition = ({
   category,
   catalogFamily,
   model,
+  currency = STARTER_CABINET_PRICE_CURRENCY,
+  tableTopProfile = null,
   variants,
   activeVariantId = null,
 }) => {
@@ -146,6 +151,8 @@ const createStarterCabinetDefinition = ({
     category,
     catalogFamily: resolveStarterCabinetFamilyId({ catalogFamily, category }),
     model: resolveCabinetModel(category, model),
+    currency,
+    tableTopProfile,
     variants: normalizedVariants,
     availableWidths: getSortedUniqueValues(normalizedVariants.map((variant) => variant.width)),
     availableHeights: getSortedUniqueValues(normalizedVariants.map((variant) => variant.height)),
@@ -195,6 +202,7 @@ export const starterCabinetCatalog = [
         price: 240,
       },
     ],
+    tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
     model: {
       shelfCount: 1,
       front: {
@@ -234,6 +242,7 @@ export const starterCabinetCatalog = [
         price: 390,
       },
     ],
+    tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
     model: {
       shelfCount: 0,
       front: {
@@ -269,6 +278,7 @@ export const starterCabinetCatalog = [
         price: 760,
       },
     ],
+    tableTopProfile: null,
     model: {
       shelfCount: 4,
       legs: null,
@@ -352,6 +362,10 @@ export const resolveStarterCabinetInstance = (cabinet, { variantId = null, useDe
     category: resolvedCabinet?.category ?? cabinet?.category ?? null,
     catalogFamily: resolveStarterCabinetFamilyId(resolvedCabinet ?? sourceDefinition ?? cabinet),
     model: resolvedCabinet?.model ?? sourceDefinition?.model ?? cabinet?.model ?? null,
+    currency:
+      resolvedCabinet?.currency ?? sourceDefinition?.currency ?? cabinet?.currency ?? STARTER_CABINET_PRICE_CURRENCY,
+    tableTopProfile:
+      resolvedCabinet?.tableTopProfile ?? sourceDefinition?.tableTopProfile ?? cabinet?.tableTopProfile ?? null,
     availableWidths: sourceDefinition?.availableWidths ?? cabinet?.availableWidths ?? [],
     availableHeights: sourceDefinition?.availableHeights ?? cabinet?.availableHeights ?? [],
     width: resolvedCabinet?.width ?? cabinet?.width ?? null,

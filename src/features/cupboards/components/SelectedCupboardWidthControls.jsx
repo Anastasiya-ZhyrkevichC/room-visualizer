@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import { getCupboardWidthStepOutcome } from "../model/placement";
+import { CUPBOARD_RESIZE_SIDES, getCupboardWidthStepOutcome } from "../model/placement";
 import { useCupboards } from "../state/CupboardProvider";
 import { useRoomScene } from "../../room/context/RoomSceneContext";
 
@@ -67,8 +67,14 @@ const WidthStepButton = ({ direction, disabled = false, onStep, position }) => (
 
 const SelectedCupboardWidthControls = ({ cupboard }) => {
   const { bounds } = useRoomScene();
-  const { cupboards, decreaseSelectedCupboardWidth, increaseSelectedCupboardWidth, isMoveActive, isPlacementActive } =
-    useCupboards();
+  const {
+    cupboards,
+    decreaseSelectedCupboardWidth,
+    increaseSelectedCupboardWidth,
+    isMoveActive,
+    isPlacementActive,
+    isResizeActive,
+  } = useCupboards();
 
   const previousWidthStep = useMemo(
     () =>
@@ -76,6 +82,7 @@ const SelectedCupboardWidthControls = ({ cupboard }) => {
         ? getCupboardWidthStepOutcome({
             cupboard,
             direction: "previous",
+            side: CUPBOARD_RESIZE_SIDES.LEFT,
             roomBounds: bounds,
             cupboards,
           })
@@ -88,6 +95,7 @@ const SelectedCupboardWidthControls = ({ cupboard }) => {
         ? getCupboardWidthStepOutcome({
             cupboard,
             direction: "next",
+            side: CUPBOARD_RESIZE_SIDES.RIGHT,
             roomBounds: bounds,
             cupboards,
           })
@@ -95,7 +103,7 @@ const SelectedCupboardWidthControls = ({ cupboard }) => {
     [bounds, cupboard, cupboards],
   );
 
-  if (!cupboard || isMoveActive || isPlacementActive) {
+  if (!cupboard || isMoveActive || isPlacementActive || isResizeActive) {
     return null;
   }
 
@@ -111,13 +119,13 @@ const SelectedCupboardWidthControls = ({ cupboard }) => {
       <WidthStepButton
         direction="previous"
         disabled={!previousWidthStep?.isAvailable}
-        onStep={decreaseSelectedCupboardWidth}
+        onStep={() => decreaseSelectedCupboardWidth(CUPBOARD_RESIZE_SIDES.LEFT)}
         position={[-horizontalOffset, verticalOffset, depthOffset]}
       />
       <WidthStepButton
         direction="next"
         disabled={!nextWidthStep?.isAvailable}
-        onStep={increaseSelectedCupboardWidth}
+        onStep={() => increaseSelectedCupboardWidth(CUPBOARD_RESIZE_SIDES.RIGHT)}
         position={[horizontalOffset, verticalOffset, depthOffset]}
       />
     </group>

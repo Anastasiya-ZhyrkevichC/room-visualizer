@@ -1,7 +1,9 @@
 import {
   alignCupboardToBackWall,
   BACK_WALL_ID,
+  CUPBOARD_RESIZE_SIDES,
   getCupboardWidthStepOutcome,
+  getCupboardResizeDragOutcome,
   MAGNETIC_ATTACHMENT_EDGES,
   PLACEMENT_VALIDATION_REASONS,
   SAME_WALL_MAGNETIC_TOLERANCE,
@@ -20,6 +22,12 @@ import {
   validatePlacementCandidate,
 } from "./placement";
 import { resolveStarterCabinetInstance } from "./catalog";
+import {
+  cupboardSupportsTableTop,
+  resolveCupboardTableTopSupportSurface,
+  TABLE_TOP_MERGE_STRATEGIES,
+  TABLE_TOP_PROFILE_SHAPES,
+} from "./tableTop";
 
 const roomBounds = {
   left: -2,
@@ -34,6 +42,29 @@ const expectPositionToMatch = (receivedPosition, expectedPosition) => {
   expect(receivedPosition.x).toBeCloseTo(expectedPosition.x);
   expect(receivedPosition.y).toBeCloseTo(expectedPosition.y);
   expect(receivedPosition.z).toBeCloseTo(expectedPosition.z);
+};
+
+const expectBoundsToMatch = (receivedBounds, expectedBounds) => {
+  expect(receivedBounds.minX).toBeCloseTo(expectedBounds.minX);
+  expect(receivedBounds.maxX).toBeCloseTo(expectedBounds.maxX);
+  expect(receivedBounds.minZ).toBeCloseTo(expectedBounds.minZ);
+  expect(receivedBounds.maxZ).toBeCloseTo(expectedBounds.maxZ);
+};
+
+const expectTableTopSupportSurfaceToMatch = (receivedSurface, expectedSurface) => {
+  expect(receivedSurface).toMatchObject({
+    wall: expectedSurface.wall,
+    shape: expectedSurface.shape,
+    mergeStrategy: expectedSurface.mergeStrategy,
+  });
+  expect(receivedSurface.start).toBeCloseTo(expectedSurface.start);
+  expect(receivedSurface.end).toBeCloseTo(expectedSurface.end);
+  expect(receivedSurface.center).toBeCloseTo(expectedSurface.center);
+  expect(receivedSurface.length).toBeCloseTo(expectedSurface.length);
+  expect(receivedSurface.depth).toBeCloseTo(expectedSurface.depth);
+  expect(receivedSurface.topY).toBeCloseTo(expectedSurface.topY);
+  expectPositionToMatch(receivedSurface.position, expectedSurface.position);
+  expectBoundsToMatch(receivedSurface.bounds, expectedSurface.bounds);
 };
 
 const createPlacedCupboardFixture = ({
@@ -118,6 +149,10 @@ describe("cupboard placement", () => {
       z: -1.72,
     });
     expect(firstCupboard.catalogFamily).toBe("base-doors");
+    expect(firstCupboard.tableTopProfile).toEqual({
+      shape: TABLE_TOP_PROFILE_SHAPES.STRAIGHT,
+      mergeStrategy: TABLE_TOP_MERGE_STRATEGIES.SAME_WALL,
+    });
     expect(firstCupboard.model).toMatchObject({
       front: {
         type: "doubleDoor",
@@ -143,6 +178,10 @@ describe("cupboard placement", () => {
       name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
+      tableTopProfile: {
+        shape: TABLE_TOP_PROFILE_SHAPES.STRAIGHT,
+        mergeStrategy: TABLE_TOP_MERGE_STRATEGIES.SAME_WALL,
+      },
       availableWidths: [600, 800, 900],
       availableHeights: [720],
       width: 600,
@@ -202,6 +241,10 @@ describe("cupboard placement", () => {
       name: "Three-drawer base cabinet",
       category: "drawer",
       catalogFamily: "base-drawers",
+      tableTopProfile: {
+        shape: TABLE_TOP_PROFILE_SHAPES.STRAIGHT,
+        mergeStrategy: TABLE_TOP_MERGE_STRATEGIES.SAME_WALL,
+      },
       availableWidths: [600, 800, 900],
       availableHeights: [720],
       price: 290,
@@ -231,6 +274,7 @@ describe("cupboard placement", () => {
     const resizeOutcome = getCupboardWidthStepOutcome({
       cupboard: createResizableCupboardFixture(),
       direction: "next",
+      side: CUPBOARD_RESIZE_SIDES.RIGHT,
       roomBounds,
       cupboards: [],
     });
@@ -250,13 +294,13 @@ describe("cupboard placement", () => {
       collidingCupboardIds: [],
     });
     expectPositionToMatch(resizeOutcome.cupboard.position, {
-      x: 0,
+      x: 0.025,
       y: -1.14,
       z: -1.72,
     });
   });
 
-  it("marks the next width step unavailable when it would only fit by shifting away from a neighbor", () => {
+  it("marks the next right-side width step unavailable when it would overlap a neighbor from the fixed edge", () => {
     const resizeOutcome = getCupboardWidthStepOutcome({
       cupboard: createResizableCupboardFixture({
         id: 10,
@@ -264,6 +308,7 @@ describe("cupboard placement", () => {
         position: { x: -0.6, y: -1.14, z: -1.72 },
       }),
       direction: "next",
+      side: CUPBOARD_RESIZE_SIDES.RIGHT,
       roomBounds,
       cupboards: [
         createResizableCupboardFixture({
@@ -276,24 +321,19 @@ describe("cupboard placement", () => {
 
     expect(resizeOutcome.isAvailable).toBe(false);
     expect(resizeOutcome.validation).toMatchObject({
-      isValid: true,
-      reason: null,
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.OVERLAP,
       wall: BACK_WALL_ID,
-      isMagneticallySnapped: true,
-      magneticAttachment: {
-        cupboardId: 11,
-        edge: MAGNETIC_ATTACHMENT_EDGES.START,
-      },
-      collidingCupboardIds: [],
+      collidingCupboardIds: [11],
     });
-    expectPositionToMatch(resizeOutcome.validation.snappedPosition, {
-      x: -0.625,
+    expectPositionToMatch(resizeOutcome.cupboard.position, {
+      x: -0.575,
       y: -1.14,
       z: -1.72,
     });
   });
 
-  it("marks the next width step unavailable when expanding would push the cabinet off its current wall span", () => {
+  it("marks the next right-side width step unavailable when expanding would push the moving edge past the wall bounds", () => {
     const resizeOutcome = getCupboardWidthStepOutcome({
       cupboard: createResizableCupboardFixture({
         id: 12,
@@ -301,19 +341,98 @@ describe("cupboard placement", () => {
         position: { x: 1.85, y: -1.14, z: -1.72 },
       }),
       direction: "next",
+      side: CUPBOARD_RESIZE_SIDES.RIGHT,
       roomBounds,
       cupboards: [],
     });
 
     expect(resizeOutcome.isAvailable).toBe(false);
     expect(resizeOutcome.validation).toMatchObject({
-      isValid: true,
-      reason: null,
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.WALL_BOUNDS,
       wall: BACK_WALL_ID,
       collidingCupboardIds: [],
     });
-    expectPositionToMatch(resizeOutcome.validation.snappedPosition, {
-      x: 1.825,
+    expectPositionToMatch(resizeOutcome.cupboard.position, {
+      x: 1.875,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("maps the left handle on the left wall to the wall-span end so the right edge stays fixed", () => {
+    const resizeOutcome = getCupboardWidthStepOutcome({
+      cupboard: createResizableCupboardFixture({
+        wall: LEFT_WALL_ID,
+        rotation: getWallAlignedRotation(LEFT_WALL_ID),
+        position: { x: -1.72, y: -1.14, z: 0 },
+      }),
+      direction: "next",
+      side: CUPBOARD_RESIZE_SIDES.LEFT,
+      roomBounds,
+      cupboards: [],
+    });
+
+    expect(resizeOutcome.isAvailable).toBe(true);
+    expect(resizeOutcome.cupboard).toMatchObject({
+      activeVariantId: "350x720x560",
+      wall: LEFT_WALL_ID,
+    });
+    expectPositionToMatch(resizeOutcome.cupboard.position, {
+      x: -1.72,
+      y: -1.14,
+      z: 0.025,
+    });
+  });
+
+  it("maps the left handle on the right wall to the wall-span start so the right edge stays fixed", () => {
+    const resizeOutcome = getCupboardWidthStepOutcome({
+      cupboard: createResizableCupboardFixture({
+        wall: RIGHT_WALL_ID,
+        rotation: getWallAlignedRotation(RIGHT_WALL_ID),
+        position: { x: 1.72, y: -1.14, z: 0 },
+      }),
+      direction: "next",
+      side: CUPBOARD_RESIZE_SIDES.LEFT,
+      roomBounds,
+      cupboards: [],
+    });
+
+    expect(resizeOutcome.isAvailable).toBe(true);
+    expect(resizeOutcome.cupboard).toMatchObject({
+      activeVariantId: "350x720x560",
+      wall: RIGHT_WALL_ID,
+    });
+    expectPositionToMatch(resizeOutcome.cupboard.position, {
+      x: 1.72,
+      y: -1.14,
+      z: -0.025,
+    });
+  });
+
+  it("snaps drag-resize to the nearest supported width while keeping the opposite edge fixed", () => {
+    const resizeOutcome = getCupboardResizeDragOutcome({
+      cupboard: createResizableCupboardFixture({
+        activeVariantId: "350x720x560",
+        position: { x: 0.025, y: -1.14, z: -1.72 },
+      }),
+      point: {
+        x: 0.12,
+        y: 0,
+      },
+      side: CUPBOARD_RESIZE_SIDES.RIGHT,
+      roomBounds,
+      cupboards: [],
+    });
+
+    expect(resizeOutcome.isAvailable).toBe(true);
+    expect(resizeOutcome.cupboard).toMatchObject({
+      activeVariantId: "300x720x560",
+      width: 300,
+      wall: BACK_WALL_ID,
+    });
+    expectPositionToMatch(resizeOutcome.cupboard.position, {
+      x: 0,
       y: -1.14,
       z: -1.72,
     });
@@ -676,5 +795,96 @@ describe("cupboard placement", () => {
       y: -1.14,
       z: -1.55,
     });
+  });
+});
+
+describe("tabletop support surface", () => {
+  it("resolves a same-wall straight tabletop support surface for base cupboards", () => {
+    const cupboard = createCupboard({
+      id: 1,
+      cabinet: {
+        catalogId: "base-double-door",
+        activeVariantId: "600x720x560",
+      },
+      position: { x: 0, y: -1.14, z: -1.72 },
+      rotation: getWallAlignedRotation(BACK_WALL_ID),
+      wall: BACK_WALL_ID,
+    });
+
+    expect(cupboardSupportsTableTop(cupboard)).toBe(true);
+    expectTableTopSupportSurfaceToMatch(resolveCupboardTableTopSupportSurface(cupboard), {
+      wall: BACK_WALL_ID,
+      shape: TABLE_TOP_PROFILE_SHAPES.STRAIGHT,
+      mergeStrategy: TABLE_TOP_MERGE_STRATEGIES.SAME_WALL,
+      start: -0.3,
+      end: 0.3,
+      center: 0,
+      length: 0.6,
+      depth: 0.56,
+      topY: -0.78,
+      position: {
+        x: 0,
+        y: -0.78,
+        z: -1.72,
+      },
+      bounds: {
+        minX: -0.3,
+        maxX: 0.3,
+        minZ: -2,
+        maxZ: -1.44,
+      },
+    });
+  });
+
+  it("keeps tabletop support geometry wall-aware when a cupboard rotates onto the left wall", () => {
+    const cupboard = createCupboard({
+      id: 2,
+      cabinet: {
+        catalogId: "base-three-drawer",
+        activeVariantId: "900x720x560",
+      },
+      position: { x: -1.72, y: -1.14, z: -0.5 },
+      rotation: getWallAlignedRotation(LEFT_WALL_ID),
+      wall: LEFT_WALL_ID,
+    });
+
+    expectTableTopSupportSurfaceToMatch(resolveCupboardTableTopSupportSurface(cupboard), {
+      wall: LEFT_WALL_ID,
+      shape: TABLE_TOP_PROFILE_SHAPES.STRAIGHT,
+      mergeStrategy: TABLE_TOP_MERGE_STRATEGIES.SAME_WALL,
+      start: -0.95,
+      end: -0.05,
+      center: -0.5,
+      length: 0.9,
+      depth: 0.56,
+      topY: -0.78,
+      position: {
+        x: -1.72,
+        y: -0.78,
+        z: -0.5,
+      },
+      bounds: {
+        minX: -2,
+        maxX: -1.44,
+        minZ: -0.95,
+        maxZ: -0.05,
+      },
+    });
+  });
+
+  it("leaves tall cupboards out of tabletop support until they are deliberately enabled", () => {
+    const cupboard = createCupboard({
+      id: 3,
+      cabinet: {
+        catalogId: "tall-pantry",
+        activeVariantId: "600x2100x600",
+      },
+      position: { x: 0, y: -0.45, z: -1.7 },
+      rotation: getWallAlignedRotation(BACK_WALL_ID),
+      wall: BACK_WALL_ID,
+    });
+
+    expect(cupboardSupportsTableTop(cupboard)).toBe(false);
+    expect(resolveCupboardTableTopSupportSurface(cupboard)).toBeNull();
   });
 });

@@ -5,6 +5,7 @@ import {
   createPlacementValidationResult,
   createPlacementPreview,
   createCupboard,
+  getCupboardResizeDragOutcome,
   getCupboardWidthStepOutcome,
   getWallAlignedRotation,
   validatePlacementCandidate,
@@ -14,6 +15,7 @@ export const initialCupboardState = {
   cupboards: [],
   placementPreview: null,
   activeMove: null,
+  activeResize: null,
   selectedCupboardId: null,
   nextCupboardId: 1,
 };
@@ -31,6 +33,12 @@ const applyValidationToPlacementPreview = (placementPreview, validation) => ({
   validation,
 });
 
+const cloneCupboardSnapshot = (cupboard) => ({
+  ...cupboard,
+  position: cupboard?.position ? { ...cupboard.position } : cupboard?.position,
+  size: Array.isArray(cupboard?.size) ? [...cupboard.size] : cupboard?.size,
+});
+
 const clearActiveMove = (state) => {
   if (!state.activeMove) {
     return state;
@@ -39,6 +47,31 @@ const clearActiveMove = (state) => {
   return {
     ...state,
     activeMove: null,
+  };
+};
+
+const clearActiveResize = (state) => {
+  if (!state.activeResize) {
+    return state;
+  }
+
+  return {
+    ...state,
+    activeResize: null,
+  };
+};
+
+const cancelActiveResize = (state) => {
+  if (!state.activeResize) {
+    return state;
+  }
+
+  return {
+    ...state,
+    cupboards: updateCupboardById(state.cupboards, state.activeResize.cupboardId, () =>
+      cloneCupboardSnapshot(state.activeResize.initialCupboard),
+    ),
+    activeResize: null,
   };
 };
 
@@ -60,7 +93,7 @@ const cancelActiveMove = (state) => {
 export const cupboardReducer = (state, action) => {
   switch (action.type) {
     case "START_PLACEMENT_PREVIEW": {
-      const nextState = cancelActiveMove(state);
+      const nextState = cancelActiveResize(cancelActiveMove(state));
       const cabinet = getStarterCabinet(action.payload.catalogId ?? defaultStarterCabinetId);
 
       return {
@@ -128,7 +161,7 @@ export const cupboardReducer = (state, action) => {
       };
 
     case "SELECT_CUPBOARD": {
-      const nextState = clearActiveMove(state);
+      const nextState = cancelActiveResize(clearActiveMove(state));
 
       return {
         ...nextState,
@@ -138,7 +171,7 @@ export const cupboardReducer = (state, action) => {
     }
 
     case "CLEAR_SELECTION": {
-      const nextState = cancelActiveMove(state);
+      const nextState = cancelActiveResize(cancelActiveMove(state));
 
       return {
         ...nextState,
@@ -148,7 +181,7 @@ export const cupboardReducer = (state, action) => {
     }
 
     case "START_CUPBOARD_MOVE": {
-      const nextState = cancelActiveMove(state);
+      const nextState = cancelActiveResize(cancelActiveMove(state));
       const cupboard = findCupboardById(nextState.cupboards, action.payload.cupboardId);
 
       if (!cupboard) {
@@ -218,8 +251,96 @@ export const cupboardReducer = (state, action) => {
     case "CANCEL_CUPBOARD_MOVE":
       return cancelActiveMove(state);
 
+    case "START_CUPBOARD_RESIZE": {
+      const nextState = cancelActiveResize(cancelActiveMove(state));
+      const cupboard = findCupboardById(nextState.cupboards, action.payload.cupboardId);
+
+      if (!cupboard || (cupboard.availableWidths?.length ?? 0) < 2) {
+        return nextState;
+      }
+
+      return {
+        ...nextState,
+        placementPreview: null,
+        activeResize: {
+          cupboardId: cupboard.id,
+          wall: cupboard.wall,
+          side: action.payload.side,
+          initialCupboard: cloneCupboardSnapshot(cupboard),
+          validation: createPlacementValidationResult({
+            isValid: true,
+            reason: null,
+            wall: cupboard.wall,
+            rotation: cupboard.rotation,
+            snappedPosition: cupboard.position,
+          }),
+        },
+        selectedCupboardId: cupboard.id,
+      };
+    }
+
+    case "UPDATE_CUPBOARD_RESIZE": {
+      if (!state.activeResize) {
+        return state;
+      }
+
+      const currentCupboard = findCupboardById(state.cupboards, state.activeResize.cupboardId);
+
+      if (!currentCupboard) {
+        return clearActiveResize(state);
+      }
+
+      if (action.payload.wall !== state.activeResize.wall || !action.payload.point) {
+        return {
+          ...state,
+          activeResize: {
+            ...state.activeResize,
+            validation: createPlacementValidationResult({
+              isValid: false,
+              reason: null,
+              wall: null,
+              rotation: currentCupboard.rotation,
+              snappedPosition: currentCupboard.position,
+            }),
+          },
+        };
+      }
+
+      const resizeOutcome = getCupboardResizeDragOutcome({
+        cupboard: state.activeResize.initialCupboard,
+        point: action.payload.point,
+        side: state.activeResize.side,
+        roomBounds: action.payload.roomBounds,
+        cupboards: state.cupboards,
+      });
+
+      if (!resizeOutcome.cupboard || !resizeOutcome.validation) {
+        return state;
+      }
+
+      return {
+        ...state,
+        cupboards: updateCupboardById(state.cupboards, currentCupboard.id, () => resizeOutcome.cupboard),
+        activeResize: {
+          ...state.activeResize,
+          validation: resizeOutcome.validation,
+        },
+      };
+    }
+
+    case "FINISH_CUPBOARD_RESIZE": {
+      if (!state.activeResize) {
+        return state;
+      }
+
+      return state.activeResize.validation?.isValid ? clearActiveResize(state) : cancelActiveResize(state);
+    }
+
+    case "CANCEL_CUPBOARD_RESIZE":
+      return cancelActiveResize(state);
+
     case "ROTATE_SELECTED_CUPBOARD": {
-      if (state.selectedCupboardId === null) {
+      if (state.selectedCupboardId === null || state.activeMove || state.activeResize || state.placementPreview) {
         return state;
       }
 
@@ -250,13 +371,14 @@ export const cupboardReducer = (state, action) => {
         ...state,
         cupboards: state.cupboards.filter((cupboard) => cupboard.id !== state.selectedCupboardId),
         activeMove: null,
+        activeResize: null,
         placementPreview: null,
         selectedCupboardId: null,
       };
     }
 
     case "STEP_SELECTED_CUPBOARD_WIDTH": {
-      if (state.selectedCupboardId === null || state.activeMove || state.placementPreview) {
+      if (state.selectedCupboardId === null || state.activeMove || state.activeResize || state.placementPreview) {
         return state;
       }
 
@@ -269,6 +391,7 @@ export const cupboardReducer = (state, action) => {
       const widthStepOutcome = getCupboardWidthStepOutcome({
         cupboard: selectedCupboard,
         direction: action.payload.direction,
+        side: action.payload.side,
         roomBounds: action.payload.roomBounds,
         cupboards: state.cupboards,
       });

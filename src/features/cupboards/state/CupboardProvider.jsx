@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useMemo, useReducer } from "react";
 
 import { useRoomScene } from "../../room/context/RoomSceneContext";
-import { selectSelectedCupboard } from "../selectors";
+import { CUPBOARD_RESIZE_SIDES } from "../model/placement";
+import { selectPricingSummary, selectSelectedCupboard } from "../selectors";
 import { cupboardReducer, initialCupboardState } from "./cupboardReducer";
 
 const CupboardContext = createContext(null);
@@ -10,7 +11,8 @@ export const CupboardProvider = ({ children }) => {
   const { bounds } = useRoomScene();
   const [state, dispatch] = useReducer(cupboardReducer, initialCupboardState);
 
-  const selectedCupboard = useMemo(() => selectSelectedCupboard(state), [state]);
+  const selectedCupboard = useMemo(() => selectSelectedCupboard(state), [state.cupboards, state.selectedCupboardId]);
+  const pricingSummary = useMemo(() => selectPricingSummary(state), [state.cupboards, state.selectedCupboardId]);
   const actions = useMemo(
     () => ({
       startPlacementPreview: (catalogId) =>
@@ -26,12 +28,21 @@ export const CupboardProvider = ({ children }) => {
         dispatch({ type: "UPDATE_CUPBOARD_MOVE", payload: { ...movement, roomBounds: bounds } }),
       finishCupboardMove: () => dispatch({ type: "FINISH_CUPBOARD_MOVE" }),
       cancelCupboardMove: () => dispatch({ type: "CANCEL_CUPBOARD_MOVE" }),
-      stepSelectedCupboardWidth: (direction) =>
-        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction, roomBounds: bounds } }),
-      decreaseSelectedCupboardWidth: () =>
-        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction: "previous", roomBounds: bounds } }),
-      increaseSelectedCupboardWidth: () =>
-        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction: "next", roomBounds: bounds } }),
+      startCupboardResize: (cupboardId, side) =>
+        dispatch({ type: "START_CUPBOARD_RESIZE", payload: { cupboardId, side } }),
+      updateCupboardResize: (resize) =>
+        dispatch({ type: "UPDATE_CUPBOARD_RESIZE", payload: { ...resize, roomBounds: bounds } }),
+      finishCupboardResize: () => dispatch({ type: "FINISH_CUPBOARD_RESIZE" }),
+      cancelCupboardResize: () => dispatch({ type: "CANCEL_CUPBOARD_RESIZE" }),
+      stepSelectedCupboardWidth: (direction, side) =>
+        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction, side, roomBounds: bounds } }),
+      decreaseSelectedCupboardWidth: (side = CUPBOARD_RESIZE_SIDES.LEFT) =>
+        dispatch({
+          type: "STEP_SELECTED_CUPBOARD_WIDTH",
+          payload: { direction: "previous", side, roomBounds: bounds },
+        }),
+      increaseSelectedCupboardWidth: (side = CUPBOARD_RESIZE_SIDES.RIGHT) =>
+        dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction: "next", side, roomBounds: bounds } }),
       rotateSelectedCupboard: () => dispatch({ type: "ROTATE_SELECTED_CUPBOARD", payload: { roomBounds: bounds } }),
       deleteSelectedCupboard: () => dispatch({ type: "DELETE_SELECTED_CUPBOARD" }),
     }),
@@ -43,13 +54,25 @@ export const CupboardProvider = ({ children }) => {
       cupboards: state.cupboards,
       placementPreview: state.placementPreview,
       activeMove: state.activeMove,
+      activeResize: state.activeResize,
       isPlacementActive: Boolean(state.placementPreview),
       isMoveActive: Boolean(state.activeMove),
+      isResizeActive: Boolean(state.activeResize),
       selectedCupboardId: state.selectedCupboardId,
       selectedCupboard,
+      pricingSummary,
       ...actions,
     }),
-    [actions, selectedCupboard, state.activeMove, state.cupboards, state.placementPreview, state.selectedCupboardId],
+    [
+      actions,
+      pricingSummary,
+      selectedCupboard,
+      state.activeMove,
+      state.activeResize,
+      state.cupboards,
+      state.placementPreview,
+      state.selectedCupboardId,
+    ],
   );
 
   return <CupboardContext.Provider value={value}>{children}</CupboardContext.Provider>;

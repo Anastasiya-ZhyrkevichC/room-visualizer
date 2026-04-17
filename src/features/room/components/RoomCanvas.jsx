@@ -10,7 +10,7 @@ import RoomShell from "./RoomShell";
 import SceneAxes from "./SceneAxes";
 
 const RoomCanvas = () => {
-  const { clearSelection, isMoveActive, isPlacementActive } = useCupboards();
+  const { clearSelection, isMoveActive, isPlacementActive, isResizeActive } = useCupboards();
   const { dimensions } = useRoomScene();
 
   return (
@@ -21,7 +21,7 @@ const RoomCanvas = () => {
           fov: 45,
         }}
         onPointerMissed={() => {
-          if (!isMoveActive && !isPlacementActive) {
+          if (!isMoveActive && !isPlacementActive && !isResizeActive) {
             clearSelection();
           }
         }}
@@ -32,7 +32,7 @@ const RoomCanvas = () => {
           intensity={1}
         />
 
-        <OrbitControls enabled={!isPlacementActive && !isMoveActive} />
+        <OrbitControls enabled={!isPlacementActive && !isMoveActive && !isResizeActive} />
         <CupboardMoveController />
         <PlacementPreviewController />
         <SceneAxes />

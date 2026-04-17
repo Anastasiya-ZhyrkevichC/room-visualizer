@@ -1,6 +1,7 @@
 import { cupboardReducer, initialCupboardState } from "./cupboardReducer";
 import {
   BACK_WALL_ID,
+  CUPBOARD_RESIZE_SIDES,
   LEFT_WALL_ID,
   MAGNETIC_ATTACHMENT_EDGES,
   PLACEMENT_VALIDATION_REASONS,
@@ -589,7 +590,7 @@ describe("cupboard reducer placement preview", () => {
 });
 
 describe("cupboard reducer width stepping", () => {
-  it("updates the selected cabinet to the next supported width when the resized cabinet fits in place", () => {
+  it("updates the selected cabinet to the next supported width from the right edge when the resized cabinet fits in place", () => {
     const nextState = cupboardReducer(
       {
         ...initialCupboardState,
@@ -601,6 +602,7 @@ describe("cupboard reducer width stepping", () => {
         type: "STEP_SELECTED_CUPBOARD_WIDTH",
         payload: {
           direction: "next",
+          side: CUPBOARD_RESIZE_SIDES.RIGHT,
           roomBounds,
         },
       },
@@ -618,13 +620,13 @@ describe("cupboard reducer width stepping", () => {
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
-      x: 0,
+      x: 0.025,
       y: -1.14,
       z: -1.72,
     });
   });
 
-  it("keeps the selected cabinet unchanged when the next width would require shifting into a neighbor", () => {
+  it("keeps the selected cabinet unchanged when the next right-edge width would overlap a neighbor", () => {
     const selectedCupboard = createResizableCupboardFixture({
       id: 10,
       activeVariantId: "300x720x560",
@@ -646,6 +648,7 @@ describe("cupboard reducer width stepping", () => {
         type: "STEP_SELECTED_CUPBOARD_WIDTH",
         payload: {
           direction: "next",
+          side: CUPBOARD_RESIZE_SIDES.RIGHT,
           roomBounds,
         },
       },
@@ -656,7 +659,7 @@ describe("cupboard reducer width stepping", () => {
     expect(nextState.cupboards[1]).toEqual(blockingNeighbor);
   });
 
-  it("keeps the selected cabinet unchanged when the next width would require shifting inside room bounds", () => {
+  it("keeps the selected cabinet unchanged when the next right-edge width would push past the wall bounds", () => {
     const selectedCupboard = createResizableCupboardFixture({
       id: 12,
       activeVariantId: "300x720x560",
@@ -673,6 +676,7 @@ describe("cupboard reducer width stepping", () => {
         type: "STEP_SELECTED_CUPBOARD_WIDTH",
         payload: {
           direction: "next",
+          side: CUPBOARD_RESIZE_SIDES.RIGHT,
           roomBounds,
         },
       },
@@ -681,6 +685,204 @@ describe("cupboard reducer width stepping", () => {
     expect(nextState.cupboards).toHaveLength(1);
     expect(nextState.cupboards[0]).toEqual(selectedCupboard);
     expect(nextState.selectedCupboardId).toBe(12);
+  });
+});
+
+describe("cupboard reducer resize mode", () => {
+  it("starts resize mode with the selected cupboard snapshot and active side", () => {
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [createResizableCupboardFixture()],
+        selectedCupboardId: 1,
+      },
+      {
+        type: "START_CUPBOARD_RESIZE",
+        payload: {
+          cupboardId: 1,
+          side: CUPBOARD_RESIZE_SIDES.RIGHT,
+        },
+      },
+    );
+
+    expect(nextState.activeResize).toMatchObject({
+      cupboardId: 1,
+      wall: BACK_WALL_ID,
+      side: CUPBOARD_RESIZE_SIDES.RIGHT,
+    });
+    expect(nextState.activeResize.initialCupboard).toMatchObject({
+      id: 1,
+      activeVariantId: "300x720x560",
+      wall: BACK_WALL_ID,
+    });
+    expectPositionToMatch(nextState.activeResize.initialCupboard.position, {
+      x: 0,
+      y: -1.14,
+      z: -1.72,
+    });
+    expect(nextState.activeResize.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+    });
+  });
+
+  it("updates the active resize live from the original fixed edge", () => {
+    const resizingState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [createResizableCupboardFixture()],
+        selectedCupboardId: 1,
+      },
+      {
+        type: "START_CUPBOARD_RESIZE",
+        payload: {
+          cupboardId: 1,
+          side: CUPBOARD_RESIZE_SIDES.RIGHT,
+        },
+      },
+    );
+
+    const nextState = cupboardReducer(resizingState, {
+      type: "UPDATE_CUPBOARD_RESIZE",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 0.23,
+          y: 0,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(nextState.activeResize).toMatchObject({
+      cupboardId: 1,
+      side: CUPBOARD_RESIZE_SIDES.RIGHT,
+    });
+    expect(nextState.activeResize.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      collidingCupboardIds: [],
+    });
+    expect(nextState.cupboards[0]).toMatchObject({
+      id: 1,
+      activeVariantId: "400x720x560",
+      width: 400,
+      wall: BACK_WALL_ID,
+    });
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: 0.05,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("reverts the cupboard when resize mode finishes on an invalid wall-bounds enlargement", () => {
+    const resizingState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [
+          createResizableCupboardFixture({
+            id: 12,
+            position: { x: 1.85, y: -1.14, z: -1.72 },
+          }),
+        ],
+        selectedCupboardId: 12,
+      },
+      {
+        type: "START_CUPBOARD_RESIZE",
+        payload: {
+          cupboardId: 12,
+          side: CUPBOARD_RESIZE_SIDES.RIGHT,
+        },
+      },
+    );
+
+    const invalidResizeState = cupboardReducer(resizingState, {
+      type: "UPDATE_CUPBOARD_RESIZE",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 2.04,
+          y: 0,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(invalidResizeState.activeResize.validation).toMatchObject({
+      isValid: false,
+      reason: PLACEMENT_VALIDATION_REASONS.WALL_BOUNDS,
+      wall: BACK_WALL_ID,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(invalidResizeState.cupboards[0].position, {
+      x: 1.875,
+      y: -1.14,
+      z: -1.72,
+    });
+
+    const nextState = cupboardReducer(invalidResizeState, {
+      type: "FINISH_CUPBOARD_RESIZE",
+    });
+
+    expect(nextState.activeResize).toBeNull();
+    expect(nextState.cupboards[0]).toMatchObject({
+      id: 12,
+      activeVariantId: "300x720x560",
+      width: 300,
+    });
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: 1.85,
+      y: -1.14,
+      z: -1.72,
+    });
+  });
+
+  it("restores the original cupboard snapshot when resize mode is canceled", () => {
+    const resizingState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [createResizableCupboardFixture()],
+        selectedCupboardId: 1,
+      },
+      {
+        type: "START_CUPBOARD_RESIZE",
+        payload: {
+          cupboardId: 1,
+          side: CUPBOARD_RESIZE_SIDES.RIGHT,
+        },
+      },
+    );
+
+    const updatedState = cupboardReducer(resizingState, {
+      type: "UPDATE_CUPBOARD_RESIZE",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 0.23,
+          y: 0,
+        },
+        roomBounds,
+      },
+    });
+
+    const nextState = cupboardReducer(updatedState, {
+      type: "CANCEL_CUPBOARD_RESIZE",
+    });
+
+    expect(nextState.activeResize).toBeNull();
+    expect(nextState.cupboards[0]).toMatchObject({
+      id: 1,
+      activeVariantId: "300x720x560",
+      width: 300,
+    });
+    expectPositionToMatch(nextState.cupboards[0].position, {
+      x: 0,
+      y: -1.14,
+      z: -1.72,
+    });
   });
 });
 

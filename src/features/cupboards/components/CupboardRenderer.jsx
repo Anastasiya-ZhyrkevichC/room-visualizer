@@ -7,6 +7,7 @@ import SelectedCupboardWidthControls from "./SelectedCupboardWidthControls";
 const CupboardRenderer = () => {
   const {
     activeMove,
+    activeResize,
     cupboards,
     placementPreview,
     selectedCupboard,
@@ -15,7 +16,9 @@ const CupboardRenderer = () => {
     startCupboardMove,
   } = useCupboards();
   const activeMoveCupboardId = activeMove?.cupboardId ?? null;
+  const activeResizeCupboardId = activeResize?.cupboardId ?? null;
   const isActiveMoveInvalid = Boolean(activeMove && activeMove.validation?.isValid === false);
+  const isActiveResizeInvalid = Boolean(activeResize && activeResize.validation?.isValid === false);
   const isPlacementPreviewInvalid = Boolean(placementPreview && placementPreview.validation?.isValid === false);
 
   return (
@@ -30,8 +33,15 @@ const CupboardRenderer = () => {
           model={cupboard.model}
           isMoving={cupboard.id === activeMoveCupboardId}
           isSelected={cupboard.id === selectedCupboardId}
-          isInvalid={cupboard.id === activeMoveCupboardId && isActiveMoveInvalid}
-          onMoveStart={cupboard.id === selectedCupboardId ? () => startCupboardMove(cupboard.id) : undefined}
+          isInvalid={
+            (cupboard.id === activeMoveCupboardId && isActiveMoveInvalid) ||
+            (cupboard.id === activeResizeCupboardId && isActiveResizeInvalid)
+          }
+          onMoveStart={
+            cupboard.id === selectedCupboardId && cupboard.id !== activeResizeCupboardId
+              ? () => startCupboardMove(cupboard.id)
+              : undefined
+          }
           onSelect={() => selectCupboard(cupboard.id)}
         />
       ))}

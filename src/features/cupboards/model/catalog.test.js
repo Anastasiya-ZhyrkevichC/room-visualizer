@@ -2,11 +2,13 @@ import {
   defaultOpenStarterCabinetGroupIds,
   getStarterCabinet,
   getStarterCabinetFamilyLabel,
+  resolveStarterCabinetInstance,
   resolveDefaultStarterCabinetVariant,
   resolveStarterCabinetWidthStep,
   starterCabinetCatalogGroups,
   starterCabinetCatalogFamilies,
 } from "./catalog";
+import { TABLE_TOP_MERGE_STRATEGIES, TABLE_TOP_PROFILE_SHAPES } from "./tableTop";
 
 describe("starter cabinet catalog grouping", () => {
   it("keeps cabinet families in a stable kitchen-first order", () => {
@@ -78,10 +80,37 @@ describe("starter cabinet catalog grouping", () => {
     const cabinet = getStarterCabinet("base-double-door");
 
     expect(cabinet.name).toBe("Double-door base cabinet");
+    expect(cabinet.currency).toBe("USD");
+    expect(cabinet.tableTopProfile).toEqual({
+      shape: TABLE_TOP_PROFILE_SHAPES.STRAIGHT,
+      mergeStrategy: TABLE_TOP_MERGE_STRATEGIES.SAME_WALL,
+    });
     expect(cabinet.availableWidths).toEqual([300, 350, 400, 450, 600]);
     expect(cabinet.availableHeights).toEqual([720]);
     expect(cabinet.variants).toHaveLength(5);
     expect(cabinet.activeVariantId).toBe("600x720x560");
+  });
+
+  it("keeps tabletop support explicit on resolved cabinet instances", () => {
+    expect(
+      resolveStarterCabinetInstance({
+        catalogId: "base-three-drawer",
+      }),
+    ).toMatchObject({
+      currency: "USD",
+      tableTopProfile: {
+        shape: TABLE_TOP_PROFILE_SHAPES.STRAIGHT,
+        mergeStrategy: TABLE_TOP_MERGE_STRATEGIES.SAME_WALL,
+      },
+    });
+
+    expect(
+      resolveStarterCabinetInstance({
+        catalogId: "tall-pantry",
+      }),
+    ).toMatchObject({
+      tableTopProfile: null,
+    });
   });
 
   it("resolves the smallest valid size variant deterministically for each cabinet definition", () => {

@@ -45,7 +45,8 @@ const SelectionInspectorPanel = () => {
             <span className="selection-panel__tag">Selected in scene</span>
             <strong className="selection-panel__name">{selectedCupboard.name}</strong>
             <p className="selection-panel__meta">
-              {formatModuleFamily(selectedCupboard)} · {formatPrototypePrice(selectedCupboard.price)}
+              {formatModuleFamily(selectedCupboard)} ·{" "}
+              {formatPrototypePrice(selectedCupboard.price, selectedCupboard.currency)}
             </p>
             <p className="selection-panel__copy">
               {formatSelectionResizeHint()} {HEIGHT_OPTIONS_REFERENCE_NOTE}. Drag this cabinet along its current wall.
@@ -75,7 +76,9 @@ const SelectionInspectorPanel = () => {
             </div>
             <div className="selection-details__item">
               <span className="selection-details__label">Prototype price</span>
-              <strong className="selection-details__value">{formatPrototypePrice(selectedCupboard.price)}</strong>
+              <strong className="selection-details__value">
+                {formatPrototypePrice(selectedCupboard.price, selectedCupboard.currency)}
+              </strong>
             </div>
             <div className="selection-details__item">
               <span className="selection-details__label">Current footprint</span>
