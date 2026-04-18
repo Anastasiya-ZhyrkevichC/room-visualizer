@@ -1,7 +1,12 @@
 import React, { useMemo, useRef } from "react";
 
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
-import { formatPrototypePrice, formatRoomDimensions } from "../lib/roomFormatting";
+import {
+  formatPrototypePrice,
+  formatRoomDimensions,
+  formatTableTopDimensions,
+  formatTableTopLabel,
+} from "../lib/roomFormatting";
 
 const EMPTY_PRICING_SUMMARY = {
   lineItems: [],
@@ -106,7 +111,7 @@ const PlannerSummaryPanel = ({
   pricingReference = null,
   projectTransferFeedback = null,
 }) => {
-  const { pricingSummary = EMPTY_PRICING_SUMMARY, selectCupboard = () => {} } = useCupboards();
+  const { pricingSummary = EMPTY_PRICING_SUMMARY, selectCupboard = () => {}, tableTopRuns = [] } = useCupboards();
   const fileInputRef = useRef(null);
   const {
     currency,
@@ -121,6 +126,7 @@ const PlannerSummaryPanel = ({
   } = pricingSummary;
   const totalPriceLabel = formatPrototypePrice(totalPrice, currency);
   const cabinetCountLabel = `${objectCount} ${objectCount === 1 ? "cabinet" : "cabinets"}`;
+  const tableTopCountLabel = `${tableTopRuns.length} ${tableTopRuns.length === 1 ? "piece" : "pieces"}`;
   const comparisonSummary = useMemo(
     () =>
       pricingReference?.comparison
@@ -195,6 +201,41 @@ const PlannerSummaryPanel = ({
           <span>Priced cabinets</span>
           <strong>{cabinetCountLabel}</strong>
         </div>
+      </div>
+
+      <div className="table-top-summary" aria-label="Derived table tops">
+        <div className="table-top-summary__header">
+          <div>
+            <p className="table-top-summary__eyebrow">Derived surfaces</p>
+            <h3 className="table-top-summary__title">Table tops</h3>
+          </div>
+          <span className="table-top-summary__count">{tableTopCountLabel}</span>
+        </div>
+
+        {tableTopRuns.length === 0 ? (
+          <div className="empty-state empty-state--compact table-top-summary__empty">
+            <strong className="empty-state__title">No table tops yet</strong>
+            <p className="empty-state__copy">
+              Add a base or drawer cabinet to generate a derived tabletop run in the planner summary.
+            </p>
+          </div>
+        ) : (
+          <div className="table-top-summary__list">
+            {tableTopRuns.map((tableTopRun) => (
+              <div key={tableTopRun.id} className="table-top-summary__item">
+                <div className="table-top-summary__item-copy">
+                  <span className="table-top-summary__item-label">{formatTableTopLabel(tableTopRun)}</span>
+                  <strong className="table-top-summary__item-meta">
+                    Supports {tableTopRun.cupboardIds.length} cabinet{tableTopRun.cupboardIds.length === 1 ? "" : "s"}
+                  </strong>
+                </div>
+                <strong className="table-top-summary__item-dimensions">
+                  {formatTableTopDimensions(tableTopRun)}
+                </strong>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="pricing-summary">

@@ -8,6 +8,8 @@ import {
   formatModuleHeightOptions,
   formatModuleWidthOptions,
   formatSelectionResizeHint,
+  formatTableTopDimensions,
+  formatTableTopLabel,
 } from "./roomFormatting";
 
 describe("room formatting", () => {
@@ -79,5 +81,29 @@ describe("room formatting", () => {
     expect(formatSelectionResizeHint("back wall")).toBe(
       "Drag the in-scene side handles to resize through supported widths, or drag the cabinet body to reposition it along the back wall.",
     );
+  });
+
+  it("formats derived tabletop labels and dimensions for planner summary rows", () => {
+    expect(
+      formatTableTopDimensions({
+        length: 1.8,
+        depth: 0.62,
+        thickness: 0.04,
+      }),
+    ).toBe("1800 x 620 x 40 mm");
+
+    expect(
+      formatTableTopLabel({
+        wall: "left",
+      }),
+    ).toBe("Left wall");
+
+    expect(
+      formatTableTopDimensions({
+        length: 1.2,
+        depth: null,
+        thickness: 0.04,
+      }),
+    ).toBe("");
   });
 });

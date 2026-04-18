@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo, useReducer } from "react";
 
 import { useRoomScene } from "../../room/context/RoomSceneContext";
 import { CUPBOARD_RESIZE_SIDES } from "../model/placementConstants";
-import { selectPricingSummary, selectSelectedCupboard } from "../selectors";
+import { selectPricingSummary, selectSelectedCupboard, selectTableTopRuns } from "../selectors";
 import { cupboardReducer, initialCupboardState } from "./cupboardReducer";
 
 const CupboardContext = createContext(null);
@@ -13,6 +13,7 @@ export const CupboardProvider = ({ children }) => {
 
   const selectedCupboard = selectSelectedCupboard(state);
   const pricingSummary = selectPricingSummary(state);
+  const tableTopRuns = useMemo(() => selectTableTopRuns(state), [state.cupboards]);
   const actions = useMemo(
     () => ({
       startPlacementPreview: (catalogId) =>
@@ -63,6 +64,7 @@ export const CupboardProvider = ({ children }) => {
       isResizeActive: Boolean(state.activeResize),
       selectedCupboardId: state.selectedCupboardId,
       selectedCupboard,
+      tableTopRuns,
       pricingSummary,
       ...actions,
     }),
@@ -75,6 +77,7 @@ export const CupboardProvider = ({ children }) => {
       state.cupboards,
       state.placementPreview,
       state.selectedCupboardId,
+      tableTopRuns,
     ],
   );
 

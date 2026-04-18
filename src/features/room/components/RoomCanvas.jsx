@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import CupboardMoveController from "./CupboardMoveController";
+import CupboardResizeController from "./CupboardResizeController";
 import { useRoomScene } from "../context/RoomSceneContext";
 import PlacementPreviewController from "./PlacementPreviewController";
 import RoomShell from "./RoomShell";
@@ -34,6 +35,7 @@ const RoomCanvas = () => {
 
         <OrbitControls enabled={!isPlacementActive && !isMoveActive && !isResizeActive} />
         <CupboardMoveController />
+        <CupboardResizeController />
         <PlacementPreviewController />
         <SceneAxes />
         <RoomShell />

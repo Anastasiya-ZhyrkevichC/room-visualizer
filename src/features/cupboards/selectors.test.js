@@ -1,4 +1,5 @@
-import { selectPricingSummary } from "./selectors";
+import { STRAIGHT_RUN_TABLE_TOP_PROFILE } from "./model/tableTop";
+import { selectPricingSummary, selectTableTopRuns } from "./selectors";
 
 const createCupboardFixture = ({
   id,
@@ -13,6 +14,7 @@ const createCupboardFixture = ({
   isUnavailable = false,
   position = { x: 0, y: -1.14, z: -1.72 },
   rotation = 0,
+  tableTopProfile = null,
 } = {}) => ({
   id,
   name,
@@ -27,7 +29,65 @@ const createCupboardFixture = ({
   position,
   rotation,
   wall: "back",
+  tableTopProfile,
   size: [width / 1000, height / 1000, depth / 1000],
+});
+
+describe("tabletop selectors", () => {
+  it("derives merged tabletop runs from eligible placed cupboards only", () => {
+    const runs = selectTableTopRuns({
+      cupboards: [
+        createCupboardFixture({
+          id: 2,
+          position: { x: -0.3, y: -1.14, z: -1.72 },
+          tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
+        }),
+        createCupboardFixture({
+          id: 3,
+          position: { x: 0.3, y: -1.14, z: -1.72 },
+          tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
+        }),
+        createCupboardFixture({
+          id: 8,
+          name: "Pantry tower",
+          height: 2100,
+          depth: 600,
+          position: { x: 1.2, y: -0.45, z: -1.7 },
+        }),
+      ],
+      placementPreview: createCupboardFixture({
+        id: "preview",
+        position: { x: 1.3, y: -1.14, z: -1.72 },
+        tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
+      }),
+    });
+
+    expect(runs).toHaveLength(1);
+    expect(runs[0]).toMatchObject({
+      id: "table-top-back-2-3",
+      wall: "back",
+      cupboardIds: [2, 3],
+    });
+    expect(runs[0].length).toBeCloseTo(1.2);
+    expect(runs[0].position.x).toBeCloseTo(0);
+    expect(runs[0].position.y).toBeCloseTo(-0.76);
+    expect(runs[0].position.z).toBeCloseTo(-1.71);
+    expect(runs[0].size[0]).toBeCloseTo(1.2);
+    expect(runs[0].size[1]).toBeCloseTo(0.04);
+    expect(runs[0].size[2]).toBeCloseTo(0.58);
+  });
+
+  it("returns no tabletop runs when only the placement preview is eligible", () => {
+    expect(
+      selectTableTopRuns({
+        cupboards: [],
+        placementPreview: createCupboardFixture({
+          id: "preview",
+          tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
+        }),
+      }),
+    ).toEqual([]);
+  });
 });
 
 describe("pricing selectors", () => {

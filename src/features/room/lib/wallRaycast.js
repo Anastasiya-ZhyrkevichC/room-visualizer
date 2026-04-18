@@ -1,6 +1,6 @@
 import { Plane, Vector3 } from "three";
 
-import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/placement";
+import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/walls";
 
 export const createRoomWallTargets = (bounds, roomPosition) => [
   {

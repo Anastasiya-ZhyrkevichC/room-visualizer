@@ -56,6 +56,7 @@ describe("PlannerSummaryPanel", () => {
         isResolved: true,
         selectedLineItemId: null,
       },
+      tableTopRuns: [],
       selectCupboard: jest.fn(),
     });
   });
@@ -70,8 +71,58 @@ describe("PlannerSummaryPanel", () => {
     expect(container.textContent).toContain("$0");
     expect(container.textContent).toContain("0 cabinets");
     expect(container.textContent).toContain("3600 x 2800 x 2400 mm");
+    expect(container.textContent).toContain("Table tops");
+    expect(container.textContent).toContain("0 pieces");
+    expect(container.textContent).toContain("No table tops yet");
     expect(container.textContent).toContain("Export JSON");
     expect(container.textContent).toContain("Import JSON");
+  });
+
+  it("renders one tabletop summary row per derived run", () => {
+    useCupboards.mockReturnValue({
+      pricingSummary: {
+        lineItems: [],
+        totalPrice: 0,
+        objectCount: 0,
+        isEmpty: true,
+        currency: "USD",
+        unavailableCount: 0,
+        hasUnavailableItems: false,
+        isResolved: true,
+        selectedLineItemId: null,
+      },
+      tableTopRuns: [
+        {
+          id: "table-top-back-1-2",
+          wall: "back",
+          length: 1.8,
+          depth: 0.62,
+          thickness: 0.04,
+          cupboardIds: [1, 2],
+        },
+        {
+          id: "table-top-left-3",
+          wall: "left",
+          length: 0.6,
+          depth: 0.62,
+          thickness: 0.04,
+          cupboardIds: [3],
+        },
+      ],
+      selectCupboard: jest.fn(),
+    });
+
+    const container = renderPlannerSummaryPanel();
+    const tableTopItems = [...container.querySelectorAll(".table-top-summary__item")];
+
+    expect(tableTopItems).toHaveLength(2);
+    expect(container.textContent).toContain("2 pieces");
+    expect(tableTopItems[0].textContent).toContain("Back wall");
+    expect(tableTopItems[0].textContent).toContain("Supports 2 cabinets");
+    expect(tableTopItems[0].textContent).toContain("1800 x 620 x 40 mm");
+    expect(tableTopItems[1].textContent).toContain("Left wall");
+    expect(tableTopItems[1].textContent).toContain("Supports 1 cabinet");
+    expect(tableTopItems[1].textContent).toContain("600 x 620 x 40 mm");
   });
 
   it("renders one pricing row per placed cabinet and highlights the selected line item", () => {
@@ -114,6 +165,7 @@ describe("PlannerSummaryPanel", () => {
         isResolved: true,
         selectedLineItemId: 3,
       },
+      tableTopRuns: [],
       selectCupboard: jest.fn(),
     });
 
@@ -175,6 +227,7 @@ describe("PlannerSummaryPanel", () => {
         isResolved: false,
         selectedLineItemId: 3,
       },
+      tableTopRuns: [],
       selectCupboard: jest.fn(),
     });
 

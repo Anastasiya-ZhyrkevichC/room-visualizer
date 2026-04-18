@@ -1,5 +1,6 @@
 import { convertMetersToMillimeters } from "../../../lib/units";
 import { getStarterCabinetFamilyLabel } from "../../cupboards/model/catalog";
+import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/walls";
 
 const currencyFormatterCache = new Map();
 
@@ -24,6 +25,12 @@ const moduleCategoryLabels = {
   tall: "Tall unit",
   wall: "Wall cabinet",
   corner: "Corner cabinet",
+};
+
+const wallLabels = {
+  [BACK_WALL_ID]: "Back wall",
+  [LEFT_WALL_ID]: "Left wall",
+  [RIGHT_WALL_ID]: "Right wall",
 };
 
 export const CATALOG_PLACEMENT_CUE = "Places smallest first, resize after selection";
@@ -60,6 +67,8 @@ export const formatModuleCategory = (category) => moduleCategoryLabels[category]
 export const formatModuleFamily = (module) =>
   getStarterCabinetFamilyLabel(module) || formatModuleCategory(module?.category);
 
+export const formatWallLabel = (wall) => wallLabels[wall] ?? wall;
+
 export const formatPrototypePrice = (price, currency = "USD") =>
   getCurrencyFormatter(currency).format(Number.isFinite(price) ? price : 0);
 
@@ -87,3 +96,15 @@ export const formatSelectionResizeHint = (wallLabel = null) =>
 
 export const formatSelectionPosition = (position) =>
   `X ${Math.round(convertMetersToMillimeters(position.x))} mm · Z ${Math.round(convertMetersToMillimeters(position.z))} mm`;
+
+export const formatTableTopLabel = (tableTopRun) => formatWallLabel(tableTopRun?.wall);
+
+export const formatTableTopDimensions = (tableTopRun) => {
+  const sourceDimensions = [tableTopRun?.length, tableTopRun?.depth, tableTopRun?.thickness];
+
+  if (!sourceDimensions.every((dimension) => Number.isFinite(dimension))) {
+    return "";
+  }
+
+  return formatMillimeterTuple(sourceDimensions.map((dimension) => convertMetersToMillimeters(dimension)));
+};

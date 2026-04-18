@@ -1,4 +1,5 @@
 import { STARTER_CABINET_PRICE_CURRENCY } from "./model/catalog";
+import { deriveTableTopRuns } from "./model/tableTop";
 
 const comparePricingInstanceIds = (firstItem, secondItem) => {
   if (typeof firstItem.instanceId === "number" && typeof secondItem.instanceId === "number") {
@@ -20,6 +21,8 @@ const formatPricingDimensions = (cupboard) => {
 
 export const selectSelectedCupboard = (state) =>
   state.cupboards.find((cupboard) => cupboard.id === state.selectedCupboardId) ?? null;
+
+export const selectTableTopRuns = (state) => deriveTableTopRuns(state?.cupboards ?? []);
 
 export const selectPricingLineItems = (state) =>
   (state?.cupboards ?? [])

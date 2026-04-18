@@ -16,6 +16,7 @@ export {
   getWallAlignedRotation,
   isPlacementWall,
 } from "./wallAlignment";
+export { getCupboardWallSpan, getWallDepth, getWallSpanCenter, getWallSpanLength, setWallSpanCenter } from "./wallSpan";
 export {
   createCupboard,
   createInitialCupboardPosition,

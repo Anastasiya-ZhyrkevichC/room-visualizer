@@ -6,22 +6,14 @@ import {
   SAME_WALL_MAGNETIC_TOLERANCE,
 } from "./placementConstants";
 import { createPlacementValidationResult } from "./placementFactories";
+import { getCupboardWallSpan, getWallSpanCenter, getWallSpanLength, setWallSpanCenter } from "./wallSpan";
 import { getWallAlignedPreviewPosition, getWallAlignedRotation, isPlacementWall } from "./wallAlignment";
 import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "./walls";
 
+export { getCupboardWallSpan, getWallSpanCenter, getWallSpanLength, setWallSpanCenter } from "./wallSpan";
+
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const OVERLAP_EPSILON = 1e-6;
-
-export const getWallSpanCenter = (position, wall) => {
-  switch (wall) {
-    case LEFT_WALL_ID:
-    case RIGHT_WALL_ID:
-      return position.z;
-    case BACK_WALL_ID:
-    default:
-      return position.x;
-  }
-};
 
 export const getWallSpanEdgeForResizeSide = (wall, side) => {
   switch (wall) {
@@ -49,48 +41,6 @@ export const getOppositeWallSpanEdge = (edge) =>
       ? MAGNETIC_ATTACHMENT_EDGES.START
       : null;
 
-export const setWallSpanCenter = (position, wall, spanCenter) => {
-  if (!position) {
-    return position;
-  }
-
-  switch (wall) {
-    case LEFT_WALL_ID:
-    case RIGHT_WALL_ID:
-      return {
-        ...position,
-        z: spanCenter,
-      };
-    case BACK_WALL_ID:
-    default:
-      return {
-        ...position,
-        x: spanCenter,
-      };
-  }
-};
-
-export const getWallSpanLength = (footprint, wall) => {
-  switch (wall) {
-    case LEFT_WALL_ID:
-    case RIGHT_WALL_ID:
-      return footprint.depth;
-    case BACK_WALL_ID:
-    default:
-      return footprint.width;
-  }
-};
-
-export const getCupboardWallSpan = ({ size, rotation, position, wall }) => {
-  const footprint = getCupboardFootprint(size, rotation);
-  const spanCenter = getWallSpanCenter(position, wall);
-  const spanLength = getWallSpanLength(footprint, wall);
-
-  return {
-    start: spanCenter - spanLength / 2,
-    end: spanCenter + spanLength / 2,
-  };
-};
 
 const getWallSpanLimits = (roomBounds, wall) => {
   switch (wall) {
