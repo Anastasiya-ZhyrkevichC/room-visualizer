@@ -1,17 +1,19 @@
-import React, { useMemo } from "react";
+import React from "react";
 
-import { CUPBOARD_RESIZE_SIDES, getCupboardWidthStepOutcome } from "../model/placement";
+import { CUPBOARD_RESIZE_SIDES } from "../model/placement";
 import { useCupboards } from "../state/CupboardProvider";
-import { useRoomScene } from "../../room/context/RoomSceneContext";
 
-const BUTTON_SIZE = [0.14, 0.11, 0.035];
-const BUTTON_EDGE_GAP = 0.06;
-const BUTTON_FRONT_OFFSET = 0.08;
-const BUTTON_TOP_OFFSET = 0.08;
-const ENABLED_BUTTON_COLOR = "#fff7dc";
-const ENABLED_ARROW_COLOR = "#6a3822";
-const DISABLED_BUTTON_COLOR = "#8d8173";
-const DISABLED_ARROW_COLOR = "#d5cabd";
+const HANDLE_HIT_TARGET_SIZE = [0.14, 0.56, 0.18];
+const HANDLE_BODY_SIZE = [0.032, 0.34, 0.038];
+const HANDLE_CAP_SIZE = [0.05, 0.06, 0.05];
+const HANDLE_EDGE_GAP = 0.02;
+const HANDLE_FRONT_OFFSET = 0.085;
+const HANDLE_BASE_COLOR = "#fff2c8";
+const HANDLE_ACTIVE_COLOR = "#ffc65a";
+const HANDLE_INVALID_COLOR = "#ff8f7a";
+const HANDLE_DISABLED_COLOR = "#9b8c7f";
+const HANDLE_EMISSIVE_COLOR = "#7a351a";
+const HANDLE_DISABLED_EMISSIVE_COLOR = "#4b4036";
 
 const stopSceneEvent = (event) => {
   event.stopPropagation();
@@ -25,108 +27,101 @@ const stopSceneEvent = (event) => {
   }
 };
 
-const WidthStepButton = ({ direction, disabled = false, onStep, position }) => (
-  <group
-    position={position}
-    onPointerDown={stopSceneEvent}
-    onClick={(event) => {
-      stopSceneEvent(event);
+const ResizeHandle = ({ disabled = false, isActive = false, isInvalid = false, onResizeStart, position }) => {
+  const fillColor = disabled
+    ? HANDLE_DISABLED_COLOR
+    : isInvalid
+      ? HANDLE_INVALID_COLOR
+      : isActive
+        ? HANDLE_ACTIVE_COLOR
+        : HANDLE_BASE_COLOR;
+  const emissiveColor = disabled ? HANDLE_DISABLED_EMISSIVE_COLOR : HANDLE_EMISSIVE_COLOR;
+  const emissiveIntensity = disabled ? 0.04 : isActive ? 0.2 : 0.14;
 
-      if (!disabled && onStep) {
-        onStep();
-      }
-    }}
-  >
-    <mesh>
-      <boxGeometry args={BUTTON_SIZE} />
-      <meshStandardMaterial
-        color={disabled ? DISABLED_BUTTON_COLOR : ENABLED_BUTTON_COLOR}
-        emissive={disabled ? "#4b4036" : "#7a351a"}
-        emissiveIntensity={disabled ? 0.04 : 0.16}
-        opacity={disabled ? 0.48 : 0.96}
-        transparent
-        roughness={0.48}
-        metalness={0.06}
-      />
-    </mesh>
-    <mesh
-      position={[0, 0, BUTTON_SIZE[2] / 2 + 0.01]}
-      rotation={[0, 0, direction === "previous" ? Math.PI / 2 : -Math.PI / 2]}
+  return (
+    <group
+      position={position}
+      onPointerDown={(event) => {
+        if (disabled || event.button !== 0) {
+          return;
+        }
+
+        stopSceneEvent(event);
+        onResizeStart?.();
+      }}
+      onClick={stopSceneEvent}
     >
-      <coneGeometry args={[0.032, 0.06, 3]} />
-      <meshStandardMaterial
-        color={disabled ? DISABLED_ARROW_COLOR : ENABLED_ARROW_COLOR}
-        emissive={disabled ? "#4b4036" : "#7a351a"}
-        emissiveIntensity={disabled ? 0.04 : 0.14}
-        roughness={0.4}
-        metalness={0.08}
-      />
-    </mesh>
-  </group>
-);
+      <mesh>
+        <boxGeometry args={HANDLE_HIT_TARGET_SIZE} />
+        <meshBasicMaterial transparent opacity={0.001} depthWrite={false} />
+      </mesh>
+      <mesh>
+        <boxGeometry args={HANDLE_BODY_SIZE} />
+        <meshStandardMaterial
+          color={fillColor}
+          emissive={emissiveColor}
+          emissiveIntensity={emissiveIntensity}
+          roughness={0.4}
+          metalness={0.14}
+        />
+      </mesh>
+      <mesh position={[0, HANDLE_BODY_SIZE[1] / 2 + HANDLE_CAP_SIZE[1] / 2 - 0.01, 0]}>
+        <boxGeometry args={HANDLE_CAP_SIZE} />
+        <meshStandardMaterial
+          color={fillColor}
+          emissive={emissiveColor}
+          emissiveIntensity={Math.max(emissiveIntensity - 0.02, 0)}
+          roughness={0.4}
+          metalness={0.12}
+        />
+      </mesh>
+      <mesh position={[0, -HANDLE_BODY_SIZE[1] / 2 - HANDLE_CAP_SIZE[1] / 2 + 0.01, 0]}>
+        <boxGeometry args={HANDLE_CAP_SIZE} />
+        <meshStandardMaterial
+          color={fillColor}
+          emissive={emissiveColor}
+          emissiveIntensity={Math.max(emissiveIntensity - 0.02, 0)}
+          roughness={0.4}
+          metalness={0.12}
+        />
+      </mesh>
+    </group>
+  );
+};
 
 const SelectedCupboardWidthControls = ({ cupboard }) => {
-  const { bounds } = useRoomScene();
-  const {
-    cupboards,
-    decreaseSelectedCupboardWidth,
-    increaseSelectedCupboardWidth,
-    isMoveActive,
-    isPlacementActive,
-    isResizeActive,
-  } = useCupboards();
+  const { activeResize, isMoveActive, isPlacementActive, isResizeActive, startCupboardResize } = useCupboards();
 
-  const previousWidthStep = useMemo(
-    () =>
-      cupboard
-        ? getCupboardWidthStepOutcome({
-            cupboard,
-            direction: "previous",
-            side: CUPBOARD_RESIZE_SIDES.LEFT,
-            roomBounds: bounds,
-            cupboards,
-          })
-        : null,
-    [bounds, cupboard, cupboards],
-  );
-  const nextWidthStep = useMemo(
-    () =>
-      cupboard
-        ? getCupboardWidthStepOutcome({
-            cupboard,
-            direction: "next",
-            side: CUPBOARD_RESIZE_SIDES.RIGHT,
-            roomBounds: bounds,
-            cupboards,
-          })
-        : null,
-    [bounds, cupboard, cupboards],
-  );
-
-  if (!cupboard || isMoveActive || isPlacementActive || isResizeActive) {
+  if (!cupboard || isMoveActive || isPlacementActive || (cupboard.availableWidths?.length ?? 0) < 2) {
     return null;
   }
 
-  const horizontalOffset = cupboard.size[0] / 2 + BUTTON_SIZE[0] / 2 + BUTTON_EDGE_GAP;
-  const verticalOffset = cupboard.size[1] / 2 + BUTTON_TOP_OFFSET;
-  const depthOffset = cupboard.size[2] / 2 + BUTTON_FRONT_OFFSET;
+  const horizontalOffset = cupboard.size[0] / 2 + HANDLE_HIT_TARGET_SIZE[0] / 2 + HANDLE_EDGE_GAP;
+  const depthOffset = cupboard.size[2] / 2 + HANDLE_FRONT_OFFSET;
+  const activeSide = activeResize?.cupboardId === cupboard.id ? activeResize.side : null;
+  const isActiveResizeInvalid = activeResize?.cupboardId === cupboard.id && activeResize?.validation?.isValid === false;
+  const isHandleInteractionDisabled = isResizeActive;
 
   return (
     <group
       position={[cupboard.position.x, cupboard.position.y, cupboard.position.z]}
       rotation={[0, cupboard.rotation, 0]}
     >
-      <WidthStepButton
-        direction="previous"
-        disabled={!previousWidthStep?.isAvailable}
-        onStep={() => decreaseSelectedCupboardWidth(CUPBOARD_RESIZE_SIDES.LEFT)}
-        position={[-horizontalOffset, verticalOffset, depthOffset]}
+      <ResizeHandle
+        side={CUPBOARD_RESIZE_SIDES.LEFT}
+        disabled={isHandleInteractionDisabled}
+        isActive={activeSide === CUPBOARD_RESIZE_SIDES.LEFT}
+        isInvalid={activeSide === CUPBOARD_RESIZE_SIDES.LEFT && isActiveResizeInvalid}
+        onResizeStart={() => startCupboardResize(cupboard.id, CUPBOARD_RESIZE_SIDES.LEFT)}
+        position={[-horizontalOffset, 0, depthOffset]}
       />
-      <WidthStepButton
-        direction="next"
-        disabled={!nextWidthStep?.isAvailable}
-        onStep={() => increaseSelectedCupboardWidth(CUPBOARD_RESIZE_SIDES.RIGHT)}
-        position={[horizontalOffset, verticalOffset, depthOffset]}
+      <ResizeHandle
+        side={CUPBOARD_RESIZE_SIDES.RIGHT}
+        disabled={isHandleInteractionDisabled}
+        isActive={activeSide === CUPBOARD_RESIZE_SIDES.RIGHT}
+        isInvalid={activeSide === CUPBOARD_RESIZE_SIDES.RIGHT && isActiveResizeInvalid}
+        onResizeStart={() => startCupboardResize(cupboard.id, CUPBOARD_RESIZE_SIDES.RIGHT)}
+        position={[horizontalOffset, 0, depthOffset]}
       />
     </group>
   );

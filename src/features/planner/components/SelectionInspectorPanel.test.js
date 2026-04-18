@@ -70,7 +70,8 @@ describe("SelectionInspectorPanel", () => {
     const details = getDetailMap(container);
 
     expect(container.textContent).toContain("Double-door base cabinet");
-    expect(container.textContent).toContain("Use the in-scene width arrows to step through supported widths.");
+    expect(container.textContent).toContain("Drag the in-scene side handles to resize through supported widths.");
+    expect(container.textContent).toContain("Drag the cabinet body along its current wall.");
     expect(container.textContent).toContain("Height options are display-only for now.");
     expect(details).toMatchObject({
       "Cabinet family": "Base cabinets with doors",
@@ -79,6 +80,45 @@ describe("SelectionInspectorPanel", () => {
       "Supported heights": "720 mm",
       "Height editing": "Height options are display-only for now",
       "Prototype price": "$175",
+    });
+  });
+
+  it("shows imported reference pricing guidance when the selected cabinet is unavailable in the live catalog", () => {
+    useCupboards.mockReturnValue({
+      selectedCupboard: {
+        id: 9,
+        ...resolveStarterCabinetInstance({
+          catalogId: "tall-pantry",
+          activeVariantId: "600x2100x600",
+        }),
+        catalogId: "legacy-pantry",
+        name: "Legacy pantry",
+        price: 640,
+        isUnavailable: true,
+        unavailableReason: "missing-catalog-item",
+        position: {
+          x: 0.1,
+          y: -0.45,
+          z: -1.7,
+        },
+        rotation: 0,
+        wall: "back",
+      },
+      clearSelection: jest.fn(),
+      rotateSelectedCupboard: jest.fn(),
+      deleteSelectedCupboard: jest.fn(),
+    });
+
+    const container = renderSelectionInspectorPanel();
+    const details = getDetailMap(container);
+
+    expect(container.textContent).toContain("Legacy pantry");
+    expect(container.textContent).toContain("Live price unavailable");
+    expect(container.textContent).toContain("Imported snapshot reference");
+    expect(container.textContent).toContain("The current catalog cannot reprice this cabinet.");
+    expect(details).toMatchObject({
+      "Live price": "Unavailable",
+      "Exported reference price": "$640",
     });
   });
 

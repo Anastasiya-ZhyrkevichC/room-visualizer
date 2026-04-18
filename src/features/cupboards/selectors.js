@@ -27,15 +27,21 @@ export const selectPricingLineItems = (state) =>
       cupboardId: cupboard.id,
       instanceId: cupboard.id,
       catalogId: cupboard.catalogId ?? null,
+      activeVariantId: cupboard.activeVariantId ?? null,
       displayName: cupboard.name ?? "Unnamed cabinet",
       dimensionsLabel: formatPricingDimensions(cupboard),
-      price: Number.isFinite(cupboard.price) ? cupboard.price : 0,
+      price: cupboard?.isUnavailable ? null : Number.isFinite(cupboard.price) ? cupboard.price : 0,
+      referencePrice: cupboard?.isUnavailable && Number.isFinite(cupboard.price) ? cupboard.price : null,
       currency: cupboard.currency ?? STARTER_CABINET_PRICE_CURRENCY,
+      isUnavailable: Boolean(cupboard?.isUnavailable),
+      unavailableReason: cupboard?.unavailableReason ?? null,
     }))
     .sort(comparePricingInstanceIds);
 
 export const selectPricingSummary = (state) => {
   const lineItems = selectPricingLineItems(state);
+  const resolvedLineItems = lineItems.filter((lineItem) => !lineItem.isUnavailable && Number.isFinite(lineItem.price));
+  const unavailableCount = lineItems.filter((lineItem) => lineItem.isUnavailable).length;
   const selectedLineItemId = lineItems.some((lineItem) => lineItem.cupboardId === state?.selectedCupboardId)
     ? state.selectedCupboardId
     : null;
@@ -43,11 +49,15 @@ export const selectPricingSummary = (state) => {
 
   return {
     lineItems,
-    totalPrice: lineItems.reduce((runningTotal, lineItem) => runningTotal + lineItem.price, 0),
+    totalPrice: resolvedLineItems.reduce((runningTotal, lineItem) => runningTotal + lineItem.price, 0),
     objectCount: lineItems.length,
     isEmpty: lineItems.length === 0,
     currency: lineItems[0]?.currency ?? STARTER_CABINET_PRICE_CURRENCY,
     hasMixedCurrencies: currencySet.size > 1,
+    resolvedObjectCount: resolvedLineItems.length,
+    unavailableCount,
+    hasUnavailableItems: unavailableCount > 0,
+    isResolved: unavailableCount === 0,
     selectedLineItemId,
   };
 };

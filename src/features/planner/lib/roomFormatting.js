@@ -82,8 +82,8 @@ export const formatCatalogPlacementHint = (module) =>
 
 export const formatSelectionResizeHint = (wallLabel = null) =>
   wallLabel
-    ? `Use the in-scene width arrows to step through supported widths, or drag it in the scene to reposition it along the ${wallLabel}.`
-    : "Use the in-scene width arrows to step through supported widths.";
+    ? `Drag the in-scene side handles to resize through supported widths, or drag the cabinet body to reposition it along the ${wallLabel}.`
+    : "Drag the in-scene side handles to resize through supported widths.";
 
 export const formatSelectionPosition = (position) =>
   `X ${Math.round(convertMetersToMillimeters(position.x))} mm · Z ${Math.round(convertMetersToMillimeters(position.z))} mm`;

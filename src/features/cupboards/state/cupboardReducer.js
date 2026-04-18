@@ -1,15 +1,9 @@
 import { defaultStarterCabinetId, getStarterCabinet, resolveStarterCabinetInstance } from "../model/catalog";
 import { ROTATION_STEP, getNormalizedRotation } from "../model/geometry";
-import {
-  alignCupboardToWall,
-  createPlacementValidationResult,
-  createPlacementPreview,
-  createCupboard,
-  getCupboardResizeDragOutcome,
-  getCupboardWidthStepOutcome,
-  getWallAlignedRotation,
-  validatePlacementCandidate,
-} from "../model/placement";
+import { createCupboard, createPlacementPreview, createPlacementValidationResult } from "../model/placementFactories";
+import { getCupboardResizeDragOutcome, getCupboardWidthStepOutcome } from "../model/cupboardResize";
+import { validatePlacementCandidate } from "../model/placementValidation";
+import { alignCupboardToWall, getWallAlignedRotation } from "../model/wallAlignment";
 
 export const initialCupboardState = {
   cupboards: [],
@@ -38,6 +32,9 @@ const cloneCupboardSnapshot = (cupboard) => ({
   position: cupboard?.position ? { ...cupboard.position } : cupboard?.position,
   size: Array.isArray(cupboard?.size) ? [...cupboard.size] : cupboard?.size,
 });
+
+const getNextCupboardId = (cupboards) =>
+  cupboards.reduce((currentMaxId, cupboard) => Math.max(currentMaxId, cupboard?.id ?? 0), 0) + 1;
 
 const clearActiveMove = (state) => {
   if (!state.activeMove) {
@@ -452,6 +449,22 @@ export const cupboardReducer = (state, action) => {
       return {
         ...state,
         cupboards: updateCupboardById(state.cupboards, selectedCupboard.id, () => widthStepOutcome.cupboard),
+      };
+    }
+
+    case "LOAD_PROJECT": {
+      const nextCupboards = Array.isArray(action.payload?.cupboards)
+        ? action.payload.cupboards.map((cupboard) => cloneCupboardSnapshot(cupboard))
+        : [];
+
+      return {
+        ...state,
+        cupboards: nextCupboards,
+        placementPreview: null,
+        activeMove: null,
+        activeResize: null,
+        selectedCupboardId: null,
+        nextCupboardId: getNextCupboardId(nextCupboards),
       };
     }
 

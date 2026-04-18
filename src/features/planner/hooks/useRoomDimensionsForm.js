@@ -72,6 +72,17 @@ export const useRoomDimensionsForm = () => {
     });
   };
 
+  const applyImportedRoom = (nextRoomDimensions, sourceLabel = "Imported project") => {
+    setDraftRoomDimensions(createDraftRoomDimensions(nextRoomDimensions));
+    setAppliedRoomDimensions(nextRoomDimensions);
+    setValidationErrors({});
+    setHasAttemptedApply(false);
+    setRoomFeedback({
+      tone: "success",
+      message: `${sourceLabel} room loaded: ${formatRoomDimensions(nextRoomDimensions)}.`,
+    });
+  };
+
   const hasDraftChanges = useMemo(
     () => roomFields.some((field) => draftRoomDimensions[field.name] !== String(appliedRoomDimensions[field.name])),
     [appliedRoomDimensions, draftRoomDimensions],
@@ -102,5 +113,6 @@ export const useRoomDimensionsForm = () => {
     handleRoomChange,
     handleApplyRoom,
     handleResetRoom,
+    applyImportedRoom,
   };
 };

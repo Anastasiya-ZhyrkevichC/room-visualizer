@@ -3,6 +3,7 @@ import { resolveCabinetModel } from "./renderModel";
 import { STRAIGHT_RUN_TABLE_TOP_PROFILE } from "./tableTop";
 
 export const STARTER_CABINET_PRICE_CURRENCY = "USD";
+export const STARTER_CABINET_CATALOG_VERSION = "starter-catalog-v1";
 
 export const starterCabinetCatalogFamilies = [
   {
@@ -319,6 +320,18 @@ const starterCabinetLookup = starterCabinetCatalog.reduce((lookup, cabinet) => {
   return lookup;
 }, {});
 
+export const findStarterCabinet = (catalogId) => starterCabinetLookup[catalogId] ?? null;
+
+export const findStarterCabinetVariant = (catalogId, variantId) => {
+  const cabinet = findStarterCabinet(catalogId);
+
+  if (!cabinet || !variantId) {
+    return null;
+  }
+
+  return cabinet.variants.find((variant) => variant.id === variantId) ?? null;
+};
+
 const getStarterCabinetDefinitionId = (cabinet) => cabinet?.catalogId ?? cabinet?.id ?? null;
 
 const resolveStarterCabinetDefinition = (cabinet) => {
@@ -416,4 +429,4 @@ export const resolveStarterCabinetWidthStep = (cabinet, direction) => {
   return nextVariant ? resolveStarterCabinetInstance(cabinet, { variantId: nextVariant.id }) : null;
 };
 
-export const getStarterCabinet = (catalogId) => starterCabinetLookup[catalogId] ?? starterCabinetCatalog[0];
+export const getStarterCabinet = (catalogId) => findStarterCabinet(catalogId) ?? starterCabinetCatalog[0];

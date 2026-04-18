@@ -1,4 +1,5 @@
-import { BACK_WALL_ID, PLACEMENT_VALIDATION_REASONS } from "../../cupboards/model/placement";
+import { CUPBOARD_RESIZE_SIDES, PLACEMENT_VALIDATION_REASONS } from "../../cupboards/model/placement";
+import { BACK_WALL_ID } from "../../cupboards/model/walls";
 import { getPlannerStageViewModel } from "./stageMessaging";
 
 describe("planner stage messaging", () => {
@@ -164,8 +165,65 @@ describe("planner stage messaging", () => {
     expect(viewModel).toEqual({
       selectionBadge: "Double-door base cabinet selected",
       stageHint:
-        "Use the in-scene width arrows to step through supported widths, or drag it in the scene to reposition it along the back wall.",
+        "Drag the in-scene side handles to resize through supported widths, or drag the cabinet body to reposition it along the back wall.",
       isStageInvalid: false,
     });
+  });
+
+  it("describes an active resize with the dragged handle and commit behavior", () => {
+    const viewModel = getPlannerStageViewModel({
+      activeMove: null,
+      activeResize: {
+        side: CUPBOARD_RESIZE_SIDES.RIGHT,
+        wall: BACK_WALL_ID,
+        validation: {
+          isValid: true,
+          reason: null,
+        },
+      },
+      isMoveActive: false,
+      isPlacementActive: false,
+      isResizeActive: true,
+      placementPreview: null,
+      selectedCupboard: {
+        name: "Double-door base cabinet",
+        wall: BACK_WALL_ID,
+      },
+    });
+
+    expect(viewModel).toEqual({
+      selectionBadge: "Resizing Double-door base cabinet",
+      stageHint: "Drag the right handle along the back wall and release to keep this width.",
+      isStageInvalid: false,
+    });
+  });
+
+  it("marks invalid resize feedback and explains that releasing restores the previous width", () => {
+    const viewModel = getPlannerStageViewModel({
+      activeMove: null,
+      activeResize: {
+        side: CUPBOARD_RESIZE_SIDES.LEFT,
+        wall: BACK_WALL_ID,
+        validation: {
+          isValid: false,
+          reason: PLACEMENT_VALIDATION_REASONS.WALL_BOUNDS,
+        },
+      },
+      isMoveActive: false,
+      isPlacementActive: false,
+      isResizeActive: true,
+      placementPreview: null,
+      selectedCupboard: {
+        name: "Double-door base cabinet",
+        wall: BACK_WALL_ID,
+      },
+    });
+
+    expect(viewModel).toMatchObject({
+      selectionBadge: "Invalid resize Double-door base cabinet",
+      isStageInvalid: true,
+    });
+    expect(viewModel.stageHint).toContain("Extends past the wall bounds.");
+    expect(viewModel.stageHint).toContain("Release now to restore the previous width");
   });
 });

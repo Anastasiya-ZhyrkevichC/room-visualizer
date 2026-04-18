@@ -931,6 +931,58 @@ describe("cupboard reducer resize mode", () => {
   });
 });
 
+describe("cupboard reducer project import", () => {
+  it("replaces planner cupboard state and resets transient interactions when a project is loaded", () => {
+    const importedCupboards = [
+      {
+        ...createResizableCupboardFixture({
+          id: 14,
+          activeVariantId: "350x720x560",
+          position: { x: -0.25, y: -1.14, z: -1.72 },
+        }),
+        isUnavailable: true,
+        unavailableReason: "missing-catalog-item",
+      },
+      createResizableCupboardFixture({
+        id: 21,
+        activeVariantId: "600x720x560",
+        position: { x: 0.4, y: -1.14, z: -1.72 },
+      }),
+    ];
+
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        cupboards: [createResizableCupboardFixture()],
+        placementPreview: {
+          catalogId: "base-double-door",
+        },
+        activeMove: {
+          cupboardId: 1,
+        },
+        activeResize: {
+          cupboardId: 1,
+        },
+        selectedCupboardId: 1,
+        nextCupboardId: 8,
+      },
+      {
+        type: "LOAD_PROJECT",
+        payload: {
+          cupboards: importedCupboards,
+        },
+      },
+    );
+
+    expect(nextState.cupboards).toEqual(importedCupboards);
+    expect(nextState.placementPreview).toBeNull();
+    expect(nextState.activeMove).toBeNull();
+    expect(nextState.activeResize).toBeNull();
+    expect(nextState.selectedCupboardId).toBeNull();
+    expect(nextState.nextCupboardId).toBe(22);
+  });
+});
+
 describe("cupboard reducer moving placed cupboards", () => {
   const placedCupboardState = {
     ...initialCupboardState,

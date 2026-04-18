@@ -5,11 +5,21 @@ import { getPlannerStageViewModel } from "../lib/stageMessaging";
 import RoomCanvas from "../../room/components/RoomCanvas";
 
 const PlannerStage = () => {
-  const { activeMove, isMoveActive, isPlacementActive, placementPreview, selectedCupboard } = useCupboards();
-  const { isStageInvalid, selectionBadge, stageHint } = getPlannerStageViewModel({
+  const {
     activeMove,
+    activeResize,
     isMoveActive,
     isPlacementActive,
+    isResizeActive,
+    placementPreview,
+    selectedCupboard,
+  } = useCupboards();
+  const { isStageInvalid, selectionBadge, stageHint } = getPlannerStageViewModel({
+    activeMove,
+    activeResize,
+    isMoveActive,
+    isPlacementActive,
+    isResizeActive,
     placementPreview,
     selectedCupboard,
   });

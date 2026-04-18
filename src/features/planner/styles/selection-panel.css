@@ -43,6 +43,19 @@
   color: var(--planner-text-soft);
 }
 
+.selection-panel__warning {
+  padding: 16px 18px;
+  border: 1px solid rgba(180, 52, 39, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 243, 241, 0.84);
+  color: #7b2623;
+}
+
+.selection-panel__warning p {
+  margin: 8px 0 0;
+  line-height: 1.55;
+}
+
 .selection-details {
   display: grid;
   gap: 12px;

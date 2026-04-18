@@ -77,7 +77,7 @@ describe("room formatting", () => {
       }),
     ).toBe("Default placement size 300 x 720 x 560 mm. Places smallest first, resize after selection.");
     expect(formatSelectionResizeHint("back wall")).toBe(
-      "Use the in-scene width arrows to step through supported widths, or drag it in the scene to reposition it along the back wall.",
+      "Drag the in-scene side handles to resize through supported widths, or drag the cabinet body to reposition it along the back wall.",
     );
   });
 });

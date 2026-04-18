@@ -9,6 +9,8 @@ const createCupboardFixture = ({
   price = 240,
   currency = "USD",
   catalogId = "base-double-door",
+  activeVariantId = "600x720x560",
+  isUnavailable = false,
   position = { x: 0, y: -1.14, z: -1.72 },
   rotation = 0,
 } = {}) => ({
@@ -20,6 +22,8 @@ const createCupboardFixture = ({
   price,
   currency,
   catalogId,
+  activeVariantId,
+  isUnavailable,
   position,
   rotation,
   wall: "back",
@@ -57,19 +61,27 @@ describe("pricing selectors", () => {
           cupboardId: 2,
           instanceId: 2,
           catalogId: "base-double-door",
+          activeVariantId: "600x720x560",
           displayName: "Double-door base cabinet",
           dimensionsLabel: "350 x 720 x 560 mm",
           price: 175,
+          referencePrice: null,
           currency: "USD",
+          isUnavailable: false,
+          unavailableReason: null,
         },
         {
           cupboardId: 4,
           instanceId: 4,
           catalogId: "tall-pantry",
+          activeVariantId: "600x720x560",
           displayName: "Pantry tower",
           dimensionsLabel: "600 x 2100 x 600 mm",
           price: 680,
+          referencePrice: null,
           currency: "USD",
+          isUnavailable: false,
+          unavailableReason: null,
         },
       ],
       totalPrice: 855,
@@ -77,6 +89,10 @@ describe("pricing selectors", () => {
       isEmpty: false,
       currency: "USD",
       hasMixedCurrencies: false,
+      resolvedObjectCount: 2,
+      unavailableCount: 0,
+      hasUnavailableItems: false,
+      isResolved: true,
       selectedLineItemId: 4,
     });
   });
@@ -164,5 +180,49 @@ describe("pricing selectors", () => {
       price: 205,
     });
     expect(resizedSummary.totalPrice).toBe(205);
+  });
+
+  it("marks unavailable imported cabinets as unresolved and excludes them from the live total", () => {
+    const summary = selectPricingSummary({
+      cupboards: [
+        createCupboardFixture({
+          id: 2,
+          name: "Double-door base cabinet",
+          width: 350,
+          price: 175,
+        }),
+        createCupboardFixture({
+          id: 7,
+          name: "Legacy pantry",
+          width: 600,
+          height: 2100,
+          depth: 600,
+          price: 640,
+          catalogId: "legacy-pantry",
+          activeVariantId: "600x2100x600",
+          isUnavailable: true,
+        }),
+      ],
+      selectedCupboardId: 7,
+    });
+
+    expect(summary.totalPrice).toBe(175);
+    expect(summary.unavailableCount).toBe(1);
+    expect(summary.hasUnavailableItems).toBe(true);
+    expect(summary.isResolved).toBe(false);
+    expect(summary.resolvedObjectCount).toBe(1);
+    expect(summary.lineItems[1]).toEqual({
+      cupboardId: 7,
+      instanceId: 7,
+      catalogId: "legacy-pantry",
+      activeVariantId: "600x2100x600",
+      displayName: "Legacy pantry",
+      dimensionsLabel: "600 x 2100 x 600 mm",
+      price: null,
+      referencePrice: 640,
+      currency: "USD",
+      isUnavailable: true,
+      unavailableReason: null,
+    });
   });
 });

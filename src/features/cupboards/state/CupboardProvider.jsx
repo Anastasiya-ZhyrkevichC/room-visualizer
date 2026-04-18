@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useReducer } from "react";
 
 import { useRoomScene } from "../../room/context/RoomSceneContext";
-import { CUPBOARD_RESIZE_SIDES } from "../model/placement";
+import { CUPBOARD_RESIZE_SIDES } from "../model/placementConstants";
 import { selectPricingSummary, selectSelectedCupboard } from "../selectors";
 import { cupboardReducer, initialCupboardState } from "./cupboardReducer";
 
@@ -47,6 +47,7 @@ export const CupboardProvider = ({ children }) => {
         dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction: "next", side, roomBounds: bounds } }),
       rotateSelectedCupboard: () => dispatch({ type: "ROTATE_SELECTED_CUPBOARD", payload: { roomBounds: bounds } }),
       deleteSelectedCupboard: () => dispatch({ type: "DELETE_SELECTED_CUPBOARD" }),
+      loadProject: (cupboards) => dispatch({ type: "LOAD_PROJECT", payload: { cupboards } }),
     }),
     [bounds],
   );
