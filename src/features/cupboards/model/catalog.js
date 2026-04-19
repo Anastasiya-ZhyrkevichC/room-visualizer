@@ -217,6 +217,58 @@ export const starterCabinetCatalog = [
       },
     },
   }),
+createStarterCabinetDefinition({
+    id: "base-single-door",
+    name: "Single-door base cabinet",
+    category: "base-1",
+    catalogFamily: "base-doors",
+    activeVariantId: "600x720x560x",
+    variants: [
+      {
+        width: 300,
+        height: 720,
+        depth: 560,
+        price: 160,
+      },
+      {
+        width: 350,
+        height: 720,
+        depth: 560,
+        price: 175,
+      },
+      {
+        width: 400,
+        height: 720,
+        depth: 560,
+        price: 190,
+      },
+      {
+        width: 450,
+        height: 720,
+        depth: 560,
+        price: 205,
+      },
+      {
+        width: 600,
+        height: 720,
+        depth: 560,
+        price: 240,
+      },
+    ],
+    tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
+    model: {
+      shelfCount: 1,
+      front: {
+        type: "doubleDoor",
+        handle: {
+          lengthMm: 176,
+        },
+      },
+      legs: {
+        heightMm: 110,
+      },
+    },
+  }),
   createStarterCabinetDefinition({
     id: "base-three-drawer",
     name: "Three-drawer base cabinet",

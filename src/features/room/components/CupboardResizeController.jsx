@@ -4,7 +4,11 @@ import { Raycaster, Vector2 } from "three";
 
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import { useRoomScene } from "../context/RoomSceneContext";
-import { createRoomWallTargets, getWallIntersectionById, updateRaycasterFromPointerEvent } from "../lib/wallRaycast";
+import {
+  createRoomWallTargets,
+  getResizeWallIntersectionById,
+  updateRaycasterFromPointerEvent,
+} from "../lib/wallRaycast";
 
 const CupboardResizeController = () => {
   const { activeResize, cancelCupboardResize, finishCupboardResize, isResizeActive, updateCupboardResize } =
@@ -30,7 +34,8 @@ const CupboardResizeController = () => {
         return;
       }
 
-      const intersection = getWallIntersectionById({
+      const intersection = getResizeWallIntersectionById({
+        bounds,
         raycaster,
         roomPosition,
         wallId: activeWallId,
