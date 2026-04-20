@@ -33,7 +33,6 @@ const wallLabels = {
   [RIGHT_WALL_ID]: "Right wall",
 };
 
-export const CATALOG_PLACEMENT_CUE = "Places smallest first, resize after selection";
 export const HEIGHT_OPTIONS_REFERENCE_NOTE = "Height options are display-only for now";
 
 export const formatRoomDimensions = (dimensions) =>
@@ -85,9 +84,6 @@ export const formatCatalogModulePrice = (module) => {
     ? `From ${formatPrototypePrice(startingPrice, currency)}`
     : formatPrototypePrice(startingPrice, currency);
 };
-
-export const formatCatalogPlacementHint = (module) =>
-  `Default placement size ${formatModuleDimensions(module)}. ${CATALOG_PLACEMENT_CUE}.`;
 
 export const formatSelectionResizeHint = (wallLabel = null) =>
   wallLabel

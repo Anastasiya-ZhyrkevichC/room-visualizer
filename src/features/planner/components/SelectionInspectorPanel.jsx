@@ -53,7 +53,7 @@ const SelectionInspectorPanel = () => {
             </p>
             <p className="selection-panel__copy">
               {isUnavailable
-                ? "This cabinet came from an imported project, but its source module is no longer available in the current catalog. Replace it from the catalog or delete it to restore a clean live total."
+                ? "This cabinet came from an imported project, but its source module is no longer available in the current catalog. Delete it, then drag in a current catalog module to restore a clean live total."
                 : `${formatSelectionResizeHint()} ${HEIGHT_OPTIONS_REFERENCE_NOTE}. Drag the cabinet body along its current wall.`}
             </p>
           </div>

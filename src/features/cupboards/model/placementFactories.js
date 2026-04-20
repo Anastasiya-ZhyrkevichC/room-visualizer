@@ -57,10 +57,11 @@ export const createPlacementValidationResult = ({
   magneticAttachment: magneticAttachment ? { ...magneticAttachment } : null,
 });
 
-export const createPlacementPreview = (cabinet, roomBounds) => {
+export const createPlacementPreview = (cabinet, roomBounds, { variantId = null } = {}) => {
   const resolvedCabinet =
     resolveStarterCabinetInstance(cabinet, {
-      useDefaultVariant: true,
+      variantId,
+      useDefaultVariant: !variantId,
     }) ?? cabinet;
   const initialRotation = getWallAlignedRotation(BACK_WALL_ID);
   const initialPosition = getWallAlignedPreviewPosition(resolvedCabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID);

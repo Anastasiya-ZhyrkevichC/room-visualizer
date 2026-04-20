@@ -1,7 +1,9 @@
 import {
   defaultOpenStarterCabinetGroupIds,
+  getStarterCabinetVariantsForHeight,
   getStarterCabinet,
   getStarterCabinetFamilyLabel,
+  resolveStarterCabinetDefaultVariantForHeight,
   resolveStarterCabinetInstance,
   resolveDefaultStarterCabinetVariant,
   resolveStarterCabinetWidthStep,
@@ -42,7 +44,7 @@ describe("starter cabinet catalog grouping", () => {
     ).toEqual([
       {
         id: "base-doors",
-        cabinetIds: ["base-double-door"],
+        cabinetIds: ["base-double-door", "base-single-door"],
       },
       {
         id: "base-drawers",
@@ -89,6 +91,17 @@ describe("starter cabinet catalog grouping", () => {
     expect(cabinet.availableHeights).toEqual([720]);
     expect(cabinet.variants).toHaveLength(5);
     expect(cabinet.activeVariantId).toBe("600x720x560");
+  });
+
+  it("normalizes the single-door base cabinet into the base family with a one-door model", () => {
+    const cabinet = getStarterCabinet("base-single-door");
+
+    expect(cabinet.category).toBe("base");
+    expect(cabinet.activeVariantId).toBe("600x720x560");
+    expect(cabinet.model.front).toMatchObject({
+      type: "doubleDoor",
+      doorCount: 1,
+    });
   });
 
   it("keeps tabletop support explicit on resolved cabinet instances", () => {
@@ -177,5 +190,25 @@ describe("starter cabinet catalog grouping", () => {
         "next",
       ),
     ).toBeNull();
+  });
+
+  it("returns height-specific variants and the matching default drag variant", () => {
+    expect(getStarterCabinetVariantsForHeight(getStarterCabinet("tall-pantry"), 2300)).toEqual([
+      expect.objectContaining({
+        id: "600x2300x600",
+        width: 600,
+        height: 2300,
+        depth: 600,
+        price: 760,
+      }),
+    ]);
+
+    expect(resolveStarterCabinetDefaultVariantForHeight(getStarterCabinet("tall-pantry"), 2300)).toMatchObject({
+      id: "600x2300x600",
+      width: 600,
+      height: 2300,
+      depth: 600,
+      price: 760,
+    });
   });
 });

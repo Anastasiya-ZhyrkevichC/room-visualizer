@@ -16,8 +16,8 @@ export const CupboardProvider = ({ children }) => {
   const tableTopRuns = useMemo(() => selectTableTopRuns(state), [state.cupboards]);
   const actions = useMemo(
     () => ({
-      startPlacementPreview: (catalogId) =>
-        dispatch({ type: "START_PLACEMENT_PREVIEW", payload: { catalogId, roomBounds: bounds } }),
+      startPlacementPreview: (catalogId, { variantId = null } = {}) =>
+        dispatch({ type: "START_PLACEMENT_PREVIEW", payload: { catalogId, variantId, roomBounds: bounds } }),
       updatePlacementPreview: (placement) =>
         dispatch({ type: "UPDATE_PLACEMENT_PREVIEW", payload: { ...placement, roomBounds: bounds } }),
       finishPlacementPreview: () => dispatch({ type: "FINISH_PLACEMENT_PREVIEW" }),

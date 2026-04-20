@@ -46,7 +46,7 @@ const formatPriceDelta = (value, currency) => {
 
 const getReferenceItemStatusLabel = (item) => {
   if (item.status === "unavailable") {
-    return "Unavailable in current catalog. Replace or remove this cabinet to restore a clean live total.";
+    return "Unavailable in current catalog. Remove this cabinet or add a current catalog alternative to restore a clean live total.";
   }
 
   if (item.status === "removed") {
@@ -76,7 +76,7 @@ const getComparisonSummary = ({ comparison, pricingReference, pricingSummary }) 
       title: "Live repricing is unresolved",
       body: `${pricingSummary.unavailableCount} cabinet${
         pricingSummary.unavailableCount === 1 ? "" : "s"
-      } cannot be repriced from the current catalog. Replace or remove them to restore a full live total.`,
+      } cannot be repriced from the current catalog. Remove them or add current catalog alternatives to restore a full live total.`,
     };
   }
 
@@ -216,7 +216,7 @@ const PlannerSummaryPanel = ({
           <div className="empty-state empty-state--compact table-top-summary__empty">
             <strong className="empty-state__title">No table tops yet</strong>
             <p className="empty-state__copy">
-              Add a base or drawer cabinet to generate a derived tabletop run in the planner summary.
+              Drag a base or drawer cabinet into the room to generate a derived tabletop run in the planner summary.
             </p>
           </div>
         ) : (
@@ -229,9 +229,7 @@ const PlannerSummaryPanel = ({
                     Supports {tableTopRun.cupboardIds.length} cabinet{tableTopRun.cupboardIds.length === 1 ? "" : "s"}
                   </strong>
                 </div>
-                <strong className="table-top-summary__item-dimensions">
-                  {formatTableTopDimensions(tableTopRun)}
-                </strong>
+                <strong className="table-top-summary__item-dimensions">{formatTableTopDimensions(tableTopRun)}</strong>
               </div>
             ))}
           </div>
@@ -243,8 +241,8 @@ const PlannerSummaryPanel = ({
           <div className="empty-state empty-state--compact pricing-summary__empty">
             <strong className="empty-state__title">No cabinets priced yet</strong>
             <p className="empty-state__copy">
-              Add a cabinet from the catalog to create a live line item. The current cabinet total stays at{" "}
-              {totalPriceLabel}.
+              Drag a cabinet from the catalog into the room to create a live line item. The current cabinet total stays
+              at {totalPriceLabel}.
             </p>
           </div>
         ) : (
@@ -286,9 +284,7 @@ const PlannerSummaryPanel = ({
             <span className="pricing-summary__footer-label">{isResolved ? "Total price" : "Partial live total"}</span>
             <p className="pricing-summary__footer-note">
               {hasUnavailableItems
-                ? `${unavailableCount} unavailable cabinet${
-                    unavailableCount === 1 ? "" : "s"
-                  } excluded until replaced or removed.`
+                ? `${unavailableCount} unavailable cabinet${unavailableCount === 1 ? "" : "s"} excluded from the live total.`
                 : "Live cabinet total only."}
             </p>
           </div>

@@ -88,7 +88,7 @@
 
 .planner-layout {
   display: grid;
-  grid-template-columns: minmax(250px, 290px) minmax(0, 1fr) minmax(250px, 290px);
+  grid-template-columns: minmax(320px, 360px) minmax(0, 1fr) minmax(250px, 290px);
   gap: 20px;
   align-items: stretch;
 }
@@ -248,7 +248,7 @@
   }
 
   .planner-layout {
-    grid-template-columns: minmax(220px, 250px) minmax(0, 1fr) minmax(220px, 250px);
+    grid-template-columns: minmax(280px, 330px) minmax(0, 1fr) minmax(220px, 250px);
   }
 
   .planner-stage__canvas {

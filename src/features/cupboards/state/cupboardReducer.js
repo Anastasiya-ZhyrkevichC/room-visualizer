@@ -95,7 +95,9 @@ export const cupboardReducer = (state, action) => {
 
       return {
         ...nextState,
-        placementPreview: createPlacementPreview(cabinet, action.payload.roomBounds),
+        placementPreview: createPlacementPreview(cabinet, action.payload.roomBounds, {
+          variantId: action.payload.variantId ?? null,
+        }),
         selectedCupboardId: null,
       };
     }

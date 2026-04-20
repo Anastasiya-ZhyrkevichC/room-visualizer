@@ -453,6 +453,39 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.selectedCupboardId).toBeNull();
   });
 
+  it("starts preview mode from an explicitly selected variant when one is provided", () => {
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        selectedCupboardId: 4,
+      },
+      {
+        type: "START_PLACEMENT_PREVIEW",
+        payload: {
+          catalogId: "tall-pantry",
+          variantId: "600x2300x600",
+          roomBounds,
+        },
+      },
+    );
+
+    expect(nextState.selectedCupboardId).toBeNull();
+    expect(nextState.placementPreview).toMatchObject({
+      catalogId: "tall-pantry",
+      defaultVariantId: "600x2100x600",
+      activeVariantId: "600x2300x600",
+      width: 600,
+      height: 2300,
+      depth: 600,
+      price: 760,
+    });
+    expectPositionToMatch(nextState.placementPreview.position, {
+      x: 0,
+      y: -0.35,
+      z: -1.7,
+    });
+  });
+
   it("rejects a cross-wall preview that intersects a cabinet at the corner", () => {
     const startedState = cupboardReducer(
       {

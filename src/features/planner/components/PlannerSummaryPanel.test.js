@@ -305,7 +305,7 @@ describe("PlannerSummaryPanel", () => {
     });
 
     expect(container.textContent).toContain("Partial live total");
-    expect(container.textContent).toContain("1 unavailable cabinet excluded until replaced or removed.");
+    expect(container.textContent).toContain("1 unavailable cabinet excluded from the live total.");
     expect(container.textContent).toContain("Unavailable");
     expect(container.textContent).toContain("Saved pricing reference");
     expect(container.textContent).toContain("Live repricing is unresolved");

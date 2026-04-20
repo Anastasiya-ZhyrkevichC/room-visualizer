@@ -98,6 +98,28 @@ export const resolveStarterCabinetActiveVariant = (cabinetDefinition) =>
     cabinetDefinition?.activeVariantId ?? cabinetDefinition?.defaultVariantId,
   );
 
+export const getStarterCabinetVariantsForHeight = (cabinetDefinition, height = null) => {
+  if (!cabinetDefinition?.variants?.length) {
+    return [];
+  }
+
+  const resolvedHeight =
+    (Number.isFinite(height) ? height : null) ??
+    resolveStarterCabinetActiveVariant(cabinetDefinition)?.height ??
+    resolveDefaultStarterCabinetVariant(cabinetDefinition)?.height ??
+    null;
+
+  if (!Number.isFinite(resolvedHeight)) {
+    return cabinetDefinition.variants;
+  }
+
+  return cabinetDefinition.variants.filter((variant) => variant.height === resolvedHeight);
+};
+
+export const resolveStarterCabinetDefaultVariantForHeight = (cabinetDefinition, height = null) =>
+  getStarterCabinetVariantsForHeight(cabinetDefinition, height)[0] ??
+  resolveDefaultStarterCabinetVariant(cabinetDefinition);
+
 export const resolveStarterCabinetDefinitionSnapshot = (cabinetDefinition, variantId = null) => {
   if (!cabinetDefinition) {
     return null;
@@ -217,12 +239,12 @@ export const starterCabinetCatalog = [
       },
     },
   }),
-createStarterCabinetDefinition({
+  createStarterCabinetDefinition({
     id: "base-single-door",
     name: "Single-door base cabinet",
-    category: "base-1",
+    category: "base",
     catalogFamily: "base-doors",
-    activeVariantId: "600x720x560x",
+    activeVariantId: "600x720x560",
     variants: [
       {
         width: 300,
@@ -260,6 +282,7 @@ createStarterCabinetDefinition({
       shelfCount: 1,
       front: {
         type: "doubleDoor",
+        doorCount: 1,
         handle: {
           lengthMm: 176,
         },
