@@ -194,14 +194,14 @@ export const getCabinetDimensionTheme = ({ isGhost = false, isInvalid = false, i
     return isGhost
       ? {
           color: "#ffb1a7",
-          textColor: "#fff4f1",
+          textColor: "#8b2f2b",
           outlineColor: "#2a1311",
           labelBackgroundColor: "#2a1311",
           opacity: 0.92,
         }
       : {
           color: "#ff8f7a",
-          textColor: "#fff1ed",
+          textColor: "#7b231f",
           outlineColor: "#24100f",
           labelBackgroundColor: "#24100f",
           opacity: 1,
@@ -211,7 +211,7 @@ export const getCabinetDimensionTheme = ({ isGhost = false, isInvalid = false, i
   if (isGhost) {
     return {
       color: "#ffe3b8",
-      textColor: "#fff6e6",
+      textColor: "#8a5b22",
       outlineColor: "#1f1913",
       labelBackgroundColor: "#1f1913",
       opacity: 0.88,
@@ -221,7 +221,7 @@ export const getCabinetDimensionTheme = ({ isGhost = false, isInvalid = false, i
   if (isActive) {
     return {
       color: "#ffc65a",
-      textColor: "#fff7dc",
+      textColor: "#7c4c14",
       outlineColor: "#1c1611",
       labelBackgroundColor: "#1c1611",
       opacity: 1,
@@ -230,7 +230,7 @@ export const getCabinetDimensionTheme = ({ isGhost = false, isInvalid = false, i
 
   return {
     color: "#d8c6a0",
-    textColor: "#fff8ea",
+    textColor: "#6c5231",
     outlineColor: "#1a1713",
     labelBackgroundColor: "#1a1713",
     opacity: 0.78,

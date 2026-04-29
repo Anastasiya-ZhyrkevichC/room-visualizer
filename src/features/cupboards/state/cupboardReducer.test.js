@@ -191,6 +191,46 @@ describe("cupboard reducer placement preview", () => {
     });
   });
 
+  it("keeps wall-cabinet previews mounted above the floor during placement updates", () => {
+    const startedState = cupboardReducer(initialCupboardState, {
+      type: "START_PLACEMENT_PREVIEW",
+      payload: {
+        catalogId: "wall-double-door",
+        roomBounds,
+      },
+    });
+
+    const nextState = cupboardReducer(startedState, {
+      type: "UPDATE_PLACEMENT_PREVIEW",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 0.4,
+          y: 0.2,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(nextState.placementPreview).toMatchObject({
+      catalogId: "wall-double-door",
+      category: "wall",
+      wall: BACK_WALL_ID,
+    });
+    expectPositionToMatch(nextState.placementPreview.position, {
+      x: 0.4,
+      y: 0.14,
+      z: -1.84,
+    });
+    expect(nextState.placementPreview.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+  });
+
   it("marks the preview invalid when the pointer leaves the back wall", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",

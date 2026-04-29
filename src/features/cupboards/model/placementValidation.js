@@ -7,7 +7,7 @@ import {
 } from "./placementConstants";
 import { createPlacementValidationResult } from "./placementFactories";
 import { getCupboardWallSpan, getWallSpanCenter, getWallSpanLength, setWallSpanCenter } from "./wallSpan";
-import { getWallAlignedPreviewPosition, getWallAlignedRotation, isPlacementWall } from "./wallAlignment";
+import { getCabinetWallAlignedPreviewPosition, getWallAlignedRotation, isPlacementWall } from "./wallAlignment";
 import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "./walls";
 
 export { getCupboardWallSpan, getWallSpanCenter, getWallSpanLength, setWallSpanCenter } from "./wallSpan";
@@ -95,6 +95,9 @@ const boxesIntersect = (firstBox, secondBox) =>
   firstBox.minZ < secondBox.maxZ - OVERLAP_EPSILON &&
   firstBox.maxZ > secondBox.minZ + OVERLAP_EPSILON;
 
+const boxesOverlapVertically = (firstBox, secondBox) =>
+  firstBox.minY < secondBox.maxY - OVERLAP_EPSILON && firstBox.maxY > secondBox.minY + OVERLAP_EPSILON;
+
 const getAdjacentWalls = (wall) => {
   switch (wall) {
     case LEFT_WALL_ID:
@@ -118,14 +121,25 @@ export const getSameWallCollisionIds = ({ candidate, cupboards, snappedPosition,
     rotation,
     wall,
   });
+  const candidateBounds = getCupboardBounds({
+    ...candidate,
+    position: snappedPosition,
+    rotation,
+  });
 
   return cupboards
     .filter((cupboard) => cupboard.wall === wall && cupboard.id !== candidate.id)
-    .filter((cupboard) => spansOverlap(candidateSpan, getCupboardWallSpan(cupboard)))
+    .filter((cupboard) => {
+      if (!spansOverlap(candidateSpan, getCupboardWallSpan(cupboard))) {
+        return false;
+      }
+
+      return boxesIntersect(candidateBounds, getCupboardBounds(cupboard));
+    })
     .map((cupboard) => cupboard.id);
 };
 
-const getSameWallBlockedIntervals = ({ candidate, cupboards, roomBounds, rotation, wall }) => {
+const getSameWallBlockedIntervals = ({ candidate, cupboards, roomBounds, snappedPosition, rotation, wall }) => {
   if (!Array.isArray(cupboards) || cupboards.length === 0) {
     return [];
   }
@@ -136,9 +150,15 @@ const getSameWallBlockedIntervals = ({ candidate, cupboards, roomBounds, rotatio
     roomBounds,
     wall,
   });
+  const candidateBounds = getCupboardBounds({
+    ...candidate,
+    position: snappedPosition,
+    rotation,
+  });
 
   return cupboards
     .filter((cupboard) => cupboard.wall === wall && cupboard.id !== candidate.id)
+    .filter((cupboard) => boxesOverlapVertically(candidateBounds, getCupboardBounds(cupboard)))
     .map((cupboard) => {
       const span = getCupboardWallSpan(cupboard);
 
@@ -262,6 +282,7 @@ const getSameWallPlacementOutcome = ({ candidate, cupboards, rawSnappedPosition,
     candidate,
     cupboards,
     roomBounds,
+    snappedPosition: rawSnappedPosition,
     rotation,
     wall,
   }).find(
@@ -330,7 +351,7 @@ export const validatePlacementCandidate = ({ candidate, point, roomBounds, wall,
   }
 
   const rotation = getWallAlignedRotation(wall);
-  const rawSnappedPosition = getWallAlignedPreviewPosition(candidate.size, point, roomBounds, wall, rotation);
+  const rawSnappedPosition = getCabinetWallAlignedPreviewPosition(candidate, point, roomBounds, wall, rotation);
   const sameWallPlacementOutcome = getSameWallPlacementOutcome({
     candidate,
     cupboards,

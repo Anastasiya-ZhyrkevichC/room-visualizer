@@ -28,21 +28,19 @@ const getRenderedChildren = (overrides = {}) => {
 
 describe("CupboardWidthOverlay", () => {
   it("formats the label from the explicit width when available", () => {
-    const [, , , billboard] = getRenderedChildren({
+    const [text] = getRenderedChildren({
       widthMm: 725.2,
       size: [0.6, 0.72, 0.56],
     });
-    const [, text] = React.Children.toArray(billboard.props.children);
 
     expect(text.props.children).toBe("725 mm");
   });
 
   it("falls back to the rendered cabinet width when explicit millimeters are missing", () => {
-    const [, , , billboard] = getRenderedChildren({
+    const [text] = getRenderedChildren({
       widthMm: undefined,
       size: [0.4, 0.72, 0.56],
     });
-    const [, text] = React.Children.toArray(billboard.props.children);
 
     expect(text.props.children).toBe("400 mm");
   });
@@ -53,15 +51,14 @@ describe("CupboardWidthOverlay", () => {
     expect(CupboardWidthOverlay(createOverlayProps({ size: [NaN, 0.72, 0.56] }))).toBeNull();
   });
 
-  it("derives local overlay endpoints from the cabinet width, height, and wall depth", () => {
+  it("derives a wall-anchored label position from the cabinet height and wall depth", () => {
     const geometry = getWidthOverlayGeometry([0.8, 0.72, 0.6]);
 
-    expect(geometry.startPoint).toEqual([-0.4, 0.36 + DIMENSION_Y_OFFSET, -0.3 + DIMENSION_WALL_INSET]);
-    expect(geometry.endPoint).toEqual([0.4, 0.36 + DIMENSION_Y_OFFSET, -0.3 + DIMENSION_WALL_INSET]);
     expect(geometry.labelPosition).toEqual([
       0,
       0.36 + DIMENSION_Y_OFFSET + DIMENSION_LABEL_LIFT,
       -0.3 + DIMENSION_WALL_INSET,
     ]);
+    expect(geometry.maxWidth).toBeCloseTo(0.72);
   });
 });

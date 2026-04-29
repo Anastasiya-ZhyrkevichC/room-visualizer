@@ -4,6 +4,7 @@ export const CUPBOARD_RESIZE_SIDES = {
 };
 
 export const SAME_WALL_MAGNETIC_TOLERANCE = 0.12;
+export const WALL_CABINET_BOTTOM_OFFSET_MM = (72 + 56) * 10;
 
 export const PLACEMENT_VALIDATION_REASONS = {
   UNSUPPORTED_WALL: "unsupported-wall",

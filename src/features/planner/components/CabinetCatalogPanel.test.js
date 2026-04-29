@@ -74,6 +74,25 @@ describe("CabinetCatalogPanel", () => {
     expect(pantryRow.textContent).toContain("From $680");
   });
 
+  it("renders wall cabinets from the starter catalog with their wall-unit depth", () => {
+    const container = renderCatalogPanel();
+    const wallRow = [...container.querySelectorAll(".catalog-row")].find((row) =>
+      row.textContent.includes("Double-door wall cabinet"),
+    );
+
+    expect(wallRow).toBeTruthy();
+    expect(wallRow.querySelector(".catalog-row__control-value")?.textContent).toBe("720 mm");
+    expect(getVariantTableData(wallRow)).toEqual([
+      ["300 mm", "$120"],
+      ["350 mm", "$132"],
+      ["400 mm", "$144"],
+      ["450 mm", "$156"],
+      ["600 mm", "$188"],
+    ]);
+    expect(wallRow.textContent).toContain("Depth 320 mm");
+    expect(wallRow.textContent).toContain("From $120");
+  });
+
   it("removes action buttons and placement hint affordances", () => {
     const container = renderCatalogPanel();
 

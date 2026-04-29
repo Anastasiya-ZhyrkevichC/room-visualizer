@@ -52,7 +52,7 @@ describe("starter cabinet catalog grouping", () => {
       },
       {
         id: "wall-doors",
-        cabinetIds: [],
+        cabinetIds: ["wall-double-door"],
       },
       {
         id: "wall-lift-up",
@@ -70,7 +70,7 @@ describe("starter cabinet catalog grouping", () => {
   });
 
   it("opens populated groups by default and leaves empty families collapsed", () => {
-    expect(defaultOpenStarterCabinetGroupIds).toEqual(["base-doors", "base-drawers", "tall"]);
+    expect(defaultOpenStarterCabinetGroupIds).toEqual(["base-doors", "base-drawers", "wall-doors", "tall"]);
   });
 
   it("falls back from legacy category ids to the matching visible family label", () => {
@@ -102,6 +102,18 @@ describe("starter cabinet catalog grouping", () => {
       type: "doubleDoor",
       doorCount: 1,
     });
+  });
+
+  it("adds a wall cabinet definition with wall-family sizing and no tabletop support", () => {
+    const cabinet = getStarterCabinet("wall-double-door");
+
+    expect(cabinet.category).toBe("wall");
+    expect(cabinet.catalogFamily).toBe("wall-doors");
+    expect(cabinet.activeVariantId).toBe("600x720x320");
+    expect(cabinet.availableWidths).toEqual([300, 350, 400, 450, 600]);
+    expect(cabinet.availableHeights).toEqual([720]);
+    expect(cabinet.tableTopProfile).toBeNull();
+    expect(cabinet.model.legs).toBeNull();
   });
 
   it("keeps tabletop support explicit on resolved cabinet instances", () => {

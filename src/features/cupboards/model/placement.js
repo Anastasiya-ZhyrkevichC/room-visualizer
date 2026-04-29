@@ -7,6 +7,8 @@ export {
 } from "./placementConstants";
 export {
   alignCupboardToBackWall,
+  getCabinetCenterY,
+  getCabinetWallAlignedPreviewPosition,
   alignCupboardToWall,
   getBackWallAlignedPreviewPosition,
   getFloorAlignedPreviewPosition,

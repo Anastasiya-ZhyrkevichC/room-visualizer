@@ -73,11 +73,12 @@ const createPlacedCupboardFixture = ({
   position = { x: 0, y: -1.14, z: -1.72 },
   wall = BACK_WALL_ID,
   rotation = getWallAlignedRotation(wall),
+  category = "base",
 } = {}) => ({
   id,
   catalogId: `fixture-${id}`,
   name: `Fixture cabinet ${id}`,
-  category: "base",
+  category,
   model: {
     front: {
       type: "doubleDoor",
@@ -267,6 +268,27 @@ describe("cupboard placement", () => {
       front: {
         type: "drawers",
       },
+    });
+  });
+
+  it("raises wall-cabinet previews to a 1280 mm mounting height from the floor", () => {
+    const preview = createPlacementPreview(
+      {
+        catalogId: "wall-double-door",
+      },
+      roomBounds,
+    );
+
+    expect(preview).toMatchObject({
+      catalogId: "wall-double-door",
+      category: "wall",
+      activeVariantId: "300x720x320",
+      wall: null,
+    });
+    expectPositionToMatch(preview.position, {
+      x: 0,
+      y: 0.14,
+      z: -1.84,
     });
   });
 
@@ -494,6 +516,37 @@ describe("cupboard placement", () => {
       x: 0.2,
       y: -1.14,
       z: -1.72,
+    });
+  });
+
+  it("allows a wall cabinet to share the same wall span when it is mounted above a base cabinet", () => {
+    const validation = validatePlacementCandidate({
+      candidate: {
+        category: "wall",
+        size: [0.6, 0.72, 0.32],
+        position: { x: 0, y: 0.14, z: -1.84 },
+        rotation: getWallAlignedRotation(BACK_WALL_ID),
+      },
+      wall: BACK_WALL_ID,
+      point: {
+        x: 0,
+        y: 0.2,
+      },
+      roomBounds,
+      cupboards: [createPlacedCupboardFixture()],
+    });
+
+    expect(validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+    expectPositionToMatch(validation.snappedPosition, {
+      x: 0,
+      y: 0.14,
+      z: -1.84,
     });
   });
 

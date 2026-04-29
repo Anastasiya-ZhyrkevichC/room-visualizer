@@ -335,6 +335,56 @@ export const starterCabinetCatalog = [
     },
   }),
   createStarterCabinetDefinition({
+    id: "wall-double-door",
+    name: "Double-door wall cabinet",
+    category: "wall",
+    catalogFamily: "wall-doors",
+    activeVariantId: "600x720x320",
+    variants: [
+      {
+        width: 300,
+        height: 720,
+        depth: 320,
+        price: 120,
+      },
+      {
+        width: 350,
+        height: 720,
+        depth: 320,
+        price: 132,
+      },
+      {
+        width: 400,
+        height: 720,
+        depth: 320,
+        price: 144,
+      },
+      {
+        width: 450,
+        height: 720,
+        depth: 320,
+        price: 156,
+      },
+      {
+        width: 600,
+        height: 720,
+        depth: 320,
+        price: 188,
+      },
+    ],
+    tableTopProfile: null,
+    model: {
+      shelfCount: 1,
+      legs: null,
+      front: {
+        type: "doubleDoor",
+        handle: {
+          lengthMm: 160,
+        },
+      },
+    },
+  }),
+  createStarterCabinetDefinition({
     id: "tall-pantry",
     name: "Pantry tower",
     category: "tall",
