@@ -2,6 +2,7 @@ import React from "react";
 
 import { useCupboards } from "../state/CupboardProvider";
 import { CupboardMesh, GhostCupboardMesh } from "./CupboardMesh";
+import CupboardWidthOverlay from "./CupboardWidthOverlay";
 import SelectedCupboardWidthControls from "./SelectedCupboardWidthControls";
 
 const CupboardRenderer = () => {
@@ -23,39 +24,66 @@ const CupboardRenderer = () => {
 
   return (
     <>
-      {cupboards.map((cupboard) => (
-        <CupboardMesh
-          key={cupboard.id}
-          position={cupboard.position}
-          rotation={cupboard.rotation}
-          size={cupboard.size}
-          category={cupboard.category}
-          model={cupboard.model}
-          isMoving={cupboard.id === activeMoveCupboardId}
-          isSelected={cupboard.id === selectedCupboardId}
-          isInvalid={
-            (cupboard.id === activeMoveCupboardId && isActiveMoveInvalid) ||
-            (cupboard.id === activeResizeCupboardId && isActiveResizeInvalid)
-          }
-          onMoveStart={
-            cupboard.id === selectedCupboardId && cupboard.id !== activeResizeCupboardId
-              ? () => startCupboardMove(cupboard.id)
-              : undefined
-          }
-          onSelect={() => selectCupboard(cupboard.id)}
-        />
-      ))}
+      {cupboards.flatMap((cupboard) => {
+        const isMoving = cupboard.id === activeMoveCupboardId;
+        const isSelected = cupboard.id === selectedCupboardId;
+        const isInvalid =
+          (cupboard.id === activeMoveCupboardId && isActiveMoveInvalid) ||
+          (cupboard.id === activeResizeCupboardId && isActiveResizeInvalid);
 
-      {placementPreview ? (
-        <GhostCupboardMesh
-          position={placementPreview.position}
-          rotation={placementPreview.rotation}
-          size={placementPreview.size}
-          category={placementPreview.category}
-          model={placementPreview.model}
-          isInvalid={isPlacementPreviewInvalid}
-        />
-      ) : null}
+        return [
+          <CupboardMesh
+            key={`cupboard-${cupboard.id}`}
+            position={cupboard.position}
+            rotation={cupboard.rotation}
+            size={cupboard.size}
+            category={cupboard.category}
+            model={cupboard.model}
+            isMoving={isMoving}
+            isSelected={isSelected}
+            isInvalid={isInvalid}
+            onMoveStart={
+              cupboard.id === selectedCupboardId && cupboard.id !== activeResizeCupboardId
+                ? () => startCupboardMove(cupboard.id)
+                : undefined
+            }
+            onSelect={() => selectCupboard(cupboard.id)}
+          />,
+          <CupboardWidthOverlay
+            key={`cupboard-width-overlay-${cupboard.id}`}
+            position={cupboard.position}
+            rotation={cupboard.rotation}
+            size={cupboard.size}
+            widthMm={cupboard.width}
+            isInvalid={isInvalid}
+            isActive
+          />,
+        ];
+      })}
+
+      {placementPreview
+        ? [
+            <GhostCupboardMesh
+              key="placement-preview"
+              position={placementPreview.position}
+              rotation={placementPreview.rotation}
+              size={placementPreview.size}
+              category={placementPreview.category}
+              model={placementPreview.model}
+              isInvalid={isPlacementPreviewInvalid}
+            />,
+            <CupboardWidthOverlay
+              key="placement-preview-width-overlay"
+              position={placementPreview.position}
+              rotation={placementPreview.rotation}
+              size={placementPreview.size}
+              widthMm={placementPreview.width}
+              isGhost
+              isInvalid={isPlacementPreviewInvalid}
+              isActive
+            />,
+          ]
+        : null}
 
       {selectedCupboard ? <SelectedCupboardWidthControls cupboard={selectedCupboard} /> : null}
     </>

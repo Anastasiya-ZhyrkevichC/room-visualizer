@@ -188,3 +188,51 @@ export const getKitchenCabinetTheme = ({
     transparent: false,
   };
 };
+
+export const getCabinetDimensionTheme = ({ isGhost = false, isInvalid = false, isActive = false }) => {
+  if (isInvalid) {
+    return isGhost
+      ? {
+          color: "#ffb1a7",
+          textColor: "#fff4f1",
+          outlineColor: "#2a1311",
+          labelBackgroundColor: "#2a1311",
+          opacity: 0.92,
+        }
+      : {
+          color: "#ff8f7a",
+          textColor: "#fff1ed",
+          outlineColor: "#24100f",
+          labelBackgroundColor: "#24100f",
+          opacity: 1,
+        };
+  }
+
+  if (isGhost) {
+    return {
+      color: "#ffe3b8",
+      textColor: "#fff6e6",
+      outlineColor: "#1f1913",
+      labelBackgroundColor: "#1f1913",
+      opacity: 0.88,
+    };
+  }
+
+  if (isActive) {
+    return {
+      color: "#ffc65a",
+      textColor: "#fff7dc",
+      outlineColor: "#1c1611",
+      labelBackgroundColor: "#1c1611",
+      opacity: 1,
+    };
+  }
+
+  return {
+    color: "#d8c6a0",
+    textColor: "#fff8ea",
+    outlineColor: "#1a1713",
+    labelBackgroundColor: "#1a1713",
+    opacity: 0.78,
+  };
+};
