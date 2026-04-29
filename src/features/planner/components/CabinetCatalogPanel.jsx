@@ -5,8 +5,10 @@ import {
   getStarterCabinetVariantsForHeight,
   resolveStarterCabinetDefaultVariantForHeight,
   resolveDefaultStarterCabinetVariant,
+  resolveStarterCabinetInstance,
   starterCabinetCatalogGroups,
 } from "../../cupboards/model/catalog";
+import { calculateCupboardPriceBreakdown } from "../../cupboards/model/pricing";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import {
   formatCatalogModulePrice,
@@ -32,7 +34,13 @@ const createInitialSelectedHeights = () =>
   }, {});
 
 const CabinetCatalogPanel = () => {
-  const { cancelPlacementPreview, finishPlacementPreview, placementPreview, startPlacementPreview } = useCupboards();
+  const {
+    cancelPlacementPreview,
+    finishPlacementPreview,
+    placementPreview,
+    projectCustomisation,
+    startPlacementPreview,
+  } = useCupboards();
   const [openGroups, setOpenGroups] = useState(createInitialOpenGroups);
   const [selectedHeights, setSelectedHeights] = useState(createInitialSelectedHeights);
   const placementCleanupRef = useRef(null);
@@ -122,7 +130,8 @@ const CabinetCatalogPanel = () => {
       </div>
       <p className="panel-card__copy">
         Expand a cabinet family, choose a height when variants exist, then drag a cabinet into the room. Each row places
-        the smallest size for the chosen height first, and you can resize it after selecting it in the scene.
+        the selected cabinet with the current project finish defaults, and you can resize it after selecting it in the
+        scene.
       </p>
 
       <div className="catalog-tree">
@@ -161,9 +170,30 @@ const CabinetCatalogPanel = () => {
                       const heightVariants = getStarterCabinetVariantsForHeight(cabinet, selectedHeight);
                       const defaultVariant =
                         resolveStarterCabinetDefaultVariantForHeight(cabinet, selectedHeight) ?? fallbackVariant;
+                      const resolvedVariantRows = heightVariants.map((variant) => {
+                        const resolvedInstance = resolveStarterCabinetInstance(cabinet, {
+                          variantId: variant.id,
+                        });
+                        const totalPrice = calculateCupboardPriceBreakdown(
+                          resolvedInstance,
+                          projectCustomisation,
+                        ).totalPrice;
+
+                        return {
+                          variant,
+                          totalPrice,
+                        };
+                      });
+                      const resolvedPrices = resolvedVariantRows
+                        .map((item) => item.totalPrice)
+                        .filter((price) => Number.isFinite(price));
                       const selectedHeightLabel = formatMillimeterOptions([selectedHeight]);
                       const depthLabel = formatModuleDepth(defaultVariant);
-                      const priceLabel = formatCatalogModulePrice(cabinet);
+                      const priceLabel = formatCatalogModulePrice({
+                        startingPrice: resolvedPrices[0] ?? 0,
+                        maxPrice: resolvedPrices[resolvedPrices.length - 1] ?? resolvedPrices[0] ?? 0,
+                        currency: cabinet.currency,
+                      });
                       const hasHeightOptions = (cabinet.availableHeights?.length ?? 0) > 1;
 
                       return (
@@ -239,7 +269,7 @@ const CabinetCatalogPanel = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {heightVariants.map((variant) => {
+                                  {resolvedVariantRows.map(({ variant, totalPrice }) => {
                                     return (
                                       <tr key={variant.id}>
                                         <td>
@@ -247,7 +277,7 @@ const CabinetCatalogPanel = () => {
                                             {formatMillimeterOptions([variant.width])}
                                           </span>
                                         </td>
-                                        <td>{formatPrototypePrice(variant.price, cabinet.currency)}</td>
+                                        <td>{formatPrototypePrice(totalPrice, cabinet.currency)}</td>
                                       </tr>
                                     );
                                   })}

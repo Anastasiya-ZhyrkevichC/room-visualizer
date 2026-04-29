@@ -1,9 +1,18 @@
 import { convertMillimetersToMeters } from "../../../lib/units";
+import starterCabinetCatalogDefinitions from "./starterCabinetCatalogDefinitions.json";
 import { resolveCabinetModel } from "./renderModel";
 import { STRAIGHT_RUN_TABLE_TOP_PROFILE } from "./tableTop";
 
-export const STARTER_CABINET_PRICE_CURRENCY = "USD";
-export const STARTER_CABINET_CATALOG_VERSION = "starter-catalog-v1";
+export const STARTER_CABINET_PRICE_CURRENCY = starterCabinetCatalogDefinitions[0]?.currency ?? "USD";
+export const STARTER_CABINET_CATALOG_VERSION = "starter-catalog-v2";
+
+export const STARTER_CABINET_TABLE_TOP_PROFILE_IDS = Object.freeze({
+  STRAIGHT_RUN: "straight-run",
+});
+
+const starterCabinetTableTopProfiles = Object.freeze({
+  [STARTER_CABINET_TABLE_TOP_PROFILE_IDS.STRAIGHT_RUN]: STRAIGHT_RUN_TABLE_TOP_PROFILE,
+});
 
 export const starterCabinetCatalogFamilies = [
   {
@@ -54,11 +63,13 @@ export const getStarterCabinetFamilyLabel = (cabinet) => {
   return starterCabinetFamilyLookup[familyId]?.label ?? cabinet?.category ?? familyId ?? "";
 };
 
+const getVariantPriceSortValue = (variant) => (Number.isFinite(variant?.price) ? variant.price : Number.MAX_SAFE_INTEGER);
+
 const compareStarterCabinetVariants = (firstVariant, secondVariant) =>
   firstVariant.width - secondVariant.width ||
   firstVariant.height - secondVariant.height ||
   firstVariant.depth - secondVariant.depth ||
-  firstVariant.price - secondVariant.price ||
+  getVariantPriceSortValue(firstVariant) - getVariantPriceSortValue(secondVariant) ||
   firstVariant.id.localeCompare(secondVariant.id);
 
 const getSortedUniqueValues = (values) =>
@@ -69,9 +80,12 @@ const createStarterCabinetVariant = ({ id, width, height, depth, price }) => ({
   width,
   height,
   depth,
-  price,
+  price: Number.isFinite(price) ? price : null,
   size: [convertMillimetersToMeters(width), convertMillimetersToMeters(height), convertMillimetersToMeters(depth)],
 });
+
+const resolveStarterCabinetTableTopProfile = (tableTopProfileId) =>
+  tableTopProfileId ? starterCabinetTableTopProfiles[tableTopProfileId] ?? null : null;
 
 export const resolveStarterCabinetVariant = (cabinetDefinition, variantId = null) => {
   if (!cabinetDefinition?.variants?.length) {
@@ -152,7 +166,7 @@ const createStarterCabinetDefinition = ({
   catalogFamily,
   model,
   currency = STARTER_CABINET_PRICE_CURRENCY,
-  tableTopProfile = null,
+  tableTopProfileId = null,
   variants,
   activeVariantId = null,
 }) => {
@@ -166,7 +180,7 @@ const createStarterCabinetDefinition = ({
 
   const defaultVariant = normalizedVariants[0];
   const resolvedActiveVariant = normalizedVariants.find((variant) => variant.id === activeVariantId) ?? defaultVariant;
-  const prices = normalizedVariants.map((variant) => variant.price);
+  const prices = normalizedVariants.map((variant) => variant.price).filter((price) => Number.isFinite(price));
 
   return resolveStarterCabinetDefinitionSnapshot({
     id,
@@ -175,7 +189,7 @@ const createStarterCabinetDefinition = ({
     catalogFamily: resolveStarterCabinetFamilyId({ catalogFamily, category }),
     model: resolveCabinetModel(category, model),
     currency,
-    tableTopProfile,
+    tableTopProfile: resolveStarterCabinetTableTopProfile(tableTopProfileId),
     variants: normalizedVariants,
     availableWidths: getSortedUniqueValues(normalizedVariants.map((variant) => variant.width)),
     availableHeights: getSortedUniqueValues(normalizedVariants.map((variant) => variant.height)),
@@ -186,237 +200,9 @@ const createStarterCabinetDefinition = ({
   });
 };
 
-export const starterCabinetCatalog = [
-  createStarterCabinetDefinition({
-    id: "base-double-door",
-    name: "Double-door base cabinet",
-    category: "base",
-    catalogFamily: "base-doors",
-    activeVariantId: "600x720x560",
-    variants: [
-      {
-        width: 300,
-        height: 720,
-        depth: 560,
-        price: 160,
-      },
-      {
-        width: 350,
-        height: 720,
-        depth: 560,
-        price: 175,
-      },
-      {
-        width: 400,
-        height: 720,
-        depth: 560,
-        price: 190,
-      },
-      {
-        width: 450,
-        height: 720,
-        depth: 560,
-        price: 205,
-      },
-      {
-        width: 600,
-        height: 720,
-        depth: 560,
-        price: 240,
-      },
-    ],
-    tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
-    model: {
-      shelfCount: 1,
-      front: {
-        type: "doubleDoor",
-        handle: {
-          lengthMm: 176,
-        },
-      },
-      legs: {
-        heightMm: 110,
-      },
-    },
-  }),
-  createStarterCabinetDefinition({
-    id: "base-single-door",
-    name: "Single-door base cabinet",
-    category: "base",
-    catalogFamily: "base-doors",
-    activeVariantId: "600x720x560",
-    variants: [
-      {
-        width: 300,
-        height: 720,
-        depth: 560,
-        price: 160,
-      },
-      {
-        width: 350,
-        height: 720,
-        depth: 560,
-        price: 175,
-      },
-      {
-        width: 400,
-        height: 720,
-        depth: 560,
-        price: 190,
-      },
-      {
-        width: 450,
-        height: 720,
-        depth: 560,
-        price: 205,
-      },
-      {
-        width: 600,
-        height: 720,
-        depth: 560,
-        price: 240,
-      },
-    ],
-    tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
-    model: {
-      shelfCount: 1,
-      front: {
-        type: "doubleDoor",
-        doorCount: 1,
-        handle: {
-          lengthMm: 176,
-        },
-      },
-      legs: {
-        heightMm: 110,
-      },
-    },
-  }),
-  createStarterCabinetDefinition({
-    id: "base-three-drawer",
-    name: "Three-drawer base cabinet",
-    category: "drawer",
-    catalogFamily: "base-drawers",
-    activeVariantId: "900x720x560",
-    variants: [
-      {
-        width: 600,
-        height: 720,
-        depth: 560,
-        price: 290,
-      },
-      {
-        width: 800,
-        height: 720,
-        depth: 560,
-        price: 350,
-      },
-      {
-        width: 900,
-        height: 720,
-        depth: 560,
-        price: 390,
-      },
-    ],
-    tableTopProfile: STRAIGHT_RUN_TABLE_TOP_PROFILE,
-    model: {
-      shelfCount: 0,
-      front: {
-        type: "drawers",
-        drawerCount: 3,
-        handle: {
-          orientation: "horizontal",
-          lengthMm: 224,
-        },
-      },
-      legs: {
-        heightMm: 110,
-      },
-    },
-  }),
-  createStarterCabinetDefinition({
-    id: "wall-double-door",
-    name: "Double-door wall cabinet",
-    category: "wall",
-    catalogFamily: "wall-doors",
-    activeVariantId: "600x720x320",
-    variants: [
-      {
-        width: 300,
-        height: 720,
-        depth: 320,
-        price: 120,
-      },
-      {
-        width: 350,
-        height: 720,
-        depth: 320,
-        price: 132,
-      },
-      {
-        width: 400,
-        height: 720,
-        depth: 320,
-        price: 144,
-      },
-      {
-        width: 450,
-        height: 720,
-        depth: 320,
-        price: 156,
-      },
-      {
-        width: 600,
-        height: 720,
-        depth: 320,
-        price: 188,
-      },
-    ],
-    tableTopProfile: null,
-    model: {
-      shelfCount: 1,
-      legs: null,
-      front: {
-        type: "doubleDoor",
-        handle: {
-          lengthMm: 160,
-        },
-      },
-    },
-  }),
-  createStarterCabinetDefinition({
-    id: "tall-pantry",
-    name: "Pantry tower",
-    category: "tall",
-    catalogFamily: "tall",
-    activeVariantId: "600x2100x600",
-    variants: [
-      {
-        width: 600,
-        height: 2100,
-        depth: 600,
-        price: 680,
-      },
-      {
-        width: 600,
-        height: 2300,
-        depth: 600,
-        price: 760,
-      },
-    ],
-    tableTopProfile: null,
-    model: {
-      shelfCount: 4,
-      legs: null,
-      front: {
-        type: "doubleDoor",
-        handle: {
-          lengthMm: 256,
-        },
-      },
-    },
-  }),
-];
+export const starterCabinetCatalog = starterCabinetCatalogDefinitions.map((cabinetDefinition) =>
+  createStarterCabinetDefinition(cabinetDefinition),
+);
 
 export const defaultStarterCabinetId = starterCabinetCatalog[0].id;
 

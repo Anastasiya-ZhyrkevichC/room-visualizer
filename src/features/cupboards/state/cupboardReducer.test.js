@@ -96,7 +96,7 @@ describe("cupboard reducer placement preview", () => {
       availableWidths: [300, 350, 400, 450, 600],
       availableHeights: [720],
       width: 300,
-      price: 160,
+      price: 170,
       wall: null,
     });
     expectPositionToMatch(nextState.placementPreview.position, {
@@ -315,7 +315,7 @@ describe("cupboard reducer placement preview", () => {
       availableWidths: [600, 800, 900],
       availableHeights: [720],
       width: 600,
-      price: 290,
+      price: 305,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -365,7 +365,7 @@ describe("cupboard reducer placement preview", () => {
       availableWidths: [600, 800, 900],
       availableHeights: [720],
       width: 600,
-      price: 290,
+      price: 305,
       wall: RIGHT_WALL_ID,
     });
     expect(nextState.cupboards[0].rotation).toBeCloseTo(Math.PI * 1.5);
@@ -517,7 +517,7 @@ describe("cupboard reducer placement preview", () => {
       width: 600,
       height: 2300,
       depth: 600,
-      price: 760,
+      price: 720,
     });
     expectPositionToMatch(nextState.placementPreview.position, {
       x: 0,
@@ -689,7 +689,7 @@ describe("cupboard reducer width stepping", () => {
       width: 350,
       height: 720,
       depth: 560,
-      price: 175,
+      price: 179,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -795,7 +795,7 @@ describe("cupboard reducer cabinet replacement", () => {
       width: 600,
       height: 2100,
       depth: 600,
-      price: 680,
+      price: 682,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -1047,7 +1047,7 @@ describe("cupboard reducer project import", () => {
       },
     );
 
-    expect(nextState.cupboards).toEqual(importedCupboards);
+    expect(nextState.cupboards).toMatchObject(importedCupboards);
     expect(nextState.placementPreview).toBeNull();
     expect(nextState.activeMove).toBeNull();
     expect(nextState.activeResize).toBeNull();

@@ -156,11 +156,12 @@ const PlannerSummaryPanel = ({
   return (
     <section className="panel-card panel-card--secondary">
       <div className="panel-card__header">
-        <p className="panel-card__eyebrow">Live Pricing</p>
+        <p className="panel-card__eyebrow">Live Estimate</p>
         <h2 className="panel-card__title">Cabinet total</h2>
       </div>
       <p className="panel-card__copy">
-        Current cabinet pricing only. Delivery, installation, and tax are excluded from this running total.
+        Body + carcass + facade + handle + accessories. Delivery, installation, and tax are excluded from this running
+        total.
       </p>
 
       <div className="project-transfer">
@@ -265,6 +266,15 @@ const PlannerSummaryPanel = ({
                     <strong className="pricing-summary__name">{lineItem.displayName}</strong>
                     {lineItem.dimensionsLabel ? (
                       <span className="pricing-summary__dimensions">{lineItem.dimensionsLabel}</span>
+                    ) : null}
+                    {lineItem.customisationChips?.length ? (
+                      <div className="pricing-summary__chips">
+                        {lineItem.customisationChips.map((chip) => (
+                          <span key={chip} className="pricing-summary__chip">
+                            {chip}
+                          </span>
+                        ))}
+                      </div>
                     ) : null}
                     {lineItem.isUnavailable ? (
                       <span className="pricing-summary__status">Live price unavailable in current catalog</span>

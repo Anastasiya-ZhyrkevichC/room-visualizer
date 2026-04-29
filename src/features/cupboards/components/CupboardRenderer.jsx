@@ -1,5 +1,6 @@
 import React from "react";
 
+import { resolveCupboardAppearanceTheme, resolveCupboardModelWithCustomisation } from "../model/customization";
 import { useCupboards } from "../state/CupboardProvider";
 import { CupboardMesh, GhostCupboardMesh } from "./CupboardMesh";
 import CupboardWidthOverlay from "./CupboardWidthOverlay";
@@ -11,6 +12,7 @@ const CupboardRenderer = () => {
     activeResize,
     cupboards,
     placementPreview,
+    projectCustomisation,
     selectedCupboard,
     selectedCupboardId,
     selectCupboard,
@@ -30,6 +32,8 @@ const CupboardRenderer = () => {
         const isInvalid =
           (cupboard.id === activeMoveCupboardId && isActiveMoveInvalid) ||
           (cupboard.id === activeResizeCupboardId && isActiveResizeInvalid);
+        const appearanceTheme = resolveCupboardAppearanceTheme(cupboard, projectCustomisation);
+        const resolvedModel = resolveCupboardModelWithCustomisation(cupboard, projectCustomisation);
 
         return [
           <CupboardMesh
@@ -38,7 +42,8 @@ const CupboardRenderer = () => {
             rotation={cupboard.rotation}
             size={cupboard.size}
             category={cupboard.category}
-            model={cupboard.model}
+            model={resolvedModel}
+            appearanceTheme={appearanceTheme}
             isMoving={isMoving}
             isSelected={isSelected}
             isInvalid={isInvalid}
@@ -69,7 +74,8 @@ const CupboardRenderer = () => {
               rotation={placementPreview.rotation}
               size={placementPreview.size}
               category={placementPreview.category}
-              model={placementPreview.model}
+              model={resolveCupboardModelWithCustomisation(placementPreview, projectCustomisation)}
+              appearanceTheme={resolveCupboardAppearanceTheme(placementPreview, projectCustomisation)}
               isInvalid={isPlacementPreviewInvalid}
             />,
             <CupboardWidthOverlay

@@ -188,7 +188,7 @@ describe("cupboard placement", () => {
       width: 600,
       height: 720,
       depth: 560,
-      price: 290,
+      price: 305,
       size: [0.6, 0.72, 0.56],
     });
   });
@@ -248,7 +248,7 @@ describe("cupboard placement", () => {
       },
       availableWidths: [600, 800, 900],
       availableHeights: [720],
-      price: 290,
+      price: 305,
       wall: null,
     });
     expectPositionToMatch(preview.position, {

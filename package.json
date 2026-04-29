@@ -21,7 +21,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "npx prettier --write ."
+    "format": "npx prettier --write .",
+    "prices:update": "node scripts/update-cabinet-prices.js",
+    "prices:check": "node scripts/update-cabinet-prices.js --check"
   },
   "eslintConfig": {
     "extends": [

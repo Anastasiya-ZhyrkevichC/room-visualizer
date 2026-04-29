@@ -55,7 +55,7 @@ describe("room formatting", () => {
         maxPrice: 240,
         price: 240,
       }),
-    ).toBe("From $160");
+    ).toBe("With current defaults from $160");
 
     expect(
       formatCatalogModulePrice({
@@ -63,7 +63,7 @@ describe("room formatting", () => {
         maxPrice: 680,
         price: 680,
       }),
-    ).toBe("$680");
+    ).toBe("With current defaults $680");
   });
 
   it("shares variable-size guidance between stage messaging and selection details", () => {

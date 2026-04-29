@@ -64,7 +64,7 @@ describe("PlannerSummaryPanel", () => {
   it("shows a zero-state with a zero total when there are no priced cabinets", () => {
     const container = renderPlannerSummaryPanel();
 
-    expect(container.textContent).toContain("Live Pricing");
+    expect(container.textContent).toContain("Live Estimate");
     expect(container.textContent).toContain("No cabinets priced yet");
     expect(container.textContent).toContain("The current cabinet total stays at $0.");
     expect(container.textContent).toContain("Total price");

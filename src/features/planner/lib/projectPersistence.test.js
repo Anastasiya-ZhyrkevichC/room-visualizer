@@ -53,51 +53,63 @@ describe("projectPersistence", () => {
     });
     const parsedProject = parseProjectDocument(JSON.stringify(projectDocument));
 
-    expect(projectDocument.pricingSnapshot).toEqual({
+    expect(projectDocument.pricingSnapshot).toMatchObject({
       savedAt: "2025-03-22T20:15:00.000Z",
       currency: "USD",
       lineItems: [
         {
+          accessoriesPrice: 0,
           cupboardId: 1,
           instanceId: 1,
           catalogId: "base-double-door",
           activeVariantId: "350x720x560",
+          bodyPrice: 179,
+          carcassPrice: 0,
           displayName: "Double-door base cabinet",
           dimensionsLabel: "350 x 720 x 560 mm",
-          price: 175,
+          facadePrice: 0,
+          handlePrice: 24,
+          price: 203,
+          totalPrice: 203,
           currency: "USD",
           isUnavailable: false,
         },
         {
+          accessoriesPrice: 140,
           cupboardId: 3,
           instanceId: 3,
           catalogId: "tall-pantry",
           activeVariantId: "600x2100x600",
+          bodyPrice: 682,
+          carcassPrice: 0,
           displayName: "Pantry tower",
           dimensionsLabel: "600 x 2100 x 600 mm",
-          price: 680,
+          facadePrice: 0,
+          handlePrice: 24,
+          price: 846,
+          totalPrice: 846,
           currency: "USD",
           isUnavailable: false,
         },
       ],
-      totalPrice: 855,
+      totalPrice: 1049,
       objectCount: 2,
       unresolvedItemCount: 0,
       isResolved: true,
     });
     expect(parsedProject.roomDimensions).toEqual(roomDimensions);
-    expect(parsedProject.pricingSnapshot.totalPrice).toBe(855);
+    expect(parsedProject.pricingSnapshot.totalPrice).toBe(1049);
     expect(parsedProject.cupboards[0]).toMatchObject({
       id: 1,
       catalogId: "base-double-door",
       activeVariantId: "350x720x560",
-      price: 175,
+      price: 179,
     });
     expect(parsedProject.cupboards[1]).toMatchObject({
       id: 3,
       catalogId: "tall-pantry",
       activeVariantId: "600x2100x600",
-      price: 680,
+      price: 682,
     });
   });
 

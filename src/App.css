@@ -1,5 +1,6 @@
 @import "./styles/tokens.css";
 @import "./features/planner/styles/planner-layout.css";
+@import "./features/planner/styles/customisation-bar.css";
 @import "./features/planner/styles/room-form.css";
 @import "./features/planner/styles/catalog.css";
 @import "./features/planner/styles/selection-panel.css";

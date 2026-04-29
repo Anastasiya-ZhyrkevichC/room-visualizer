@@ -1,3 +1,76 @@
+const clampChannel = (value) => Math.min(255, Math.max(0, Math.round(value)));
+
+const normalizeHex = (value, fallback) => {
+  if (typeof value !== "string") {
+    return fallback;
+  }
+
+  const normalized = value.trim().replace("#", "");
+
+  if (/^[0-9a-fA-F]{6}$/.test(normalized)) {
+    return `#${normalized.toLowerCase()}`;
+  }
+
+  return fallback;
+};
+
+const splitHex = (value, fallback) => {
+  const normalized = normalizeHex(value, fallback).slice(1);
+
+  return [0, 2, 4].map((index) => Number.parseInt(normalized.slice(index, index + 2), 16));
+};
+
+const mixHexColors = (firstColor, secondColor, weight = 0.5, fallback = "#000000") => {
+  const normalizedWeight = Math.min(Math.max(weight, 0), 1);
+  const [firstRed, firstGreen, firstBlue] = splitHex(firstColor, fallback);
+  const [secondRed, secondGreen, secondBlue] = splitHex(secondColor, fallback);
+
+  return `#${[firstRed, firstGreen, firstBlue]
+    .map((channel, index) =>
+      clampChannel(channel + ([secondRed, secondGreen, secondBlue][index] - channel) * normalizedWeight)
+        .toString(16)
+        .padStart(2, "0"),
+    )
+    .join("")}`;
+};
+
+const baseCabinetTheme = Object.freeze({
+  bodyColor: "#b89b78",
+  frontColor: "#efe1cf",
+  interiorColor: "#9d7c5d",
+  handleColor: "#5d564e",
+  legColor: "#4b4036",
+  emissiveColor: "#2f2015",
+  emissiveIntensity: 0.03,
+  opacity: 1,
+  transparent: false,
+});
+
+const resolveBaseTheme = (appearanceTheme = {}) => ({
+  ...baseCabinetTheme,
+  bodyColor: normalizeHex(appearanceTheme.bodyColor, baseCabinetTheme.bodyColor),
+  frontColor: normalizeHex(appearanceTheme.frontColor, baseCabinetTheme.frontColor),
+  interiorColor: normalizeHex(appearanceTheme.interiorColor, baseCabinetTheme.interiorColor),
+  handleColor: normalizeHex(appearanceTheme.handleColor, baseCabinetTheme.handleColor),
+  legColor: normalizeHex(appearanceTheme.legColor, baseCabinetTheme.legColor),
+});
+
+const tintTheme = (
+  theme,
+  { tintColor, tintWeight, emissiveColor, emissiveIntensity, opacity = 1, transparent = false },
+) => ({
+  ...theme,
+  bodyColor: mixHexColors(theme.bodyColor, tintColor, tintWeight, theme.bodyColor),
+  frontColor: mixHexColors(theme.frontColor, tintColor, tintWeight, theme.frontColor),
+  interiorColor: mixHexColors(theme.interiorColor, tintColor, tintWeight, theme.interiorColor),
+  handleColor: mixHexColors(theme.handleColor, tintColor, Math.min(tintWeight + 0.12, 0.95), theme.handleColor),
+  legColor: mixHexColors(theme.legColor, tintColor, tintWeight, theme.legColor),
+  emissiveColor,
+  emissiveIntensity,
+  opacity,
+  transparent,
+});
+
 export const getCabinetOutlineColor = ({
   isGhost = false,
   isMoving = false,
@@ -27,165 +100,81 @@ export const getCabinetOutlineScale = ({ isGhost = false, isInvalid = false }) =
   return isGhost ? 1.02 : 1.001;
 };
 
-export const getSimpleCupboardMaterialProps = ({
-  isGhost = false,
-  isMoving = false,
-  isSelected = false,
-  isInvalid = false,
-}) => {
-  if (isInvalid) {
-    return isGhost
-      ? {
-          color: "#d86d63",
-          emissive: "#9f2124",
-          emissiveIntensity: 0.3,
-          opacity: 0.42,
-          transparent: true,
-          roughness: 0.82,
-          metalness: 0.03,
-        }
-      : {
-          color: "#c85f58",
-          emissive: "#8f1f25",
-          emissiveIntensity: 0.24,
-          opacity: 1,
-          transparent: false,
-          roughness: 0.8,
-          metalness: 0.04,
-        };
-  }
-
-  if (isGhost) {
-    return {
-      color: "#d99660",
-      emissive: "#8f471d",
-      emissiveIntensity: 0.14,
-      opacity: 0.35,
-      transparent: true,
-      roughness: 0.86,
-      metalness: 0.04,
-    };
-  }
-
-  if (isMoving) {
-    return {
-      color: "#c5976c",
-      emissive: "#7a351a",
-      emissiveIntensity: 0.1,
-      opacity: 1,
-      transparent: false,
-      roughness: 0.84,
-      metalness: 0.04,
-    };
-  }
-
-  if (isSelected) {
-    return {
-      color: "#cfab87",
-      emissive: "#7a351a",
-      emissiveIntensity: 0.08,
-      opacity: 1,
-      transparent: false,
-      roughness: 0.82,
-      metalness: 0.05,
-    };
-  }
-
-  return {
-    color: "#b69a79",
-    emissive: "#2f2015",
-    emissiveIntensity: 0.03,
-    opacity: 1,
-    transparent: false,
-    roughness: 0.85,
-    metalness: 0.04,
-  };
-};
-
 export const getKitchenCabinetTheme = ({
+  appearanceTheme = null,
   isGhost = false,
   isMoving = false,
   isSelected = false,
   isInvalid = false,
 }) => {
+  const resolvedBaseTheme = resolveBaseTheme(appearanceTheme);
+
   if (isInvalid) {
-    return isGhost
-      ? {
-          bodyColor: "#dd7267",
-          frontColor: "#ffd1cb",
-          interiorColor: "#b84d43",
-          handleColor: "#ffece8",
-          legColor: "#8d3834",
-          emissiveColor: "#9f2124",
-          emissiveIntensity: 0.3,
-          opacity: 0.42,
-          transparent: true,
-        }
-      : {
-          bodyColor: "#c96059",
-          frontColor: "#ffd7d2",
-          interiorColor: "#a74640",
-          handleColor: "#fff0ed",
-          legColor: "#743633",
-          emissiveColor: "#8f1f25",
-          emissiveIntensity: 0.24,
-          opacity: 1,
-          transparent: false,
-        };
+    return tintTheme(resolvedBaseTheme, {
+      tintColor: isGhost ? "#ffb0a9" : "#ff8b7c",
+      tintWeight: isGhost ? 0.58 : 0.44,
+      emissiveColor: isGhost ? "#9f2124" : "#8f1f25",
+      emissiveIntensity: isGhost ? 0.3 : 0.24,
+      opacity: isGhost ? 0.42 : 1,
+      transparent: isGhost,
+    });
   }
 
   if (isGhost) {
-    return {
-      bodyColor: "#df9b63",
-      frontColor: "#f6d7b4",
-      interiorColor: "#c07e47",
-      handleColor: "#fff0dc",
-      legColor: "#8d5f35",
+    return tintTheme(resolvedBaseTheme, {
+      tintColor: "#f4c791",
+      tintWeight: 0.42,
       emissiveColor: "#8f471d",
       emissiveIntensity: 0.22,
       opacity: 0.38,
       transparent: true,
-    };
+    });
   }
 
   if (isMoving) {
-    return {
-      bodyColor: "#c18f64",
-      frontColor: "#eed0b0",
-      interiorColor: "#a67145",
-      handleColor: "#fff2df",
-      legColor: "#6d503b",
+    return tintTheme(resolvedBaseTheme, {
+      tintColor: "#e6b487",
+      tintWeight: 0.28,
       emissiveColor: "#8b411d",
       emissiveIntensity: 0.18,
-      opacity: 1,
-      transparent: false,
-    };
+    });
   }
 
   if (isSelected) {
-    return {
-      bodyColor: "#c9a37f",
-      frontColor: "#f4e2cf",
-      interiorColor: "#af835f",
-      handleColor: "#fff5e8",
-      legColor: "#664f40",
+    return tintTheme(resolvedBaseTheme, {
+      tintColor: "#f2dfc6",
+      tintWeight: 0.24,
       emissiveColor: "#7a351a",
       emissiveIntensity: 0.16,
-      opacity: 1,
-      transparent: false,
-    };
+    });
   }
 
+  return resolvedBaseTheme;
+};
+
+export const getSimpleCupboardMaterialProps = ({
+  appearanceTheme = null,
+  isGhost = false,
+  isMoving = false,
+  isSelected = false,
+  isInvalid = false,
+}) => {
+  const theme = getKitchenCabinetTheme({
+    appearanceTheme,
+    isGhost,
+    isMoving,
+    isSelected,
+    isInvalid,
+  });
+
   return {
-    bodyColor: "#b89b78",
-    frontColor: "#efe1cf",
-    interiorColor: "#9d7c5d",
-    handleColor: "#5d564e",
-    legColor: "#4b4036",
-    emissiveColor: "#2f2015",
-    emissiveIntensity: 0.03,
-    opacity: 1,
-    transparent: false,
+    color: theme.bodyColor,
+    emissive: theme.emissiveColor,
+    emissiveIntensity: theme.emissiveIntensity,
+    opacity: theme.opacity,
+    transparent: theme.transparent,
+    roughness: 0.84,
+    metalness: 0.04,
   };
 };
 

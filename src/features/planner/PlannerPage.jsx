@@ -4,6 +4,7 @@ import { CupboardProvider, useCupboards } from "../cupboards/state/CupboardProvi
 import { RoomSceneProvider } from "../room/context/RoomSceneContext";
 import CabinetCatalogPanel from "./components/CabinetCatalogPanel";
 import PlannerHeader from "./components/PlannerHeader";
+import ProjectCustomisationBar from "./components/ProjectCustomisationBar";
 import PlannerStage from "./components/PlannerStage";
 import PlannerSummaryPanel from "./components/PlannerSummaryPanel";
 import RoomSetupPanel from "./components/RoomSetupPanel";
@@ -27,6 +28,7 @@ const PlannerLayout = ({
 }) => {
   return (
     <div className="planner-page">
+      <ProjectCustomisationBar />
       <PlannerHeader appliedRoomDimensions={roomDimensionsForm.appliedRoomDimensions} />
 
       <div className="planner-layout">
@@ -62,7 +64,7 @@ const PlannerLayout = ({
 };
 
 const PlannerWorkspace = ({ roomDimensionsForm }) => {
-  const { cupboards, loadProject, pricingSummary } = useCupboards();
+  const { cupboards, loadProject, pricingSummary, projectCustomisation } = useCupboards();
   const [pricingReferenceSource, setPricingReferenceSource] = useState(null);
   const [projectTransferFeedback, setProjectTransferFeedback] = useState(null);
 
@@ -84,6 +86,7 @@ const PlannerWorkspace = ({ roomDimensionsForm }) => {
     const projectDocument = createProjectDocument({
       cupboards,
       pricingSummary,
+      projectCustomisation,
       roomDimensions: roomDimensionsForm.appliedRoomDimensions,
     });
     const fileName = createProjectFileName(projectDocument);
@@ -101,7 +104,7 @@ const PlannerWorkspace = ({ roomDimensionsForm }) => {
       tone: "success",
       message: `Project exported to ${fileName}. The saved pricing snapshot below now matches that file.`,
     });
-  }, [cupboards, pricingSummary, roomDimensionsForm.appliedRoomDimensions]);
+  }, [cupboards, pricingSummary, projectCustomisation, roomDimensionsForm.appliedRoomDimensions]);
 
   const handleImportProject = useCallback(
     async (file) => {
@@ -109,7 +112,10 @@ const PlannerWorkspace = ({ roomDimensionsForm }) => {
         const projectDocumentText = await readProjectFile(file);
         const importedProject = parseProjectDocument(projectDocumentText);
 
-        loadProject(importedProject.cupboards);
+        loadProject({
+          cupboards: importedProject.cupboards,
+          projectCustomisation: importedProject.projectCustomisation,
+        });
         roomDimensionsForm.applyImportedRoom(
           importedProject.roomDimensions,
           importedProject.projectName || file?.name || "Imported project",
@@ -124,7 +130,9 @@ const PlannerWorkspace = ({ roomDimensionsForm }) => {
         });
         setProjectTransferFeedback({
           tone: "info",
-          message: `Imported ${file?.name ?? importedProject.projectName}. Review the pricing comparison below before treating the live total as final.`,
+          message: importedProject.migration?.message
+            ? `Imported ${file?.name ?? importedProject.projectName}. ${importedProject.migration.message}`
+            : `Imported ${file?.name ?? importedProject.projectName}. Review the pricing comparison below before treating the live total as final.`,
         });
       } catch (error) {
         setProjectTransferFeedback({

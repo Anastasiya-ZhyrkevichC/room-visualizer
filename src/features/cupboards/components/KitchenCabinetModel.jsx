@@ -325,12 +325,13 @@ export const KitchenCabinetModel = ({
   size,
   category,
   model,
+  appearanceTheme = null,
   isGhost = false,
   isMoving = false,
   isSelected = false,
   isInvalid = false,
 }) => {
-  const theme = getKitchenCabinetTheme({ isGhost, isMoving, isSelected, isInvalid });
+  const theme = getKitchenCabinetTheme({ appearanceTheme, isGhost, isMoving, isSelected, isInvalid });
   const metrics = getCabinetMetrics(size, category, model);
   const parts = [
     ...getCabinetBodyParts(metrics),

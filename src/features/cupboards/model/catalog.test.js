@@ -144,7 +144,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 300,
       height: 720,
       depth: 560,
-      price: 160,
+      price: 170,
     });
 
     expect(resolveDefaultStarterCabinetVariant(getStarterCabinet("tall-pantry"))).toMatchObject({
@@ -152,7 +152,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 600,
       height: 2100,
       depth: 600,
-      price: 680,
+      price: 682,
     });
   });
 
@@ -171,7 +171,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 300,
       height: 720,
       depth: 560,
-      price: 160,
+      price: 170,
     });
 
     expect(
@@ -188,7 +188,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 400,
       height: 720,
       depth: 560,
-      price: 190,
+      price: 188,
     });
   });
 
@@ -211,7 +211,7 @@ describe("starter cabinet catalog grouping", () => {
         width: 600,
         height: 2300,
         depth: 600,
-        price: 760,
+        price: 720,
       }),
     ]);
 
@@ -220,7 +220,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 600,
       height: 2300,
       depth: 600,
-      price: 760,
+      price: 720,
     });
   });
 });

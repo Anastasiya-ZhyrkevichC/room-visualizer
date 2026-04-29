@@ -291,6 +291,25 @@
   color: #9a5a17;
 }
 
+.pricing-summary__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pricing-summary__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(182, 89, 50, 0.1);
+  color: #8e4324;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .pricing-summary__price {
   flex-shrink: 0;
   font-size: 1rem;

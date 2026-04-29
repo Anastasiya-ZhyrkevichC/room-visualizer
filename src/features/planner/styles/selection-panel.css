@@ -25,6 +25,11 @@
   text-transform: uppercase;
 }
 
+.selection-panel__tag--customized {
+  background: rgba(162, 76, 41, 0.14);
+  color: #8e4324;
+}
+
 .selection-panel__name {
   font-size: 1.15rem;
   line-height: 1.3;
@@ -93,10 +98,119 @@
   margin-top: 0;
 }
 
+.selection-config {
+  display: grid;
+  gap: 12px;
+}
+
+.selection-config__section {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--planner-border);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.selection-config__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+
+.selection-config__eyebrow {
+  margin: 0 0 4px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--planner-highlight);
+}
+
+.selection-config__status {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.selection-config__field {
+  display: grid;
+  gap: 6px;
+}
+
+.selection-config__field-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--planner-text-soft);
+}
+
+.selection-config__select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(162, 76, 41, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--planner-text);
+  font: inherit;
+}
+
+.selection-config__checkbox-list {
+  display: grid;
+  gap: 10px;
+}
+
+.selection-config__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--planner-text);
+}
+
+.selection-config__checkbox input {
+  accent-color: #b65932;
+}
+
+.selection-config__hint {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--planner-text-soft);
+}
+
+.selection-breakdown {
+  display: grid;
+  gap: 10px;
+}
+
+.selection-breakdown__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 0.94rem;
+}
+
+.selection-breakdown__row--total {
+  padding-top: 10px;
+  border-top: 1px solid rgba(93, 72, 47, 0.12);
+}
+
+.selection-panel__reset.MuiButton-outlined {
+  margin-top: 0;
+}
+
 .selection-panel__clear.MuiButton-text {
   justify-self: flex-start;
   padding: 0;
   color: var(--planner-highlight);
   text-transform: none;
   font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .selection-actions {
+    grid-template-columns: 1fr;
+  }
 }

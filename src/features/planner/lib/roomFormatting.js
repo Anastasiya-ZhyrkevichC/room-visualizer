@@ -81,8 +81,24 @@ export const formatCatalogModulePrice = (module) => {
   }
 
   return maxPrice > startingPrice
-    ? `From ${formatPrototypePrice(startingPrice, currency)}`
-    : formatPrototypePrice(startingPrice, currency);
+    ? `With current defaults from ${formatPrototypePrice(startingPrice, currency)}`
+    : `With current defaults ${formatPrototypePrice(startingPrice, currency)}`;
+};
+
+export const formatCustomisationSource = (source) => {
+  if (source === "override") {
+    return "Custom";
+  }
+
+  if (source === "override-preset") {
+    return "Using cabinet preset";
+  }
+
+  if (source === "project-preset") {
+    return "Using project preset";
+  }
+
+  return "Using project default";
 };
 
 export const formatSelectionResizeHint = (wallLabel = null) =>

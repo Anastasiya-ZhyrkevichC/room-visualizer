@@ -2,7 +2,15 @@ import React, { createContext, useContext, useMemo, useReducer } from "react";
 
 import { useRoomScene } from "../../room/context/RoomSceneContext";
 import { CUPBOARD_RESIZE_SIDES } from "../model/placementConstants";
-import { selectPricingSummary, selectSelectedCupboard, selectTableTopRuns } from "../selectors";
+import {
+  selectInheritedCupboardCount,
+  selectPricingSummary,
+  selectProjectCustomisation,
+  selectSelectedCupboard,
+  selectSelectedCupboardResolvedCustomisation,
+  selectSelectedPricingLineItem,
+  selectTableTopRuns,
+} from "../selectors";
 import { cupboardReducer, initialCupboardState } from "./cupboardReducer";
 
 const CupboardContext = createContext(null);
@@ -12,7 +20,12 @@ export const CupboardProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cupboardReducer, initialCupboardState);
 
   const selectedCupboard = selectSelectedCupboard(state);
+  const selectedCupboardResolvedCustomisation = selectSelectedCupboardResolvedCustomisation(state);
+  const selectedPricingLineItem = selectSelectedPricingLineItem(state);
   const pricingSummary = selectPricingSummary(state);
+  const projectCustomisation = selectProjectCustomisation(state);
+  const inheritedCupboardCount = selectInheritedCupboardCount(state);
+  const selectedCupboardId = state.selectedCupboardId;
   const tableTopRuns = useMemo(() => selectTableTopRuns(state), [state.cupboards]);
   const actions = useMemo(
     () => ({
@@ -46,11 +59,27 @@ export const CupboardProvider = ({ children }) => {
         }),
       increaseSelectedCupboardWidth: (side = CUPBOARD_RESIZE_SIDES.RIGHT) =>
         dispatch({ type: "STEP_SELECTED_CUPBOARD_WIDTH", payload: { direction: "next", side, roomBounds: bounds } }),
+      updateProjectCustomisation: (patch) => dispatch({ type: "UPDATE_PROJECT_CUSTOMISATION", payload: patch }),
+      updateCupboardCustomisation: (cupboardId, patch) =>
+        dispatch({ type: "UPDATE_CUPBOARD_CUSTOMISATION", payload: { cupboardId, patch } }),
+      updateSelectedCupboardCustomisation: (patch) =>
+        dispatch({ type: "UPDATE_CUPBOARD_CUSTOMISATION", payload: { cupboardId: selectedCupboardId, patch } }),
+      resetCupboardCustomisation: (cupboardId) =>
+        dispatch({ type: "RESET_CUPBOARD_CUSTOMISATION", payload: { cupboardId } }),
+      resetSelectedCupboardCustomisation: () =>
+        dispatch({ type: "RESET_CUPBOARD_CUSTOMISATION", payload: { cupboardId: selectedCupboardId } }),
       rotateSelectedCupboard: () => dispatch({ type: "ROTATE_SELECTED_CUPBOARD", payload: { roomBounds: bounds } }),
       deleteSelectedCupboard: () => dispatch({ type: "DELETE_SELECTED_CUPBOARD" }),
-      loadProject: (cupboards) => dispatch({ type: "LOAD_PROJECT", payload: { cupboards } }),
+      loadProject: ({ cupboards, projectCustomisation: importedProjectCustomisation } = {}) =>
+        dispatch({
+          type: "LOAD_PROJECT",
+          payload: {
+            cupboards,
+            projectCustomisation: importedProjectCustomisation,
+          },
+        }),
     }),
-    [bounds],
+    [bounds, selectedCupboardId],
   );
 
   const value = useMemo(
@@ -62,21 +91,29 @@ export const CupboardProvider = ({ children }) => {
       isPlacementActive: Boolean(state.placementPreview),
       isMoveActive: Boolean(state.activeMove),
       isResizeActive: Boolean(state.activeResize),
-      selectedCupboardId: state.selectedCupboardId,
+      selectedCupboardId,
       selectedCupboard,
+      selectedCupboardResolvedCustomisation,
+      selectedPricingLineItem,
       tableTopRuns,
       pricingSummary,
+      projectCustomisation,
+      inheritedCupboardCount,
       ...actions,
     }),
     [
       actions,
+      inheritedCupboardCount,
       pricingSummary,
+      projectCustomisation,
       selectedCupboard,
+      selectedCupboardResolvedCustomisation,
+      selectedPricingLineItem,
       state.activeMove,
       state.activeResize,
       state.cupboards,
       state.placementPreview,
-      state.selectedCupboardId,
+      selectedCupboardId,
       tableTopRuns,
     ],
   );

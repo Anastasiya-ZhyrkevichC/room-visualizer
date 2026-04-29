@@ -67,6 +67,16 @@ Then open [http://localhost:3000](http://localhost:3000).
 - `npm test` runs the test suite.
 - `npm run build` creates a production build.
 - `npm run format` formats the repository with Prettier.
+- `npm run prices:update` recalculates all starter cabinet prices from the manual pricing config.
+- `npm run prices:check` verifies whether the starter cabinet prices are already in sync with the config.
+
+## Updating cabinet prices
+
+1. Edit `config/cabinet-pricing.config.json`.
+2. Run `npm run prices:update`.
+3. Review the regenerated prices in `src/features/cupboards/model/starterCabinetCatalogDefinitions.json`.
+
+For a fuller breakdown of the config structure and pricing workflow, see `docs/cabinet-pricing.md`.
 
 ## Project structure
 

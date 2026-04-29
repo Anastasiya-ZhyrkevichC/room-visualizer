@@ -20,6 +20,7 @@ const RenderedCupboardBody = ({
   size,
   category,
   model,
+  appearanceTheme = null,
   isGhost = false,
   isMoving = false,
   isSelected = false,
@@ -28,6 +29,7 @@ const RenderedCupboardBody = ({
   cabinetRenderMode === CABINET_RENDER_MODES.BOX ? (
     <SimpleCupboardModel
       size={size}
+      appearanceTheme={appearanceTheme}
       isGhost={isGhost}
       isMoving={isMoving}
       isSelected={isSelected}
@@ -38,6 +40,7 @@ const RenderedCupboardBody = ({
       size={size}
       category={category}
       model={model}
+      appearanceTheme={appearanceTheme}
       isGhost={isGhost}
       isMoving={isMoving}
       isSelected={isSelected}
@@ -45,10 +48,25 @@ const RenderedCupboardBody = ({
     />
   );
 
-export const GhostCupboardMesh = ({ position, rotation = 0, size, category, model, isInvalid = false }) => {
+export const GhostCupboardMesh = ({
+  position,
+  rotation = 0,
+  size,
+  category,
+  model,
+  appearanceTheme = null,
+  isInvalid = false,
+}) => {
   return (
     <group position={toPositionProp(position)} rotation={[0, rotation, 0]}>
-      <RenderedCupboardBody size={size} category={category} model={model} isGhost isInvalid={isInvalid} />
+      <RenderedCupboardBody
+        size={size}
+        category={category}
+        model={model}
+        appearanceTheme={appearanceTheme}
+        isGhost
+        isInvalid={isInvalid}
+      />
       <CabinetOutline
         size={size}
         color={getCabinetOutlineColor({ isGhost: true, isInvalid })}
@@ -64,6 +82,7 @@ export const CupboardMesh = ({
   size,
   category,
   model,
+  appearanceTheme = null,
   isMoving = false,
   isSelected = false,
   isInvalid = false,
@@ -100,6 +119,7 @@ export const CupboardMesh = ({
         size={size}
         category={category}
         model={model}
+        appearanceTheme={appearanceTheme}
         isMoving={isMoving}
         isSelected={isSelected}
         isInvalid={isInvalid}
