@@ -13,31 +13,36 @@
         "width": 300,
         "height": 720,
         "depth": 560,
-        "price": 170
+        "price": 503,
+        "bodyCost": 27.703280319999998
       },
       {
         "width": 350,
         "height": 720,
         "depth": 560,
-        "price": 179
+        "price": 509,
+        "bodyCost": 30.20437432
       },
       {
         "width": 400,
         "height": 720,
         "depth": 560,
-        "price": 188
+        "price": 514,
+        "bodyCost": 32.705468319999994
       },
       {
         "width": 450,
         "height": 720,
         "depth": 560,
-        "price": 197
+        "price": 520,
+        "bodyCost": 35.206562319999996
       },
       {
         "width": 600,
         "height": 720,
         "depth": 560,
-        "price": 225
+        "price": 537,
+        "bodyCost": 42.70984432
       }
     ],
     "model": {
@@ -67,31 +72,36 @@
         "width": 300,
         "height": 720,
         "depth": 560,
-        "price": 164
+        "price": 497,
+        "bodyCost": 27.703280319999998
       },
       {
         "width": 350,
         "height": 720,
         "depth": 560,
-        "price": 173
+        "price": 503,
+        "bodyCost": 30.20437432
       },
       {
         "width": 400,
         "height": 720,
         "depth": 560,
-        "price": 182
+        "price": 509,
+        "bodyCost": 32.705468319999994
       },
       {
         "width": 450,
         "height": 720,
         "depth": 560,
-        "price": 192
+        "price": 514,
+        "bodyCost": 35.206562319999996
       },
       {
         "width": 600,
         "height": 720,
         "depth": 560,
-        "price": 220
+        "price": 532,
+        "bodyCost": 42.70984432
       }
     ],
     "model": {
@@ -122,19 +132,22 @@
         "width": 600,
         "height": 720,
         "depth": 560,
-        "price": 305
+        "price": 626,
+        "bodyCost": 37.045267392
       },
       {
         "width": 800,
         "height": 720,
         "depth": 560,
-        "price": 346
+        "price": 848,
+        "bodyCost": 44.938108992
       },
       {
         "width": 900,
         "height": 720,
         "depth": 560,
-        "price": 362
+        "price": 860,
+        "bodyCost": 48.884529791999995
       }
     ],
     "model": {
@@ -166,31 +179,36 @@
         "width": 300,
         "height": 720,
         "depth": 320,
-        "price": 123
+        "price": 93,
+        "bodyCost": 18.129055142400002
       },
       {
         "width": 350,
         "height": 720,
         "depth": 320,
-        "price": 130
+        "price": 99,
+        "bodyCost": 19.858815222399997
       },
       {
         "width": 400,
         "height": 720,
         "depth": 320,
-        "price": 137
+        "price": 104,
+        "bodyCost": 21.5885753024
       },
       {
         "width": 450,
         "height": 720,
         "depth": 320,
-        "price": 145
+        "price": 109,
+        "bodyCost": 23.3183353824
       },
       {
         "width": 600,
         "height": 720,
         "depth": 320,
-        "price": 166
+        "price": 126,
+        "bodyCost": 28.507615622400003
       }
     ],
     "model": {
@@ -218,13 +236,15 @@
         "width": 600,
         "height": 2100,
         "depth": 600,
-        "price": 682
+        "price": 459,
+        "bodyCost": 144.418499232
       },
       {
         "width": 600,
         "height": 2300,
         "depth": 600,
-        "price": 720
+        "price": 483,
+        "bodyCost": 153.647939232
       }
     ],
     "model": {

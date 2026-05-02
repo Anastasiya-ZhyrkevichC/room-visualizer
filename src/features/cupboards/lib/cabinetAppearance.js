@@ -46,14 +46,18 @@ const baseCabinetTheme = Object.freeze({
   transparent: false,
 });
 
-const resolveBaseTheme = (appearanceTheme = {}) => ({
-  ...baseCabinetTheme,
-  bodyColor: normalizeHex(appearanceTheme.bodyColor, baseCabinetTheme.bodyColor),
-  frontColor: normalizeHex(appearanceTheme.frontColor, baseCabinetTheme.frontColor),
-  interiorColor: normalizeHex(appearanceTheme.interiorColor, baseCabinetTheme.interiorColor),
-  handleColor: normalizeHex(appearanceTheme.handleColor, baseCabinetTheme.handleColor),
-  legColor: normalizeHex(appearanceTheme.legColor, baseCabinetTheme.legColor),
-});
+const resolveBaseTheme = (appearanceTheme = {}) => {
+  const normalizedAppearanceTheme = appearanceTheme ?? {};
+
+  return {
+    ...baseCabinetTheme,
+    bodyColor: normalizeHex(normalizedAppearanceTheme.bodyColor, baseCabinetTheme.bodyColor),
+    frontColor: normalizeHex(normalizedAppearanceTheme.frontColor, baseCabinetTheme.frontColor),
+    interiorColor: normalizeHex(normalizedAppearanceTheme.interiorColor, baseCabinetTheme.interiorColor),
+    handleColor: normalizeHex(normalizedAppearanceTheme.handleColor, baseCabinetTheme.handleColor),
+    legColor: normalizeHex(normalizedAppearanceTheme.legColor, baseCabinetTheme.legColor),
+  };
+};
 
 const tintTheme = (
   theme,

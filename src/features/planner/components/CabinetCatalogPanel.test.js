@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 
-import CabinetCatalogPanel from "./CabinetCatalogPanel";
+import { getDefaultProjectCustomisation } from "../../cupboards/model/customization";
 import { starterCabinetCatalog } from "../../cupboards/model/catalog";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
+import CabinetCatalogPanel from "./CabinetCatalogPanel";
 
 jest.mock("../../cupboards/state/CupboardProvider", () => ({
   useCupboards: jest.fn(),
@@ -28,11 +29,12 @@ describe("CabinetCatalogPanel", () => {
       cancelPlacementPreview: jest.fn(),
       finishPlacementPreview: jest.fn(),
       placementPreview: null,
+      projectCustomisation: getDefaultProjectCustomisation(),
       startPlacementPreview: jest.fn(),
     });
   });
 
-  it("renders one visible row per cabinet definition with preview thumbnails and width-price tables", () => {
+  it("renders one visible row per cabinet definition with previews and live width-price tables", () => {
     const container = renderCatalogPanel();
     const rows = [...container.querySelectorAll(".catalog-row")];
 
@@ -49,14 +51,14 @@ describe("CabinetCatalogPanel", () => {
     expect(doubleDoorRow.querySelector(".catalog-row__select")).toBeNull();
     expect(doubleDoorRow.querySelector(".catalog-row__control-value")?.textContent).toBe("720 mm");
     expect(getVariantTableData(doubleDoorRow)).toEqual([
-      ["300 mm", "$160"],
-      ["350 mm", "$175"],
-      ["400 mm", "$190"],
-      ["450 mm", "$205"],
-      ["600 mm", "$240"],
+      ["300 mm", "$184"],
+      ["350 mm", "$199"],
+      ["400 mm", "$214"],
+      ["450 mm", "$229"],
+      ["600 mm", "$264"],
     ]);
     expect(doubleDoorRow.textContent).toContain("Depth 560 mm");
-    expect(doubleDoorRow.textContent).toContain("From $160");
+    expect(doubleDoorRow.textContent).toContain("With current defaults from $184");
   });
 
   it("renders a height selector when a cabinet has multiple height variants", () => {
@@ -70,11 +72,11 @@ describe("CabinetCatalogPanel", () => {
       "2100 mm",
       "2300 mm",
     ]);
-    expect(getVariantTableData(pantryRow)).toEqual([["600 mm", "$680"]]);
-    expect(pantryRow.textContent).toContain("From $680");
+    expect(getVariantTableData(pantryRow)).toEqual([["600 mm", "$704"]]);
+    expect(pantryRow.textContent).toContain("With current defaults from $704");
   });
 
-  it("renders wall cabinets from the starter catalog with their wall-unit depth", () => {
+  it("renders wall cabinets from the starter catalog with current-default pricing", () => {
     const container = renderCatalogPanel();
     const wallRow = [...container.querySelectorAll(".catalog-row")].find((row) =>
       row.textContent.includes("Double-door wall cabinet"),
@@ -83,14 +85,14 @@ describe("CabinetCatalogPanel", () => {
     expect(wallRow).toBeTruthy();
     expect(wallRow.querySelector(".catalog-row__control-value")?.textContent).toBe("720 mm");
     expect(getVariantTableData(wallRow)).toEqual([
-      ["300 mm", "$120"],
-      ["350 mm", "$132"],
-      ["400 mm", "$144"],
-      ["450 mm", "$156"],
-      ["600 mm", "$188"],
+      ["300 mm", "$144"],
+      ["350 mm", "$156"],
+      ["400 mm", "$168"],
+      ["450 mm", "$180"],
+      ["600 mm", "$212"],
     ]);
     expect(wallRow.textContent).toContain("Depth 320 mm");
-    expect(wallRow.textContent).toContain("From $120");
+    expect(wallRow.textContent).toContain("With current defaults from $144");
   });
 
   it("removes action buttons and placement hint affordances", () => {
