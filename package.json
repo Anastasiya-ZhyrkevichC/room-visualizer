@@ -23,7 +23,9 @@
     "eject": "react-scripts eject",
     "format": "npx prettier --write .",
     "prices:update": "node scripts/update-cabinet-prices.js",
-    "prices:check": "node scripts/update-cabinet-prices.js --check"
+    "prices:check": "node scripts/update-cabinet-prices.js --check",
+    "manufacturing:update": "node scripts/update-cabinet-manufacturing.js",
+    "manufacturing:check": "node scripts/update-cabinet-manufacturing.js --check"
   },
   "eslintConfig": {
     "extends": [

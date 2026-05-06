@@ -1,0 +1,4569 @@
+{
+  "schemaVersion": 1,
+  "units": {
+    "length": "mm",
+    "area": "mm2"
+  },
+  "sources": {
+    "catalog": "src/features/cupboards/model/starterCabinetCatalogDefinitions.json",
+    "pricingConfig": "config/cabinet-pricing.config.json"
+  },
+  "holeRules": {
+    "handleMountHolesPerHandle": 2,
+    "hingeCupHolesPerHinge": 1,
+    "shelfSupportHolesPerShelf": 4,
+    "legMountHolesPerLeg": 4,
+    "drawerSlideMountHolesPerDrawer": 8,
+    "wallMountHolesPerKit": 4,
+    "tallReinforcementMountHolesPerKit": 4
+  },
+  "cabinets": [
+    {
+      "cabinetId": "base-double-door",
+      "name": "Double-door base cabinet",
+      "category": "base",
+      "pricingProfileId": "base-double-door",
+      "activeVariantId": "600x720x560",
+      "variants": [
+        {
+          "variantId": "300x720x560",
+          "sizeMm": {
+            "width": 300,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                264,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 147840,
+              "perimeterMm": 1648,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                264,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 147840,
+              "perimeterMm": 1648,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                264,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 151536,
+              "perimeterMm": 1676,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                264,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 140976,
+              "perimeterMm": 1596,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                146,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 88476,
+              "perimeterMm": 1504,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1504
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                146,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 88476,
+              "perimeterMm": 1504,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1504
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 978880,
+              "backPanel": 151536,
+              "shelf": 140976,
+              "facade": 176952
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 7976,
+              "backPanel": 1676,
+              "shelf": 1596,
+              "facade": 3008
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 1748,
+              "backPanel": 0,
+              "shelf": 264,
+              "facade": 3008
+            },
+            "totalAreaMm2": 1448344,
+            "totalCutPerimeterMm": 14256,
+            "totalEdgeBandingLengthMm": 5020,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 4,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 28,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "350x720x560",
+          "sizeMm": {
+            "width": 350,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                314,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 175840,
+              "perimeterMm": 1748,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                314,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 175840,
+              "perimeterMm": 1748,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                314,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 180236,
+              "perimeterMm": 1776,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                314,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 167676,
+              "perimeterMm": 1696,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                171,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 103626,
+              "perimeterMm": 1554,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1554
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                171,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 103626,
+              "perimeterMm": 1554,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1554
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 1034880,
+              "backPanel": 180236,
+              "shelf": 167676,
+              "facade": 207252
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 8176,
+              "backPanel": 1776,
+              "shelf": 1696,
+              "facade": 3108
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 1848,
+              "backPanel": 0,
+              "shelf": 314,
+              "facade": 3108
+            },
+            "totalAreaMm2": 1590044,
+            "totalCutPerimeterMm": 14756,
+            "totalEdgeBandingLengthMm": 5270,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 4,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 28,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "400x720x560",
+          "sizeMm": {
+            "width": 400,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                364,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 203840,
+              "perimeterMm": 1848,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                364,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 203840,
+              "perimeterMm": 1848,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                364,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 208936,
+              "perimeterMm": 1876,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                364,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 194376,
+              "perimeterMm": 1796,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                196,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 118776,
+              "perimeterMm": 1604,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1604
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                196,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 118776,
+              "perimeterMm": 1604,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1604
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 1090880,
+              "backPanel": 208936,
+              "shelf": 194376,
+              "facade": 237552
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 8376,
+              "backPanel": 1876,
+              "shelf": 1796,
+              "facade": 3208
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 1948,
+              "backPanel": 0,
+              "shelf": 364,
+              "facade": 3208
+            },
+            "totalAreaMm2": 1731744,
+            "totalCutPerimeterMm": 15256,
+            "totalEdgeBandingLengthMm": 5520,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 4,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 28,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "450x720x560",
+          "sizeMm": {
+            "width": 450,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                414,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 231840,
+              "perimeterMm": 1948,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                414,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 231840,
+              "perimeterMm": 1948,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                414,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 237636,
+              "perimeterMm": 1976,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                414,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 221076,
+              "perimeterMm": 1896,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                221,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 133926,
+              "perimeterMm": 1654,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1654
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                221,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 133926,
+              "perimeterMm": 1654,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1654
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 1146880,
+              "backPanel": 237636,
+              "shelf": 221076,
+              "facade": 267852
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 8576,
+              "backPanel": 1976,
+              "shelf": 1896,
+              "facade": 3308
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2048,
+              "backPanel": 0,
+              "shelf": 414,
+              "facade": 3308
+            },
+            "totalAreaMm2": 1873444,
+            "totalCutPerimeterMm": 15756,
+            "totalEdgeBandingLengthMm": 5770,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 4,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 28,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "600x720x560",
+          "sizeMm": {
+            "width": 600,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 315840,
+              "perimeterMm": 2248,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 315840,
+              "perimeterMm": 2248,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 301176,
+              "perimeterMm": 2196,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 179376,
+              "perimeterMm": 1804,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1804
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 179376,
+              "perimeterMm": 1804,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1804
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 1314880,
+              "backPanel": 323736,
+              "shelf": 301176,
+              "facade": 358752
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 9176,
+              "backPanel": 2276,
+              "shelf": 2196,
+              "facade": 3608
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2348,
+              "backPanel": 0,
+              "shelf": 564,
+              "facade": 3608
+            },
+            "totalAreaMm2": 2298544,
+            "totalCutPerimeterMm": 17256,
+            "totalEdgeBandingLengthMm": 6520,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 4,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 28,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cabinetId": "base-single-door",
+      "name": "Single-door base cabinet",
+      "category": "base",
+      "pricingProfileId": "base-single-door",
+      "activeVariantId": "600x720x560",
+      "variants": [
+        {
+          "variantId": "300x720x560",
+          "sizeMm": {
+            "width": 300,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                264,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 147840,
+              "perimeterMm": 1648,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                264,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 147840,
+              "perimeterMm": 1648,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                264,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 151536,
+              "perimeterMm": 1676,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                264,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 140976,
+              "perimeterMm": 1596,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 179376,
+              "perimeterMm": 1804,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1804
+            }
+          ],
+          "summary": {
+            "panelCount": 7,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 1
+            },
+            "areaMm2ByGroup": {
+              "body": 978880,
+              "backPanel": 151536,
+              "shelf": 140976,
+              "facade": 179376
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 7976,
+              "backPanel": 1676,
+              "shelf": 1596,
+              "facade": 1804
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 1748,
+              "backPanel": 0,
+              "shelf": 264,
+              "facade": 1804
+            },
+            "totalAreaMm2": 1450768,
+            "totalCutPerimeterMm": 13052,
+            "totalEdgeBandingLengthMm": 3816,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 1,
+              "drawerCount": 0,
+              "handleCount": 1,
+              "legCount": 4,
+              "doorHingeCount": 2,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 24,
+            "byType": {
+              "handleMount": 2,
+              "hingeCup": 2,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "350x720x560",
+          "sizeMm": {
+            "width": 350,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                314,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 175840,
+              "perimeterMm": 1748,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                314,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 175840,
+              "perimeterMm": 1748,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                314,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 180236,
+              "perimeterMm": 1776,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                314,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 167676,
+              "perimeterMm": 1696,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                346,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 209676,
+              "perimeterMm": 1904,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 346
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 346
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 1904
+            }
+          ],
+          "summary": {
+            "panelCount": 7,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 1
+            },
+            "areaMm2ByGroup": {
+              "body": 1034880,
+              "backPanel": 180236,
+              "shelf": 167676,
+              "facade": 209676
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 8176,
+              "backPanel": 1776,
+              "shelf": 1696,
+              "facade": 1904
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 1848,
+              "backPanel": 0,
+              "shelf": 314,
+              "facade": 1904
+            },
+            "totalAreaMm2": 1592468,
+            "totalCutPerimeterMm": 13552,
+            "totalEdgeBandingLengthMm": 4066,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 1,
+              "drawerCount": 0,
+              "handleCount": 1,
+              "legCount": 4,
+              "doorHingeCount": 2,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 24,
+            "byType": {
+              "handleMount": 2,
+              "hingeCup": 2,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "400x720x560",
+          "sizeMm": {
+            "width": 400,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                364,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 203840,
+              "perimeterMm": 1848,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                364,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 203840,
+              "perimeterMm": 1848,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                364,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 208936,
+              "perimeterMm": 1876,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                364,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 194376,
+              "perimeterMm": 1796,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                396,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 239976,
+              "perimeterMm": 2004,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 396
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 396
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 2004
+            }
+          ],
+          "summary": {
+            "panelCount": 7,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 1
+            },
+            "areaMm2ByGroup": {
+              "body": 1090880,
+              "backPanel": 208936,
+              "shelf": 194376,
+              "facade": 239976
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 8376,
+              "backPanel": 1876,
+              "shelf": 1796,
+              "facade": 2004
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 1948,
+              "backPanel": 0,
+              "shelf": 364,
+              "facade": 2004
+            },
+            "totalAreaMm2": 1734168,
+            "totalCutPerimeterMm": 14052,
+            "totalEdgeBandingLengthMm": 4316,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 1,
+              "drawerCount": 0,
+              "handleCount": 1,
+              "legCount": 4,
+              "doorHingeCount": 2,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 24,
+            "byType": {
+              "handleMount": 2,
+              "hingeCup": 2,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "450x720x560",
+          "sizeMm": {
+            "width": 450,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                414,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 231840,
+              "perimeterMm": 1948,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                414,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 231840,
+              "perimeterMm": 1948,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                414,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 237636,
+              "perimeterMm": 1976,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                414,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 221076,
+              "perimeterMm": 1896,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                446,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 270276,
+              "perimeterMm": 2104,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 446
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 446
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 2104
+            }
+          ],
+          "summary": {
+            "panelCount": 7,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 1
+            },
+            "areaMm2ByGroup": {
+              "body": 1146880,
+              "backPanel": 237636,
+              "shelf": 221076,
+              "facade": 270276
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 8576,
+              "backPanel": 1976,
+              "shelf": 1896,
+              "facade": 2104
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2048,
+              "backPanel": 0,
+              "shelf": 414,
+              "facade": 2104
+            },
+            "totalAreaMm2": 1875868,
+            "totalCutPerimeterMm": 14552,
+            "totalEdgeBandingLengthMm": 4566,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 1,
+              "drawerCount": 0,
+              "handleCount": 1,
+              "legCount": 4,
+              "doorHingeCount": 2,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 24,
+            "byType": {
+              "handleMount": 2,
+              "hingeCup": 2,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "600x720x560",
+          "sizeMm": {
+            "width": 600,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 315840,
+              "perimeterMm": 2248,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 315840,
+              "perimeterMm": 2248,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                534
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 301176,
+              "perimeterMm": 2196,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                596,
+                606
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 361176,
+              "perimeterMm": 2404,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 606
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 606
+                }
+              ],
+              "edgeBandingLengthMm": 2404
+            }
+          ],
+          "summary": {
+            "panelCount": 7,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 1
+            },
+            "areaMm2ByGroup": {
+              "body": 1314880,
+              "backPanel": 323736,
+              "shelf": 301176,
+              "facade": 361176
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 9176,
+              "backPanel": 2276,
+              "shelf": 2196,
+              "facade": 2404
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2348,
+              "backPanel": 0,
+              "shelf": 564,
+              "facade": 2404
+            },
+            "totalAreaMm2": 2300968,
+            "totalCutPerimeterMm": 16052,
+            "totalEdgeBandingLengthMm": 5316,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 1,
+              "drawerCount": 0,
+              "handleCount": 1,
+              "legCount": 4,
+              "doorHingeCount": 2,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 24,
+            "byType": {
+              "handleMount": 2,
+              "hingeCup": 2,
+              "shelfSupport": 4,
+              "legMount": 16,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cabinetId": "base-three-drawer",
+      "name": "Three-drawer base cabinet",
+      "category": "drawer",
+      "pricingProfileId": "base-three-drawer",
+      "activeVariantId": "900x720x560",
+      "variants": [
+        {
+          "variantId": "600x720x560",
+          "sizeMm": {
+            "width": 600,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 315840,
+              "perimeterMm": 2248,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 315840,
+              "perimeterMm": 2248,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "drawer-front-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                596,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 118802.67,
+              "perimeterMm": 1590.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 1590.67
+            },
+            {
+              "name": "drawer-front-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                596,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 118802.67,
+              "perimeterMm": 1590.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 1590.67
+            },
+            {
+              "name": "drawer-front-3",
+              "materialGroup": "facade",
+              "sizeMm": [
+                596,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 118802.67,
+              "perimeterMm": 1590.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 596
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 1590.67
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "facade": 3
+            },
+            "areaMm2ByGroup": {
+              "body": 1314880,
+              "backPanel": 323736,
+              "facade": 356408
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 9176,
+              "backPanel": 2276,
+              "facade": 4772
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2348,
+              "backPanel": 0,
+              "facade": 4772
+            },
+            "totalAreaMm2": 1995024,
+            "totalCutPerimeterMm": 16224,
+            "totalEdgeBandingLengthMm": 7120,
+            "componentCounts": {
+              "shelfCount": 0,
+              "doorCount": 0,
+              "drawerCount": 3,
+              "handleCount": 3,
+              "legCount": 4,
+              "doorHingeCount": 0,
+              "drawerBoxCount": 3,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 46,
+            "byType": {
+              "handleMount": 6,
+              "hingeCup": 0,
+              "shelfSupport": 0,
+              "legMount": 16,
+              "drawerSlideMount": 24,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "800x720x560",
+          "sizeMm": {
+            "width": 800,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                764,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 427840,
+              "perimeterMm": 2648,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 764
+                }
+              ],
+              "edgeBandingLengthMm": 764
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                764,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 427840,
+              "perimeterMm": 2648,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 764
+                }
+              ],
+              "edgeBandingLengthMm": 764
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                764,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 438536,
+              "perimeterMm": 2676,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "drawer-front-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                796,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 158669.33,
+              "perimeterMm": 1990.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 796
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 796
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 1990.67
+            },
+            {
+              "name": "drawer-front-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                796,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 158669.33,
+              "perimeterMm": 1990.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 796
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 796
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 1990.67
+            },
+            {
+              "name": "drawer-front-3",
+              "materialGroup": "facade",
+              "sizeMm": [
+                796,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 158669.33,
+              "perimeterMm": 1990.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 796
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 796
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 1990.67
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "facade": 3
+            },
+            "areaMm2ByGroup": {
+              "body": 1538880,
+              "backPanel": 438536,
+              "facade": 476008
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 9976,
+              "backPanel": 2676,
+              "facade": 5972
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2748,
+              "backPanel": 0,
+              "facade": 5972
+            },
+            "totalAreaMm2": 2453424,
+            "totalCutPerimeterMm": 18624,
+            "totalEdgeBandingLengthMm": 8720,
+            "componentCounts": {
+              "shelfCount": 0,
+              "doorCount": 0,
+              "drawerCount": 3,
+              "handleCount": 3,
+              "legCount": 6,
+              "doorHingeCount": 0,
+              "drawerBoxCount": 3,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 54,
+            "byType": {
+              "handleMount": 6,
+              "hingeCup": 0,
+              "shelfSupport": 0,
+              "legMount": 24,
+              "drawerSlideMount": 24,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "900x720x560",
+          "sizeMm": {
+            "width": 900,
+            "height": 720,
+            "depth": 560
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                560,
+                610
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 341600,
+              "perimeterMm": 2340,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 610
+                }
+              ],
+              "edgeBandingLengthMm": 610
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                864,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 483840,
+              "perimeterMm": 2848,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 864
+                }
+              ],
+              "edgeBandingLengthMm": 864
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                864,
+                560
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 483840,
+              "perimeterMm": 2848,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 864
+                }
+              ],
+              "edgeBandingLengthMm": 864
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                864,
+                574
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 495936,
+              "perimeterMm": 2876,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "drawer-front-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                896,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 178602.67,
+              "perimeterMm": 2190.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 896
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 896
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 2190.67
+            },
+            {
+              "name": "drawer-front-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                896,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 178602.67,
+              "perimeterMm": 2190.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 896
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 896
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 2190.67
+            },
+            {
+              "name": "drawer-front-3",
+              "materialGroup": "facade",
+              "sizeMm": [
+                896,
+                199.33
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 178602.67,
+              "perimeterMm": 2190.67,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 896
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 199.33
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 896
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 199.33
+                }
+              ],
+              "edgeBandingLengthMm": 2190.67
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "facade": 3
+            },
+            "areaMm2ByGroup": {
+              "body": 1650880,
+              "backPanel": 495936,
+              "facade": 535808
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 10376,
+              "backPanel": 2876,
+              "facade": 6572
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2948,
+              "backPanel": 0,
+              "facade": 6572
+            },
+            "totalAreaMm2": 2682624,
+            "totalCutPerimeterMm": 19824,
+            "totalEdgeBandingLengthMm": 9520,
+            "componentCounts": {
+              "shelfCount": 0,
+              "doorCount": 0,
+              "drawerCount": 3,
+              "handleCount": 3,
+              "legCount": 6,
+              "doorHingeCount": 0,
+              "drawerBoxCount": 3,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 54,
+            "byType": {
+              "handleMount": 6,
+              "hingeCup": 0,
+              "shelfSupport": 0,
+              "legMount": 24,
+              "drawerSlideMount": 24,
+              "wallMount": 0,
+              "tallReinforcementMount": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cabinetId": "wall-double-door",
+      "name": "Double-door wall cabinet",
+      "category": "wall",
+      "pricingProfileId": "wall-double-door",
+      "activeVariantId": "600x720x320",
+      "variants": [
+        {
+          "variantId": "300x720x320",
+          "sizeMm": {
+            "width": 300,
+            "height": 720,
+            "depth": 320
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                264,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 84480,
+              "perimeterMm": 1168,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                264,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 84480,
+              "perimeterMm": 1168,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                264,
+                684
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 180576,
+              "perimeterMm": 1896,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                264,
+                294
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 77616,
+              "perimeterMm": 1116,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 264
+                }
+              ],
+              "edgeBandingLengthMm": 264
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                146,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 104536,
+              "perimeterMm": 1724,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1724
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                146,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 104536,
+              "perimeterMm": 1724,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 146
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1724
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 629760,
+              "backPanel": 180576,
+              "shelf": 77616,
+              "facade": 209072
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 6496,
+              "backPanel": 1896,
+              "shelf": 1116,
+              "facade": 3448
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 1968,
+              "backPanel": 0,
+              "shelf": 264,
+              "facade": 3448
+            },
+            "totalAreaMm2": 1097024,
+            "totalCutPerimeterMm": 12956,
+            "totalEdgeBandingLengthMm": 5680,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 0,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 1,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 16,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 0,
+              "drawerSlideMount": 0,
+              "wallMount": 4,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "350x720x320",
+          "sizeMm": {
+            "width": 350,
+            "height": 720,
+            "depth": 320
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                314,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 100480,
+              "perimeterMm": 1268,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                314,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 100480,
+              "perimeterMm": 1268,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                314,
+                684
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 214776,
+              "perimeterMm": 1996,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                314,
+                294
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 92316,
+              "perimeterMm": 1216,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 314
+                }
+              ],
+              "edgeBandingLengthMm": 314
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                171,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 122436,
+              "perimeterMm": 1774,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1774
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                171,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 122436,
+              "perimeterMm": 1774,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 171
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1774
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 661760,
+              "backPanel": 214776,
+              "shelf": 92316,
+              "facade": 244872
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 6696,
+              "backPanel": 1996,
+              "shelf": 1216,
+              "facade": 3548
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2068,
+              "backPanel": 0,
+              "shelf": 314,
+              "facade": 3548
+            },
+            "totalAreaMm2": 1213724,
+            "totalCutPerimeterMm": 13456,
+            "totalEdgeBandingLengthMm": 5930,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 0,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 1,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 16,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 0,
+              "drawerSlideMount": 0,
+              "wallMount": 4,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "400x720x320",
+          "sizeMm": {
+            "width": 400,
+            "height": 720,
+            "depth": 320
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                364,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 116480,
+              "perimeterMm": 1368,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                364,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 116480,
+              "perimeterMm": 1368,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                364,
+                684
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 248976,
+              "perimeterMm": 2096,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                364,
+                294
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 107016,
+              "perimeterMm": 1316,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 364
+                }
+              ],
+              "edgeBandingLengthMm": 364
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                196,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 140336,
+              "perimeterMm": 1824,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1824
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                196,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 140336,
+              "perimeterMm": 1824,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 196
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1824
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 693760,
+              "backPanel": 248976,
+              "shelf": 107016,
+              "facade": 280672
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 6896,
+              "backPanel": 2096,
+              "shelf": 1316,
+              "facade": 3648
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2168,
+              "backPanel": 0,
+              "shelf": 364,
+              "facade": 3648
+            },
+            "totalAreaMm2": 1330424,
+            "totalCutPerimeterMm": 13956,
+            "totalEdgeBandingLengthMm": 6180,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 0,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 1,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 16,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 0,
+              "drawerSlideMount": 0,
+              "wallMount": 4,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "450x720x320",
+          "sizeMm": {
+            "width": 450,
+            "height": 720,
+            "depth": 320
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                414,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 132480,
+              "perimeterMm": 1468,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                414,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 132480,
+              "perimeterMm": 1468,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                414,
+                684
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 283176,
+              "perimeterMm": 2196,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                414,
+                294
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 121716,
+              "perimeterMm": 1416,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 414
+                }
+              ],
+              "edgeBandingLengthMm": 414
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                221,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 158236,
+              "perimeterMm": 1874,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1874
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                221,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 158236,
+              "perimeterMm": 1874,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 221
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 1874
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 725760,
+              "backPanel": 283176,
+              "shelf": 121716,
+              "facade": 316472
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 7096,
+              "backPanel": 2196,
+              "shelf": 1416,
+              "facade": 3748
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2268,
+              "backPanel": 0,
+              "shelf": 414,
+              "facade": 3748
+            },
+            "totalAreaMm2": 1447124,
+            "totalCutPerimeterMm": 14456,
+            "totalEdgeBandingLengthMm": 6430,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 0,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 1,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 16,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 0,
+              "drawerSlideMount": 0,
+              "wallMount": 4,
+              "tallReinforcementMount": 0
+            }
+          }
+        },
+        {
+          "variantId": "600x720x320",
+          "sizeMm": {
+            "width": 600,
+            "height": 720,
+            "depth": 320
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                320,
+                720
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 230400,
+              "perimeterMm": 2080,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 720
+                }
+              ],
+              "edgeBandingLengthMm": 720
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 180480,
+              "perimeterMm": 1768,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                320
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 180480,
+              "perimeterMm": 1768,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                564,
+                684
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 385776,
+              "perimeterMm": 2496,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                294
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 165816,
+              "perimeterMm": 1716,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 211936,
+              "perimeterMm": 2024,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 2024
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                716
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 211936,
+              "perimeterMm": 2024,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 716
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 716
+                }
+              ],
+              "edgeBandingLengthMm": 2024
+            }
+          ],
+          "summary": {
+            "panelCount": 8,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 1,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 821760,
+              "backPanel": 385776,
+              "shelf": 165816,
+              "facade": 423872
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 7696,
+              "backPanel": 2496,
+              "shelf": 1716,
+              "facade": 4048
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 2568,
+              "backPanel": 0,
+              "shelf": 564,
+              "facade": 4048
+            },
+            "totalAreaMm2": 1797224,
+            "totalCutPerimeterMm": 15956,
+            "totalEdgeBandingLengthMm": 7180,
+            "componentCounts": {
+              "shelfCount": 1,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 0,
+              "doorHingeCount": 4,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 1,
+              "tallReinforcementKitCount": 0
+            }
+          },
+          "holes": {
+            "totalCount": 16,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 4,
+              "shelfSupport": 4,
+              "legMount": 0,
+              "drawerSlideMount": 0,
+              "wallMount": 4,
+              "tallReinforcementMount": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cabinetId": "tall-pantry",
+      "name": "Pantry tower",
+      "category": "tall",
+      "pricingProfileId": "tall-pantry",
+      "activeVariantId": "600x2100x600",
+      "variants": [
+        {
+          "variantId": "600x2100x600",
+          "sizeMm": {
+            "width": 600,
+            "height": 2100,
+            "depth": 600
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                600,
+                2100
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 1260000,
+              "perimeterMm": 5400,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 2100
+                }
+              ],
+              "edgeBandingLengthMm": 2100
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                600,
+                2100
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 1260000,
+              "perimeterMm": 5400,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 2100
+                }
+              ],
+              "edgeBandingLengthMm": 2100
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                600
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 338400,
+              "perimeterMm": 2328,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                600
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 338400,
+              "perimeterMm": 2328,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                564,
+                2064
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 1164096,
+              "perimeterMm": 5256,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "shelf-2",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "shelf-3",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "shelf-4",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                2096
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 620416,
+              "perimeterMm": 4784,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 2096
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 2096
+                }
+              ],
+              "edgeBandingLengthMm": 4784
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                2096
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 620416,
+              "perimeterMm": 4784,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 2096
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 2096
+                }
+              ],
+              "edgeBandingLengthMm": 4784
+            }
+          ],
+          "summary": {
+            "panelCount": 11,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 4,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 3196800,
+              "backPanel": 1164096,
+              "shelf": 1294944,
+              "facade": 1240832
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 15456,
+              "backPanel": 5256,
+              "shelf": 9104,
+              "facade": 9568
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 5328,
+              "backPanel": 0,
+              "shelf": 2256,
+              "facade": 9568
+            },
+            "totalAreaMm2": 6896672,
+            "totalCutPerimeterMm": 39384,
+            "totalEdgeBandingLengthMm": 17152,
+            "componentCounts": {
+              "shelfCount": 4,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 0,
+              "doorHingeCount": 6,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 1
+            }
+          },
+          "holes": {
+            "totalCount": 30,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 6,
+              "shelfSupport": 16,
+              "legMount": 0,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 4
+            }
+          }
+        },
+        {
+          "variantId": "600x2300x600",
+          "sizeMm": {
+            "width": 600,
+            "height": 2300,
+            "depth": 600
+          },
+          "panels": [
+            {
+              "name": "left-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                600,
+                2300
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 1380000,
+              "perimeterMm": 5800,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 2300
+                }
+              ],
+              "edgeBandingLengthMm": 2300
+            },
+            {
+              "name": "right-side",
+              "materialGroup": "body",
+              "sizeMm": [
+                600,
+                2300
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 1380000,
+              "perimeterMm": 5800,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 2300
+                }
+              ],
+              "edgeBandingLengthMm": 2300
+            },
+            {
+              "name": "bottom-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                600
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 338400,
+              "perimeterMm": 2328,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "top-panel",
+              "materialGroup": "body",
+              "sizeMm": [
+                564,
+                600
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 338400,
+              "perimeterMm": 2328,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "back-panel",
+              "materialGroup": "backPanel",
+              "sizeMm": [
+                564,
+                2264
+              ],
+              "thicknessMm": 6,
+              "areaMm2": 1276896,
+              "perimeterMm": 5656,
+              "edgeBanding": [],
+              "edgeBandingLengthMm": 0
+            },
+            {
+              "name": "shelf-1",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "shelf-2",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "shelf-3",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "shelf-4",
+              "materialGroup": "shelf",
+              "sizeMm": [
+                564,
+                574
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 323736,
+              "perimeterMm": 2276,
+              "edgeBanding": [
+                {
+                  "edge": "front",
+                  "lengthMm": 564
+                }
+              ],
+              "edgeBandingLengthMm": 564
+            },
+            {
+              "name": "door-1",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                2296
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 679616,
+              "perimeterMm": 5184,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 2296
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 2296
+                }
+              ],
+              "edgeBandingLengthMm": 5184
+            },
+            {
+              "name": "door-2",
+              "materialGroup": "facade",
+              "sizeMm": [
+                296,
+                2296
+              ],
+              "thicknessMm": 18,
+              "areaMm2": 679616,
+              "perimeterMm": 5184,
+              "edgeBanding": [
+                {
+                  "edge": "top",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "right",
+                  "lengthMm": 2296
+                },
+                {
+                  "edge": "bottom",
+                  "lengthMm": 296
+                },
+                {
+                  "edge": "left",
+                  "lengthMm": 2296
+                }
+              ],
+              "edgeBandingLengthMm": 5184
+            }
+          ],
+          "summary": {
+            "panelCount": 11,
+            "panelCountByGroup": {
+              "body": 4,
+              "backPanel": 1,
+              "shelf": 4,
+              "facade": 2
+            },
+            "areaMm2ByGroup": {
+              "body": 3436800,
+              "backPanel": 1276896,
+              "shelf": 1294944,
+              "facade": 1359232
+            },
+            "cutPerimeterMmByGroup": {
+              "body": 16256,
+              "backPanel": 5656,
+              "shelf": 9104,
+              "facade": 10368
+            },
+            "edgeBandingLengthMmByGroup": {
+              "body": 5728,
+              "backPanel": 0,
+              "shelf": 2256,
+              "facade": 10368
+            },
+            "totalAreaMm2": 7367872,
+            "totalCutPerimeterMm": 41384,
+            "totalEdgeBandingLengthMm": 18352,
+            "componentCounts": {
+              "shelfCount": 4,
+              "doorCount": 2,
+              "drawerCount": 0,
+              "handleCount": 2,
+              "legCount": 0,
+              "doorHingeCount": 6,
+              "drawerBoxCount": 0,
+              "wallMountingKitCount": 0,
+              "tallReinforcementKitCount": 1
+            }
+          },
+          "holes": {
+            "totalCount": 30,
+            "byType": {
+              "handleMount": 4,
+              "hingeCup": 6,
+              "shelfSupport": 16,
+              "legMount": 0,
+              "drawerSlideMount": 0,
+              "wallMount": 0,
+              "tallReinforcementMount": 4
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

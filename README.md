@@ -67,14 +67,17 @@ Then open [http://localhost:3000](http://localhost:3000).
 - `npm test` runs the test suite.
 - `npm run build` creates a production build.
 - `npm run format` formats the repository with Prettier.
-- `npm run prices:update` recalculates all starter cabinet prices from the manual pricing config.
-- `npm run prices:check` verifies whether the starter cabinet prices are already in sync with the config.
+- `npm run prices:update` recalculates all starter cabinet prices from the manual pricing config and refreshes `config/cabinet-pricing.generated.json` with compact per-variant pricing steps.
+- `npm run prices:check` verifies whether the catalog prices and generated pricing breakdowns are already in sync with the config.
+- `npm run manufacturing:update` generates per-variant panel, edge-banding, perimeter, and hole metadata in `config/cabinet-manufacturing.generated.json`.
+- `npm run manufacturing:check` verifies whether the manufacturing metadata file is already in sync.
 
 ## Updating cabinet prices
 
 1. Edit `config/cabinet-pricing.config.json`.
 2. Run `npm run prices:update`.
 3. Review the regenerated prices in `src/features/cupboards/model/starterCabinetCatalogDefinitions.json`.
+4. Inspect the generated per-variant breakdowns in `config/cabinet-pricing.generated.json`.
 
 For a fuller breakdown of the config structure and pricing workflow, see `docs/cabinet-pricing.md`.
 

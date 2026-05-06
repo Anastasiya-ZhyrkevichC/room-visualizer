@@ -6,9 +6,9 @@
   "materials": {
     "carcase": {
       "white-chipboard": {
-        "bodyPanelPricePerSquareMeter": 68,
+        "bodyPanelPricePerSquareMeter": 21.22,
         "backPanelPricePerSquareMeter": 26,
-        "shelfPricePerSquareMeter": 56,
+        "shelfPricePerSquareMeter": 21.22,
         "coefficient": 1
       }
     },
@@ -43,7 +43,7 @@
   },
   "legs": {
     "plastic-leg-110": {
-      "unitPrice": 4
+      "unitPrice": 100
     }
   },
   "hardware": {
@@ -51,6 +51,17 @@
     "drawerBoxUnitPrice": 26,
     "wallMountingKitPrice": 14,
     "tallReinforcementKitPrice": 34
+  },
+  "manufacturing": {
+    "holeRules": {
+      "handleMountHolesPerHandle": 2,
+      "hingeCupHolesPerHinge": 1,
+      "shelfSupportHolesPerShelf": 4,
+      "legMountHolesPerLeg": 4,
+      "drawerSlideMountHolesPerDrawer": 8,
+      "wallMountHolesPerKit": 4,
+      "tallReinforcementMountHolesPerKit": 4
+    }
   },
   "pricingProfiles": {
     "base-double-door": {
