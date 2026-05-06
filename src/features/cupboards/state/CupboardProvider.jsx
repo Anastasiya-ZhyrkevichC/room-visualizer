@@ -26,7 +26,7 @@ export const CupboardProvider = ({ children }) => {
   const projectCustomisation = selectProjectCustomisation(state);
   const inheritedCupboardCount = selectInheritedCupboardCount(state);
   const selectedCupboardId = state.selectedCupboardId;
-  const tableTopRuns = useMemo(() => selectTableTopRuns(state), [state.cupboards]);
+  const tableTopRuns = useMemo(() => selectTableTopRuns({ cupboards: state.cupboards }), [state.cupboards]);
   const actions = useMemo(
     () => ({
       startPlacementPreview: (catalogId, { variantId = null } = {}) =>
