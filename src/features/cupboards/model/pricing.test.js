@@ -19,12 +19,12 @@ describe("pricing model", () => {
     };
 
     expect(calculateCupboardPriceBreakdown(cupboard, getDefaultProjectCustomisation())).toMatchObject({
-      bodyPrice: 160,
+      bodyPrice: 481,
       carcassPrice: 0,
       facadePrice: 0,
       handlePrice: 24,
       accessoriesPrice: 0,
-      totalPrice: 184,
+      totalPrice: 505,
       currency: "USD",
     });
   });
@@ -45,12 +45,12 @@ describe("pricing model", () => {
     };
 
     expect(calculateCupboardPriceBreakdown(cupboard, getDefaultProjectCustomisation())).toMatchObject({
-      bodyPrice: 390,
+      bodyPrice: 842,
       carcassPrice: 0,
       facadePrice: 65,
       handlePrice: 54,
       accessoriesPrice: 57,
-      totalPrice: 566,
+      totalPrice: 1018,
       currency: "USD",
     });
   });

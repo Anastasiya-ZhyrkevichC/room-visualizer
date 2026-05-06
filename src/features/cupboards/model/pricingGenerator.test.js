@@ -30,10 +30,12 @@ describe("pricing breakdown generator", () => {
       bodyPanelPricePerSquareMeter: 21.22,
       backPanelPricePerSquareMeter: 26,
       shelfPricePerSquareMeter: 21.22,
+      edgeBandingPricePerMeter: 1,
       coefficient: 1,
     });
     expect(breakdown.inputs.facadeMaterial).toEqual({
       pricePerSquareMeter: 108,
+      edgeBandingPricePerMeter: 2,
       coefficient: 1,
     });
     expect(breakdown.inputs.handle).toEqual({
@@ -45,21 +47,25 @@ describe("pricing breakdown generator", () => {
     expect(breakdown.costs.bodyCost).toBeCloseTo(20.7718336, 6);
     expect(breakdown.costs.backPanelCost).toBeCloseTo(3.939936, 6);
     expect(breakdown.costs.shelfCost).toBeCloseTo(2.99151072, 6);
-    expect(breakdown.costs.totalBodyCost).toBeCloseTo(27.70328032, 6);
+    expect(breakdown.costs.bodyEdgeBandingCost).toBeCloseTo(2.012, 6);
+    expect(breakdown.costs.bodyPanelsPanelCost).toBeCloseTo(23.76334432, 6);
+    expect(breakdown.costs.totalBodyPanelsCost).toBeCloseTo(25.77534432, 6);
     expect(breakdown.costs.facadeCost).toBeCloseTo(19.110816, 6);
+    expect(breakdown.costs.facadeEdgeBandingCost).toBeCloseTo(6.016, 6);
+    expect(breakdown.costs.totalFacadeCost).toBeCloseTo(25.126816, 6);
     expect(breakdown.costs.handleCost).toBe(16);
     expect(breakdown.costs.legCost).toBe(400);
     expect(breakdown.costs.hingeCost).toBe(10);
-    expect(breakdown.costs.subtotal).toBeCloseTo(502.81409632, 6);
-    expect(breakdown.costs.totalBeforeRounding).toBeCloseTo(502.81409632, 6);
-    expect(breakdown.costs.roundedPrice).toBe(503);
+    expect(breakdown.costs.subtotal).toBeCloseTo(480.84209632, 6);
+    expect(breakdown.costs.totalBeforeRounding).toBeCloseTo(480.84209632, 6);
+    expect(breakdown.costs.roundedPrice).toBe(481);
   });
 
   it("builds a serializable generated breakdown file for every cabinet variant", () => {
     const output = buildPricingBreakdownDefinitions(starterCabinetCatalogDefinitions, pricingConfig);
 
     expect(output).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       currency: "USD",
       roundingNearest: 1,
     });
@@ -84,7 +90,11 @@ describe("pricing breakdown generator", () => {
           areaM2: 1.65088,
           unitPricePerSquareMeter: 21.22,
           coefficient: 1.02,
-          cost: 35.7323,
+          panelCost: 35.7323,
+          edgeLengthM: 2.948,
+          edgeBandingPricePerMeter: 1,
+          edgeCost: 3.007,
+          cost: 38.7393,
         },
         backPanel: {
           areaM2: 0.495936,
@@ -96,7 +106,11 @@ describe("pricing breakdown generator", () => {
           areaM2: 0.535808,
           unitPricePerSquareMeter: 118,
           coefficient: 1.04,
-          cost: 65.7544,
+          panelCost: 65.7544,
+          edgeLengthM: 6.572,
+          edgeBandingPricePerMeter: 2,
+          edgeCost: 13.6698,
+          cost: 79.4241,
         },
         handles: {
           count: 3,
@@ -113,18 +127,16 @@ describe("pricing breakdown generator", () => {
           unitPrice: 26,
           cost: 78,
         },
-        assembly: {
-          cost: 34,
-        },
       },
-      subtotal: 859.6389,
-      totalBeforeRounding: 859.6389,
-      roundedPrice: 860,
+      subtotal: 842.3156,
+      totalBeforeRounding: 842.3156,
+      roundedPrice: 842,
     });
     expect(baseVariant.steps.bodyPanels.coefficient).toBeUndefined();
     expect(baseVariant.cabinetCoefficient).toBeUndefined();
     expect(wideDrawerVariant.steps.hinges).toBeUndefined();
     expect(wideDrawerVariant.steps.wallMountingKits).toBeUndefined();
+    expect(wideDrawerVariant.steps.assembly).toBeUndefined();
     expect(wideDrawerVariant.steps.extraFixed).toBeUndefined();
   });
 });

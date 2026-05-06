@@ -9,20 +9,24 @@
         "bodyPanelPricePerSquareMeter": 21.22,
         "backPanelPricePerSquareMeter": 26,
         "shelfPricePerSquareMeter": 21.22,
+        "edgeBandingPricePerMeter": 1,
         "coefficient": 1
       }
     },
     "facade": {
       "painted-mdf": {
         "pricePerSquareMeter": 108,
+        "edgeBandingPricePerMeter": 2,
         "coefficient": 1
       },
       "drawer-painted-mdf": {
         "pricePerSquareMeter": 118,
+        "edgeBandingPricePerMeter": 2,
         "coefficient": 1.04
       },
       "tall-painted-mdf": {
         "pricePerSquareMeter": 110,
+        "edgeBandingPricePerMeter": 2,
         "coefficient": 1.08
       }
     }
@@ -79,7 +83,6 @@
         }
       ],
       "doorHingeCountPerDoor": 2,
-      "assemblyCost": 30,
       "extraFixedCost": 0,
       "cabinetCoefficient": 1
     },
@@ -98,7 +101,6 @@
         }
       ],
       "doorHingeCountPerDoor": 2,
-      "assemblyCost": 32,
       "extraFixedCost": 5,
       "cabinetCoefficient": 1
     },
@@ -121,7 +123,6 @@
         }
       ],
       "drawerBoxCountMode": "drawerCount",
-      "assemblyCost": 34,
       "extraFixedCost": 0,
       "cabinetCoefficient": 1
     },
@@ -134,7 +135,6 @@
       "handleCountMode": "doorCount",
       "doorHingeCountPerDoor": 2,
       "wallMountingKitCount": 1,
-      "assemblyCost": 16,
       "extraFixedCost": 0,
       "cabinetCoefficient": 1
     },
@@ -147,7 +147,6 @@
       "handleCountMode": "doorCount",
       "doorHingeCountPerDoor": 3,
       "tallReinforcementKitCount": 1,
-      "assemblyCost": 78,
       "extraFixedCost": 0,
       "cabinetCoefficient": 1
     }

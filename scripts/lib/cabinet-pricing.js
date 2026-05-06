@@ -18,19 +18,45 @@ function roundPrice(value, step) {
   return Math.round(value / step) * step;
 }
 
-function createAreaStep({ areaM2, unitPricePerSquareMeter, coefficient, cost }) {
+function toLinearMeters(lengthMm) {
+  return lengthMm / 1_000;
+}
+
+function createAreaStep({
+  areaM2,
+  unitPricePerSquareMeter,
+  coefficient,
+  panelCost,
+  edgeLengthM,
+  edgeBandingPricePerMeter,
+  edgeCost,
+  cost,
+}) {
   if (!Number.isFinite(cost) || cost === 0) {
     return null;
   }
 
   const step = {
     areaM2: roundNumber(areaM2, 6),
-    unitPricePerSquareMeter: roundNumber(unitPricePerSquareMeter, 4),
     cost: roundNumber(cost, 4),
   };
 
+  if (Number.isFinite(unitPricePerSquareMeter)) {
+    step.unitPricePerSquareMeter = roundNumber(unitPricePerSquareMeter, 4);
+  }
+
   if (Number.isFinite(coefficient) && coefficient !== 1) {
     step.coefficient = roundNumber(coefficient, 6);
+  }
+
+  if (Number.isFinite(panelCost) && panelCost !== cost) {
+    step.panelCost = roundNumber(panelCost, 4);
+  }
+
+  if (Number.isFinite(edgeCost) && edgeCost > 0) {
+    step.edgeLengthM = roundNumber(edgeLengthM, 6);
+    step.edgeBandingPricePerMeter = roundNumber(edgeBandingPricePerMeter, 4);
+    step.edgeCost = roundNumber(edgeCost, 4);
   }
 
   return step;
@@ -101,14 +127,34 @@ function getPricingBreakdown({ cabinet, variant, config }) {
     shelf: toSquareMeters(areaMm2ByGroup.shelf),
     facade: toSquareMeters(areaMm2ByGroup.facade),
   };
+  const edgeBandingLengthMmByGroup = {
+    body: manufacturing.summary.edgeBandingLengthMmByGroup.body ?? 0,
+    backPanel: manufacturing.summary.edgeBandingLengthMmByGroup.backPanel ?? 0,
+    shelf: manufacturing.summary.edgeBandingLengthMmByGroup.shelf ?? 0,
+    facade: manufacturing.summary.edgeBandingLengthMmByGroup.facade ?? 0,
+  };
+  const edgeLengthMByGroup = {
+    body: toLinearMeters(edgeBandingLengthMmByGroup.body),
+    backPanel: toLinearMeters(edgeBandingLengthMmByGroup.backPanel),
+    shelf: toLinearMeters(edgeBandingLengthMmByGroup.shelf),
+    facade: toLinearMeters(edgeBandingLengthMmByGroup.facade),
+  };
   const carcaseCoefficient = (carcaseMaterial.coefficient ?? 1) * (profile.carcaseCoefficient ?? 1);
   const facadeCoefficient = (facadeMaterial.coefficient ?? 1) * (profile.facadeCoefficient ?? 1);
   const cabinetCoefficient = profile.cabinetCoefficient ?? 1;
   const bodyCost = areaM2ByGroup.body * carcaseMaterial.bodyPanelPricePerSquareMeter * carcaseCoefficient;
   const backPanelCost = areaM2ByGroup.backPanel * carcaseMaterial.backPanelPricePerSquareMeter * carcaseCoefficient;
   const shelfCost = areaM2ByGroup.shelf * carcaseMaterial.shelfPricePerSquareMeter * carcaseCoefficient;
-  const totalBodyCost = bodyCost + backPanelCost + shelfCost;
+  const bodyPanelsAreaM2 = areaM2ByGroup.body + areaM2ByGroup.shelf;
+  const bodyPanelsPanelCost = bodyCost + shelfCost;
+  const bodyPanelsEdgeLengthM = edgeLengthMByGroup.body + edgeLengthMByGroup.shelf;
+  const bodyEdgeBandingCost =
+    bodyPanelsEdgeLengthM * (carcaseMaterial.edgeBandingPricePerMeter ?? 0) * carcaseCoefficient;
+  const totalBodyPanelsCost = bodyPanelsPanelCost + bodyEdgeBandingCost;
   const facadeCost = areaM2ByGroup.facade * facadeMaterial.pricePerSquareMeter * facadeCoefficient;
+  const facadeEdgeLengthM = edgeLengthMByGroup.facade;
+  const facadeEdgeBandingCost = facadeEdgeLengthM * (facadeMaterial.edgeBandingPricePerMeter ?? 0) * facadeCoefficient;
+  const totalFacadeCost = facadeCost + facadeEdgeBandingCost;
   const handleCost = componentCounts.handleCount * (handle?.unitPrice ?? 0);
   const legCost = componentCounts.legCount * (leg?.unitPrice ?? 0);
   const hingeCost = componentCounts.doorHingeCount * (config.hardware?.doorHingeUnitPrice ?? 0);
@@ -116,18 +162,17 @@ function getPricingBreakdown({ cabinet, variant, config }) {
   const wallMountingKitCost = componentCounts.wallMountingKitCount * (config.hardware?.wallMountingKitPrice ?? 0);
   const tallReinforcementKitCost =
     componentCounts.tallReinforcementKitCount * (config.hardware?.tallReinforcementKitPrice ?? 0);
-  const assemblyCost = profile.assemblyCost ?? 0;
   const extraFixedCost = profile.extraFixedCost ?? 0;
   const subtotal =
-    totalBodyCost +
-    facadeCost +
+    totalBodyPanelsCost +
+    backPanelCost +
+    totalFacadeCost +
     handleCost +
     legCost +
     hingeCost +
     drawerBoxCost +
     wallMountingKitCost +
     tallReinforcementKitCost +
-    assemblyCost +
     extraFixedCost;
   const totalBeforeRounding = subtotal * cabinetCoefficient;
   const roundingNearest = config.rounding?.nearest ?? null;
@@ -151,6 +196,11 @@ function getPricingBreakdown({ cabinet, variant, config }) {
     measurements: {
       areaMm2ByGroup,
       areaM2ByGroup,
+      edgeBandingLengthMmByGroup,
+      edgeLengthMByGroup,
+      bodyPanelsAreaM2,
+      bodyPanelsEdgeLengthM,
+      facadeEdgeLengthM,
     },
     componentCounts,
     inputs: {
@@ -185,15 +235,18 @@ function getPricingBreakdown({ cabinet, variant, config }) {
       bodyCost,
       backPanelCost,
       shelfCost,
-      totalBodyCost,
+      bodyPanelsPanelCost,
+      bodyEdgeBandingCost,
+      totalBodyPanelsCost,
       facadeCost,
+      facadeEdgeBandingCost,
+      totalFacadeCost,
       handleCost,
       legCost,
       hingeCost,
       drawerBoxCost,
       wallMountingKitCost,
       tallReinforcementKitCost,
-      assemblyCost,
       extraFixedCost,
       subtotal,
       totalBeforeRounding,
@@ -203,32 +256,40 @@ function getPricingBreakdown({ cabinet, variant, config }) {
 }
 
 function toSerializablePricingBreakdown(breakdown) {
+  const mergedBodyUnitPrice =
+    breakdown.inputs.carcaseMaterial.bodyPanelPricePerSquareMeter ===
+    breakdown.inputs.carcaseMaterial.shelfPricePerSquareMeter
+      ? breakdown.inputs.carcaseMaterial.bodyPanelPricePerSquareMeter
+      : undefined;
   const serializable = {
     variantId: breakdown.variantId,
     steps: compactObjectEntries({
       bodyPanels: createAreaStep({
-        areaM2: breakdown.measurements.areaM2ByGroup.body,
-        unitPricePerSquareMeter: breakdown.inputs.carcaseMaterial.bodyPanelPricePerSquareMeter,
+        areaM2: breakdown.measurements.bodyPanelsAreaM2,
+        unitPricePerSquareMeter: mergedBodyUnitPrice,
         coefficient: breakdown.coefficients.carcaseResolved,
-        cost: breakdown.costs.bodyCost,
+        panelCost: breakdown.costs.bodyPanelsPanelCost,
+        edgeLengthM: breakdown.measurements.bodyPanelsEdgeLengthM,
+        edgeBandingPricePerMeter: breakdown.inputs.carcaseMaterial.edgeBandingPricePerMeter ?? 0,
+        edgeCost: breakdown.costs.bodyEdgeBandingCost,
+        cost: breakdown.costs.totalBodyPanelsCost,
       }),
       backPanel: createAreaStep({
         areaM2: breakdown.measurements.areaM2ByGroup.backPanel,
         unitPricePerSquareMeter: breakdown.inputs.carcaseMaterial.backPanelPricePerSquareMeter,
         coefficient: breakdown.coefficients.carcaseResolved,
+        panelCost: breakdown.costs.backPanelCost,
         cost: breakdown.costs.backPanelCost,
-      }),
-      shelves: createAreaStep({
-        areaM2: breakdown.measurements.areaM2ByGroup.shelf,
-        unitPricePerSquareMeter: breakdown.inputs.carcaseMaterial.shelfPricePerSquareMeter,
-        coefficient: breakdown.coefficients.carcaseResolved,
-        cost: breakdown.costs.shelfCost,
       }),
       facade: createAreaStep({
         areaM2: breakdown.measurements.areaM2ByGroup.facade,
         unitPricePerSquareMeter: breakdown.inputs.facadeMaterial.pricePerSquareMeter,
         coefficient: breakdown.coefficients.facadeResolved,
-        cost: breakdown.costs.facadeCost,
+        panelCost: breakdown.costs.facadeCost,
+        edgeLengthM: breakdown.measurements.facadeEdgeLengthM,
+        edgeBandingPricePerMeter: breakdown.inputs.facadeMaterial.edgeBandingPricePerMeter ?? 0,
+        edgeCost: breakdown.costs.facadeEdgeBandingCost,
+        cost: breakdown.costs.totalFacadeCost,
       }),
       handles: createCountStep({
         count: breakdown.componentCounts.handleCount,
@@ -260,7 +321,6 @@ function toSerializablePricingBreakdown(breakdown) {
         unitPrice: breakdown.inputs.hardware.tallReinforcementKitPrice,
         cost: breakdown.costs.tallReinforcementKitCost,
       }),
-      assembly: createFixedStep(breakdown.costs.assemblyCost),
       extraFixed: createFixedStep(breakdown.costs.extraFixedCost),
     }),
     subtotal: roundNumber(breakdown.costs.subtotal, 4),
@@ -279,7 +339,7 @@ function buildPricingBreakdownDefinitions(catalog, config) {
   const currency = config.currency ?? catalog[0]?.currency ?? "USD";
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     currency,
     roundingNearest: Number.isFinite(config.rounding?.nearest) ? roundNumber(config.rounding.nearest, 4) : null,
     cabinets: catalog.map((cabinet) => ({
