@@ -31,12 +31,10 @@ describe("pricing breakdown generator", () => {
       backPanelPricePerSquareMeter: 26,
       shelfPricePerSquareMeter: 21.22,
       edgeBandingPricePerMeter: 1,
-      coefficient: 1,
     });
     expect(breakdown.inputs.facadeMaterial).toEqual({
       pricePerSquareMeter: 108,
       edgeBandingPricePerMeter: 2,
-      coefficient: 1,
     });
     expect(breakdown.inputs.handle).toEqual({
       unitPrice: 8,
@@ -89,28 +87,25 @@ describe("pricing breakdown generator", () => {
         bodyPanels: {
           areaM2: 1.65088,
           unitPricePerSquareMeter: 21.22,
-          coefficient: 1.02,
-          panelCost: 35.7323,
+          panelCost: 35.0317,
           edgeLengthM: 2.948,
           edgeBandingPricePerMeter: 1,
-          edgeCost: 3.007,
-          cost: 38.7393,
+          edgeCost: 2.948,
+          cost: 37.9797,
         },
         backPanel: {
           areaM2: 0.495936,
           unitPricePerSquareMeter: 26,
-          coefficient: 1.02,
-          cost: 13.1522,
+          cost: 12.8943,
         },
         facade: {
           areaM2: 0.535808,
           unitPricePerSquareMeter: 118,
-          coefficient: 1.04,
-          panelCost: 65.7544,
+          panelCost: 63.2253,
           edgeLengthM: 6.572,
           edgeBandingPricePerMeter: 2,
-          edgeCost: 13.6698,
-          cost: 79.4241,
+          edgeCost: 13.144,
+          cost: 76.3693,
         },
         handles: {
           count: 3,
@@ -128,12 +123,10 @@ describe("pricing breakdown generator", () => {
           cost: 78,
         },
       },
-      subtotal: 842.3156,
-      totalBeforeRounding: 842.3156,
-      roundedPrice: 842,
+      subtotal: 838.2434,
+      totalBeforeRounding: 838.2434,
+      roundedPrice: 838,
     });
-    expect(baseVariant.steps.bodyPanels.coefficient).toBeUndefined();
-    expect(baseVariant.cabinetCoefficient).toBeUndefined();
     expect(wideDrawerVariant.steps.hinges).toBeUndefined();
     expect(wideDrawerVariant.steps.wallMountingKits).toBeUndefined();
     expect(wideDrawerVariant.steps.assembly).toBeUndefined();

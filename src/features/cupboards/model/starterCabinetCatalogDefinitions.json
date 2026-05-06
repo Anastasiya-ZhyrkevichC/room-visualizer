@@ -122,19 +122,19 @@
         "width": 600,
         "height": 720,
         "depth": 560,
-        "price": 604
+        "price": 601
       },
       {
         "width": 800,
         "height": 720,
         "depth": 560,
-        "price": 830
+        "price": 826
       },
       {
         "width": 900,
         "height": 720,
         "depth": 560,
-        "price": 842
+        "price": 838
       }
     ],
     "model": {
@@ -166,31 +166,31 @@
         "width": 300,
         "height": 720,
         "depth": 320,
-        "price": 86
+        "price": 89
       },
       {
         "width": 350,
         "height": 720,
         "depth": 320,
-        "price": 92
+        "price": 96
       },
       {
         "width": 400,
         "height": 720,
         "depth": 320,
-        "price": 97
+        "price": 102
       },
       {
         "width": 450,
         "height": 720,
         "depth": 320,
-        "price": 103
+        "price": 108
       },
       {
         "width": 600,
         "height": 720,
         "depth": 320,
-        "price": 120
+        "price": 126
       }
     ],
     "model": {
@@ -218,13 +218,13 @@
         "width": 600,
         "height": 2100,
         "depth": 600,
-        "price": 412
+        "price": 366
       },
       {
         "width": 600,
         "height": 2300,
         "depth": 600,
-        "price": 438
+        "price": 389
       }
     ],
     "model": {

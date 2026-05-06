@@ -9,25 +9,21 @@
         "bodyPanelPricePerSquareMeter": 21.22,
         "backPanelPricePerSquareMeter": 26,
         "shelfPricePerSquareMeter": 21.22,
-        "edgeBandingPricePerMeter": 1,
-        "coefficient": 1
+        "edgeBandingPricePerMeter": 1
       }
     },
     "facade": {
       "painted-mdf": {
         "pricePerSquareMeter": 108,
-        "edgeBandingPricePerMeter": 2,
-        "coefficient": 1
+        "edgeBandingPricePerMeter": 2
       },
       "drawer-painted-mdf": {
         "pricePerSquareMeter": 118,
-        "edgeBandingPricePerMeter": 2,
-        "coefficient": 1.04
+        "edgeBandingPricePerMeter": 2
       },
       "tall-painted-mdf": {
         "pricePerSquareMeter": 110,
-        "edgeBandingPricePerMeter": 2,
-        "coefficient": 1.08
+        "edgeBandingPricePerMeter": 2
       }
     }
   },
@@ -70,9 +66,7 @@
   "pricingProfiles": {
     "base-double-door": {
       "carcaseMaterialId": "white-chipboard",
-      "carcaseCoefficient": 1,
       "facadeMaterialId": "painted-mdf",
-      "facadeCoefficient": 1,
       "handleId": "bar-176",
       "handleCountMode": "doorCount",
       "legId": "plastic-leg-110",
@@ -83,14 +77,11 @@
         }
       ],
       "doorHingeCountPerDoor": 2,
-      "extraFixedCost": 0,
-      "cabinetCoefficient": 1
+      "extraFixedCost": 0
     },
     "base-single-door": {
       "carcaseMaterialId": "white-chipboard",
-      "carcaseCoefficient": 1,
       "facadeMaterialId": "painted-mdf",
-      "facadeCoefficient": 1,
       "handleId": "bar-176",
       "handleCountMode": "doorCount",
       "legId": "plastic-leg-110",
@@ -101,14 +92,11 @@
         }
       ],
       "doorHingeCountPerDoor": 2,
-      "extraFixedCost": 5,
-      "cabinetCoefficient": 1
+      "extraFixedCost": 5
     },
     "base-three-drawer": {
       "carcaseMaterialId": "white-chipboard",
-      "carcaseCoefficient": 1.02,
       "facadeMaterialId": "drawer-painted-mdf",
-      "facadeCoefficient": 1,
       "handleId": "bar-224-horizontal",
       "handleCountMode": "drawerCount",
       "legId": "plastic-leg-110",
@@ -123,32 +111,25 @@
         }
       ],
       "drawerBoxCountMode": "drawerCount",
-      "extraFixedCost": 0,
-      "cabinetCoefficient": 1
+      "extraFixedCost": 0
     },
     "wall-double-door": {
       "carcaseMaterialId": "white-chipboard",
-      "carcaseCoefficient": 0.92,
       "facadeMaterialId": "painted-mdf",
-      "facadeCoefficient": 0.94,
       "handleId": "bar-160",
       "handleCountMode": "doorCount",
       "doorHingeCountPerDoor": 2,
       "wallMountingKitCount": 1,
-      "extraFixedCost": 0,
-      "cabinetCoefficient": 1
+      "extraFixedCost": 0
     },
     "tall-pantry": {
       "carcaseMaterialId": "white-chipboard",
-      "carcaseCoefficient": 1.15,
       "facadeMaterialId": "tall-painted-mdf",
-      "facadeCoefficient": 1.08,
       "handleId": "bar-256",
       "handleCountMode": "doorCount",
       "doorHingeCountPerDoor": 3,
       "tallReinforcementKitCount": 1,
-      "extraFixedCost": 0,
-      "cabinetCoefficient": 1
+      "extraFixedCost": 0
     }
   }
 }

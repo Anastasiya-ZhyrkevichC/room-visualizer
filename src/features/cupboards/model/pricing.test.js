@@ -45,12 +45,12 @@ describe("pricing model", () => {
     };
 
     expect(calculateCupboardPriceBreakdown(cupboard, getDefaultProjectCustomisation())).toMatchObject({
-      bodyPrice: 842,
+      bodyPrice: 838,
       carcassPrice: 0,
       facadePrice: 65,
       handlePrice: 54,
       accessoriesPrice: 57,
-      totalPrice: 1018,
+      totalPrice: 1014,
       currency: "USD",
     });
   });

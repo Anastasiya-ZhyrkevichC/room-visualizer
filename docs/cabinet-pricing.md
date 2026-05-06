@@ -24,7 +24,7 @@ And script-level pricing breakdown data in:
 The pricing config is split into a few clear sections:
 
 - `materials.carcase`: base rates for cabinet body, back panel, and shelves.
-- `materials.facade`: facade price tables, edge-banding rates, and facade coefficients.
+- `materials.facade`: facade price tables and edge-banding rates.
 - `handles`: unit prices for each handle type.
 - `legs`: unit prices for each leg type.
 - `hardware`: shared hardware rates such as hinges, drawer boxes, wall mounting kits, and tall-cabinet reinforcement kits.
@@ -78,9 +78,9 @@ After the subtotal is calculated, the script rounds the result using `rounding.n
 The same command also writes a compact pricing-breakdown JSON file with, for each cabinet variant:
 
 - only the price-relevant steps that actually affect that cabinet
-- area-based steps with area, per-square-meter rate, optional coefficient, optional edging cost, and resulting cost
+- area-based steps with area, per-square-meter rate, optional edging cost, and resulting cost
 - count-based steps with count, unit price, and resulting cost
-- subtotal, optional cabinet coefficient, total before rounding, and final rounded price
+- subtotal, total before rounding, and final rounded price
 
 ## What the manufacturing generator outputs
 

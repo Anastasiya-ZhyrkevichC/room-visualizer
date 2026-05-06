@@ -496,29 +496,26 @@
           "steps": {
             "bodyPanels": {
               "areaM2": 1.31488,
-              "cost": 30.8547,
+              "cost": 30.2498,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 1.02,
-              "panelCost": 28.4598,
+              "panelCost": 27.9018,
               "edgeLengthM": 2.348,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 2.395
+              "edgeCost": 2.348
             },
             "backPanel": {
               "areaM2": 0.323736,
-              "cost": 8.5855,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 1.02
+              "cost": 8.4171,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.356408,
-              "cost": 53.6641,
+              "cost": 51.6001,
               "unitPricePerSquareMeter": 118,
-              "coefficient": 1.04,
-              "panelCost": 43.7384,
+              "panelCost": 42.0561,
               "edgeLengthM": 4.772,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 9.9258
+              "edgeCost": 9.544
             },
             "handles": {
               "count": 3,
@@ -536,38 +533,35 @@
               "cost": 78
             }
           },
-          "subtotal": 604.1044,
-          "totalBeforeRounding": 604.1044,
-          "roundedPrice": 604
+          "subtotal": 601.267,
+          "totalBeforeRounding": 601.267,
+          "roundedPrice": 601
         },
         {
           "variantId": "800x720x560",
           "steps": {
             "bodyPanels": {
               "areaM2": 1.53888,
-              "cost": 36.1111,
+              "cost": 35.403,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 1.02,
-              "panelCost": 33.3081,
+              "panelCost": 32.655,
               "edgeLengthM": 2.748,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 2.803
+              "edgeCost": 2.748
             },
             "backPanel": {
               "areaM2": 0.438536,
-              "cost": 11.63,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 1.02
+              "cost": 11.4019,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.476008,
-              "cost": 70.8375,
+              "cost": 68.1129,
               "unitPricePerSquareMeter": 118,
-              "coefficient": 1.04,
-              "panelCost": 58.4157,
+              "panelCost": 56.1689,
               "edgeLengthM": 5.972,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 12.4218
+              "edgeCost": 11.944
             },
             "handles": {
               "count": 3,
@@ -585,38 +579,35 @@
               "cost": 78
             }
           },
-          "subtotal": 829.5785,
-          "totalBeforeRounding": 829.5785,
-          "roundedPrice": 830
+          "subtotal": 825.9179,
+          "totalBeforeRounding": 825.9179,
+          "roundedPrice": 826
         },
         {
           "variantId": "900x720x560",
           "steps": {
             "bodyPanels": {
               "areaM2": 1.65088,
-              "cost": 38.7393,
+              "cost": 37.9797,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 1.02,
-              "panelCost": 35.7323,
+              "panelCost": 35.0317,
               "edgeLengthM": 2.948,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 3.007
+              "edgeCost": 2.948
             },
             "backPanel": {
               "areaM2": 0.495936,
-              "cost": 13.1522,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 1.02
+              "cost": 12.8943,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.535808,
-              "cost": 79.4241,
+              "cost": 76.3693,
               "unitPricePerSquareMeter": 118,
-              "coefficient": 1.04,
-              "panelCost": 65.7544,
+              "panelCost": 63.2253,
               "edgeLengthM": 6.572,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 13.6698
+              "edgeCost": 13.144
             },
             "handles": {
               "count": 3,
@@ -634,9 +625,9 @@
               "cost": 78
             }
           },
-          "subtotal": 842.3156,
-          "totalBeforeRounding": 842.3156,
-          "roundedPrice": 842
+          "subtotal": 838.2434,
+          "totalBeforeRounding": 838.2434,
+          "roundedPrice": 838
         }
       ]
     },
@@ -648,29 +639,26 @@
           "steps": {
             "bodyPanels": {
               "areaM2": 0.707376,
-              "cost": 15.8631,
+              "cost": 17.2425,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 0.92,
-              "panelCost": 13.8097,
+              "panelCost": 15.0105,
               "edgeLengthM": 2.232,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 2.0534
+              "edgeCost": 2.232
             },
             "backPanel": {
               "areaM2": 0.180576,
-              "cost": 4.3194,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 0.92
+              "cost": 4.695,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.209072,
-              "cost": 27.7072,
+              "cost": 29.4758,
               "unitPricePerSquareMeter": 108,
-              "coefficient": 0.94,
-              "panelCost": 21.225,
+              "panelCost": 22.5798,
               "edgeLengthM": 3.448,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 6.4822
+              "edgeCost": 6.896
             },
             "handles": {
               "count": 2,
@@ -688,38 +676,35 @@
               "cost": 14
             }
           },
-          "subtotal": 85.8897,
-          "totalBeforeRounding": 85.8897,
-          "roundedPrice": 86
+          "subtotal": 89.4133,
+          "totalBeforeRounding": 89.4133,
+          "roundedPrice": 89
         },
         {
           "variantId": "350x720x320",
           "steps": {
             "bodyPanels": {
               "areaM2": 0.754076,
-              "cost": 16.9128,
+              "cost": 18.3835,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 0.92,
-              "panelCost": 14.7214,
+              "panelCost": 16.0015,
               "edgeLengthM": 2.382,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 2.1914
+              "edgeCost": 2.382
             },
             "backPanel": {
               "areaM2": 0.214776,
-              "cost": 5.1374,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 0.92
+              "cost": 5.5842,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.244872,
-              "cost": 31.5296,
+              "cost": 33.5422,
               "unitPricePerSquareMeter": 108,
-              "coefficient": 0.94,
-              "panelCost": 24.8594,
+              "panelCost": 26.4462,
               "edgeLengthM": 3.548,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 6.6702
+              "edgeCost": 7.096
             },
             "handles": {
               "count": 2,
@@ -737,38 +722,35 @@
               "cost": 14
             }
           },
-          "subtotal": 91.5799,
-          "totalBeforeRounding": 91.5799,
-          "roundedPrice": 92
+          "subtotal": 95.5098,
+          "totalBeforeRounding": 95.5098,
+          "roundedPrice": 96
         },
         {
           "variantId": "400x720x320",
           "steps": {
             "bodyPanels": {
               "areaM2": 0.800776,
-              "cost": 17.9625,
+              "cost": 19.5245,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 0.92,
-              "panelCost": 15.6331,
+              "panelCost": 16.9925,
               "edgeLengthM": 2.532,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 2.3294
+              "edgeCost": 2.532
             },
             "backPanel": {
               "areaM2": 0.248976,
-              "cost": 5.9555,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 0.92
+              "cost": 6.4734,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.280672,
-              "cost": 35.3521,
+              "cost": 37.6086,
               "unitPricePerSquareMeter": 108,
-              "coefficient": 0.94,
-              "panelCost": 28.4938,
+              "panelCost": 30.3126,
               "edgeLengthM": 3.648,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 6.8582
+              "edgeCost": 7.296
             },
             "handles": {
               "count": 2,
@@ -786,38 +768,35 @@
               "cost": 14
             }
           },
-          "subtotal": 97.2701,
-          "totalBeforeRounding": 97.2701,
-          "roundedPrice": 97
+          "subtotal": 101.6064,
+          "totalBeforeRounding": 101.6064,
+          "roundedPrice": 102
         },
         {
           "variantId": "450x720x320",
           "steps": {
             "bodyPanels": {
               "areaM2": 0.847476,
-              "cost": 19.0122,
+              "cost": 20.6654,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 0.92,
-              "panelCost": 16.5448,
+              "panelCost": 17.9834,
               "edgeLengthM": 2.682,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 2.4674
+              "edgeCost": 2.682
             },
             "backPanel": {
               "areaM2": 0.283176,
-              "cost": 6.7736,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 0.92
+              "cost": 7.3626,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.316472,
-              "cost": 39.1745,
+              "cost": 41.675,
               "unitPricePerSquareMeter": 108,
-              "coefficient": 0.94,
-              "panelCost": 32.1282,
+              "panelCost": 34.179,
               "edgeLengthM": 3.748,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 7.0462
+              "edgeCost": 7.496
             },
             "handles": {
               "count": 2,
@@ -835,38 +814,35 @@
               "cost": 14
             }
           },
-          "subtotal": 102.9603,
-          "totalBeforeRounding": 102.9603,
-          "roundedPrice": 103
+          "subtotal": 107.703,
+          "totalBeforeRounding": 107.703,
+          "roundedPrice": 108
         },
         {
           "variantId": "600x720x320",
           "steps": {
             "bodyPanels": {
               "areaM2": 0.987576,
-              "cost": 22.1613,
+              "cost": 24.0884,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 0.92,
-              "panelCost": 19.2799,
+              "panelCost": 20.9564,
               "edgeLengthM": 3.132,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 2.8814
+              "edgeCost": 3.132
             },
             "backPanel": {
               "areaM2": 0.385776,
-              "cost": 9.2278,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 0.92
+              "cost": 10.0302,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 0.423872,
-              "cost": 50.6417,
+              "cost": 53.8742,
               "unitPricePerSquareMeter": 108,
-              "coefficient": 0.94,
-              "panelCost": 43.0315,
+              "panelCost": 45.7782,
               "edgeLengthM": 4.048,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 7.6102
+              "edgeCost": 8.096
             },
             "handles": {
               "count": 2,
@@ -884,9 +860,9 @@
               "cost": 14
             }
           },
-          "subtotal": 120.0308,
-          "totalBeforeRounding": 120.0308,
-          "roundedPrice": 120
+          "subtotal": 125.9927,
+          "totalBeforeRounding": 125.9927,
+          "roundedPrice": 126
         }
       ]
     },
@@ -898,29 +874,26 @@
           "steps": {
             "bodyPanels": {
               "areaM2": 4.491744,
-              "cost": 118.3336,
+              "cost": 102.8988,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 1.15,
-              "panelCost": 109.612,
+              "panelCost": 95.3148,
               "edgeLengthM": 7.584,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 8.7216
+              "edgeCost": 7.584
             },
             "backPanel": {
               "areaM2": 1.164096,
-              "cost": 34.8065,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 1.15
+              "cost": 30.2665,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 1.240832,
-              "cost": 181.5239,
+              "cost": 155.6275,
               "unitPricePerSquareMeter": 110,
-              "coefficient": 1.1664,
-              "panelCost": 159.2037,
+              "panelCost": 136.4915,
               "edgeLengthM": 9.568,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 22.3202
+              "edgeCost": 19.136
             },
             "handles": {
               "count": 2,
@@ -938,38 +911,35 @@
               "cost": 34
             }
           },
-          "subtotal": 411.664,
-          "totalBeforeRounding": 411.664,
-          "roundedPrice": 412
+          "subtotal": 365.7928,
+          "totalBeforeRounding": 365.7928,
+          "roundedPrice": 366
         },
         {
           "variantId": "600x2300x600",
           "steps": {
             "bodyPanels": {
               "areaM2": 4.731744,
-              "cost": 124.6503,
+              "cost": 108.3916,
               "unitPricePerSquareMeter": 21.22,
-              "coefficient": 1.15,
-              "panelCost": 115.4687,
+              "panelCost": 100.4076,
               "edgeLengthM": 7.984,
               "edgeBandingPricePerMeter": 1,
-              "edgeCost": 9.1816
+              "edgeCost": 7.984
             },
             "backPanel": {
               "areaM2": 1.276896,
-              "cost": 38.1792,
-              "unitPricePerSquareMeter": 26,
-              "coefficient": 1.15
+              "cost": 33.1993,
+              "unitPricePerSquareMeter": 26
             },
             "facade": {
               "areaM2": 1.359232,
-              "cost": 198.5814,
+              "cost": 170.2515,
               "unitPricePerSquareMeter": 110,
-              "coefficient": 1.1664,
-              "panelCost": 174.3949,
+              "panelCost": 149.5155,
               "edgeLengthM": 10.368,
               "edgeBandingPricePerMeter": 2,
-              "edgeCost": 24.1865
+              "edgeCost": 20.736
             },
             "handles": {
               "count": 2,
@@ -987,9 +957,9 @@
               "cost": 34
             }
           },
-          "subtotal": 438.4109,
-          "totalBeforeRounding": 438.4109,
-          "roundedPrice": 438
+          "subtotal": 388.8424,
+          "totalBeforeRounding": 388.8424,
+          "roundedPrice": 389
         }
       ]
     }
