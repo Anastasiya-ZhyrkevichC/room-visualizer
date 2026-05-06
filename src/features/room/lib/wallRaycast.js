@@ -1,6 +1,6 @@
 import { Plane, Vector3 } from "three";
 
-import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/placement";
+import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/walls";
 
 export const createRoomWallTargets = (bounds, roomPosition) => [
   {
@@ -46,6 +46,51 @@ const toLocalRoomPoint = (point, roomPosition) => ({
   y: point.y - roomPosition.y,
   z: point.z - roomPosition.z,
 });
+
+const getFloorIntersectionPoint = ({ bounds, raycaster, roomPosition }) => {
+  const floorPlane = new Plane(new Vector3(0, 1, 0), -(roomPosition.y + bounds.floor));
+  const intersectionPoint = raycaster.ray.intersectPlane(floorPlane, new Vector3());
+
+  if (!intersectionPoint) {
+    return null;
+  }
+
+  return toLocalRoomPoint(intersectionPoint, roomPosition);
+};
+
+const projectFloorIntersectionToWall = ({ bounds, floorPoint, wallId }) => {
+  switch (wallId) {
+    case BACK_WALL_ID:
+      return {
+        wall: BACK_WALL_ID,
+        point: {
+          x: floorPoint.x,
+          y: bounds.floor,
+          z: bounds.back,
+        },
+      };
+    case LEFT_WALL_ID:
+      return {
+        wall: LEFT_WALL_ID,
+        point: {
+          x: bounds.left,
+          y: bounds.floor,
+          z: floorPoint.z,
+        },
+      };
+    case RIGHT_WALL_ID:
+      return {
+        wall: RIGHT_WALL_ID,
+        point: {
+          x: bounds.right,
+          y: bounds.floor,
+          z: floorPoint.z,
+        },
+      };
+    default:
+      return null;
+  }
+};
 
 const getWallIntersection = ({ raycaster, roomPosition, wallTarget }) => {
   const intersectionPoint = raycaster.ray.intersectPlane(wallTarget.plane, new Vector3());
@@ -103,5 +148,34 @@ export const getWallIntersectionById = ({ raycaster, roomPosition, wallId, wallT
     raycaster,
     roomPosition,
     wallTarget,
+  });
+};
+
+export const getResizeWallIntersectionById = ({ bounds, raycaster, roomPosition, wallId, wallTargets }) => {
+  const wallIntersection = getWallIntersectionById({
+    raycaster,
+    roomPosition,
+    wallId,
+    wallTargets,
+  });
+
+  if (wallIntersection) {
+    return wallIntersection;
+  }
+
+  const floorPoint = getFloorIntersectionPoint({
+    bounds,
+    raycaster,
+    roomPosition,
+  });
+
+  if (!floorPoint) {
+    return null;
+  }
+
+  return projectFloorIntersectionToWall({
+    bounds,
+    floorPoint,
+    wallId,
   });
 };

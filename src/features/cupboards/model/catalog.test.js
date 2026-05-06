@@ -1,7 +1,9 @@
 import {
   defaultOpenStarterCabinetGroupIds,
+  getStarterCabinetVariantsForHeight,
   getStarterCabinet,
   getStarterCabinetFamilyLabel,
+  resolveStarterCabinetDefaultVariantForHeight,
   resolveStarterCabinetInstance,
   resolveDefaultStarterCabinetVariant,
   resolveStarterCabinetWidthStep,
@@ -42,7 +44,7 @@ describe("starter cabinet catalog grouping", () => {
     ).toEqual([
       {
         id: "base-doors",
-        cabinetIds: ["base-double-door"],
+        cabinetIds: ["base-double-door", "base-single-door"],
       },
       {
         id: "base-drawers",
@@ -50,7 +52,7 @@ describe("starter cabinet catalog grouping", () => {
       },
       {
         id: "wall-doors",
-        cabinetIds: [],
+        cabinetIds: ["wall-double-door"],
       },
       {
         id: "wall-lift-up",
@@ -68,7 +70,7 @@ describe("starter cabinet catalog grouping", () => {
   });
 
   it("opens populated groups by default and leaves empty families collapsed", () => {
-    expect(defaultOpenStarterCabinetGroupIds).toEqual(["base-doors", "base-drawers", "tall"]);
+    expect(defaultOpenStarterCabinetGroupIds).toEqual(["base-doors", "base-drawers", "wall-doors", "tall"]);
   });
 
   it("falls back from legacy category ids to the matching visible family label", () => {
@@ -89,6 +91,29 @@ describe("starter cabinet catalog grouping", () => {
     expect(cabinet.availableHeights).toEqual([720]);
     expect(cabinet.variants).toHaveLength(5);
     expect(cabinet.activeVariantId).toBe("600x720x560");
+  });
+
+  it("normalizes the single-door base cabinet into the base family with a one-door model", () => {
+    const cabinet = getStarterCabinet("base-single-door");
+
+    expect(cabinet.category).toBe("base");
+    expect(cabinet.activeVariantId).toBe("600x720x560");
+    expect(cabinet.model.front).toMatchObject({
+      type: "doubleDoor",
+      doorCount: 1,
+    });
+  });
+
+  it("adds a wall cabinet definition with wall-family sizing and no tabletop support", () => {
+    const cabinet = getStarterCabinet("wall-double-door");
+
+    expect(cabinet.category).toBe("wall");
+    expect(cabinet.catalogFamily).toBe("wall-doors");
+    expect(cabinet.activeVariantId).toBe("600x720x320");
+    expect(cabinet.availableWidths).toEqual([300, 350, 400, 450, 600]);
+    expect(cabinet.availableHeights).toEqual([720]);
+    expect(cabinet.tableTopProfile).toBeNull();
+    expect(cabinet.model.legs).toBeNull();
   });
 
   it("keeps tabletop support explicit on resolved cabinet instances", () => {
@@ -119,7 +144,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 300,
       height: 720,
       depth: 560,
-      price: 160,
+      price: 170,
     });
 
     expect(resolveDefaultStarterCabinetVariant(getStarterCabinet("tall-pantry"))).toMatchObject({
@@ -127,7 +152,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 600,
       height: 2100,
       depth: 600,
-      price: 680,
+      price: 682,
     });
   });
 
@@ -146,7 +171,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 300,
       height: 720,
       depth: 560,
-      price: 160,
+      price: 170,
     });
 
     expect(
@@ -163,7 +188,7 @@ describe("starter cabinet catalog grouping", () => {
       width: 400,
       height: 720,
       depth: 560,
-      price: 190,
+      price: 188,
     });
   });
 
@@ -177,5 +202,25 @@ describe("starter cabinet catalog grouping", () => {
         "next",
       ),
     ).toBeNull();
+  });
+
+  it("returns height-specific variants and the matching default drag variant", () => {
+    expect(getStarterCabinetVariantsForHeight(getStarterCabinet("tall-pantry"), 2300)).toEqual([
+      expect.objectContaining({
+        id: "600x2300x600",
+        width: 600,
+        height: 2300,
+        depth: 600,
+        price: 720,
+      }),
+    ]);
+
+    expect(resolveStarterCabinetDefaultVariantForHeight(getStarterCabinet("tall-pantry"), 2300)).toMatchObject({
+      id: "600x2300x600",
+      width: 600,
+      height: 2300,
+      depth: 600,
+      price: 720,
+    });
   });
 });

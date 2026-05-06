@@ -1,5 +1,6 @@
 import { convertMetersToMillimeters } from "../../../lib/units";
 import { getStarterCabinetFamilyLabel } from "../../cupboards/model/catalog";
+import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "../../cupboards/model/walls";
 
 const currencyFormatterCache = new Map();
 
@@ -26,7 +27,12 @@ const moduleCategoryLabels = {
   corner: "Corner cabinet",
 };
 
-export const CATALOG_PLACEMENT_CUE = "Places smallest first, resize after selection";
+const wallLabels = {
+  [BACK_WALL_ID]: "Back wall",
+  [LEFT_WALL_ID]: "Left wall",
+  [RIGHT_WALL_ID]: "Right wall",
+};
+
 export const HEIGHT_OPTIONS_REFERENCE_NOTE = "Height options are display-only for now";
 
 export const formatRoomDimensions = (dimensions) =>
@@ -60,6 +66,8 @@ export const formatModuleCategory = (category) => moduleCategoryLabels[category]
 export const formatModuleFamily = (module) =>
   getStarterCabinetFamilyLabel(module) || formatModuleCategory(module?.category);
 
+export const formatWallLabel = (wall) => wallLabels[wall] ?? wall;
+
 export const formatPrototypePrice = (price, currency = "USD") =>
   getCurrencyFormatter(currency).format(Number.isFinite(price) ? price : 0);
 
@@ -73,12 +81,25 @@ export const formatCatalogModulePrice = (module) => {
   }
 
   return maxPrice > startingPrice
-    ? `From ${formatPrototypePrice(startingPrice, currency)}`
-    : formatPrototypePrice(startingPrice, currency);
+    ? `With current defaults from ${formatPrototypePrice(startingPrice, currency)}`
+    : `With current defaults ${formatPrototypePrice(startingPrice, currency)}`;
 };
 
-export const formatCatalogPlacementHint = (module) =>
-  `Default placement size ${formatModuleDimensions(module)}. ${CATALOG_PLACEMENT_CUE}.`;
+export const formatCustomisationSource = (source) => {
+  if (source === "override") {
+    return "Custom";
+  }
+
+  if (source === "override-preset") {
+    return "Using cabinet preset";
+  }
+
+  if (source === "project-preset") {
+    return "Using project preset";
+  }
+
+  return "Using project default";
+};
 
 export const formatSelectionResizeHint = (wallLabel = null) =>
   wallLabel
@@ -87,3 +108,15 @@ export const formatSelectionResizeHint = (wallLabel = null) =>
 
 export const formatSelectionPosition = (position) =>
   `X ${Math.round(convertMetersToMillimeters(position.x))} mm · Z ${Math.round(convertMetersToMillimeters(position.z))} mm`;
+
+export const formatTableTopLabel = (tableTopRun) => formatWallLabel(tableTopRun?.wall);
+
+export const formatTableTopDimensions = (tableTopRun) => {
+  const sourceDimensions = [tableTopRun?.length, tableTopRun?.depth, tableTopRun?.thickness];
+
+  if (!sourceDimensions.every((dimension) => Number.isFinite(dimension))) {
+    return "";
+  }
+
+  return formatMillimeterTuple(sourceDimensions.map((dimension) => convertMetersToMillimeters(dimension)));
+};

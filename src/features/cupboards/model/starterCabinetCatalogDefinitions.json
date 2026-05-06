@@ -1,0 +1,261 @@
+[
+  {
+    "id": "base-double-door",
+    "name": "Double-door base cabinet",
+    "category": "base",
+    "catalogFamily": "base-doors",
+    "currency": "USD",
+    "pricingProfileId": "base-double-door",
+    "activeVariantId": "600x720x560",
+    "tableTopProfileId": "straight-run",
+    "variants": [
+      {
+        "width": 300,
+        "height": 720,
+        "depth": 560,
+        "price": 503,
+        "bodyCost": 27.703280319999998
+      },
+      {
+        "width": 350,
+        "height": 720,
+        "depth": 560,
+        "price": 509,
+        "bodyCost": 30.20437432
+      },
+      {
+        "width": 400,
+        "height": 720,
+        "depth": 560,
+        "price": 514,
+        "bodyCost": 32.705468319999994
+      },
+      {
+        "width": 450,
+        "height": 720,
+        "depth": 560,
+        "price": 520,
+        "bodyCost": 35.206562319999996
+      },
+      {
+        "width": 600,
+        "height": 720,
+        "depth": 560,
+        "price": 537,
+        "bodyCost": 42.70984432
+      }
+    ],
+    "model": {
+      "shelfCount": 1,
+      "front": {
+        "type": "doubleDoor",
+        "handle": {
+          "lengthMm": 176
+        }
+      },
+      "legs": {
+        "heightMm": 110
+      }
+    }
+  },
+  {
+    "id": "base-single-door",
+    "name": "Single-door base cabinet",
+    "category": "base",
+    "catalogFamily": "base-doors",
+    "currency": "USD",
+    "pricingProfileId": "base-single-door",
+    "activeVariantId": "600x720x560",
+    "tableTopProfileId": "straight-run",
+    "variants": [
+      {
+        "width": 300,
+        "height": 720,
+        "depth": 560,
+        "price": 497,
+        "bodyCost": 27.703280319999998
+      },
+      {
+        "width": 350,
+        "height": 720,
+        "depth": 560,
+        "price": 503,
+        "bodyCost": 30.20437432
+      },
+      {
+        "width": 400,
+        "height": 720,
+        "depth": 560,
+        "price": 509,
+        "bodyCost": 32.705468319999994
+      },
+      {
+        "width": 450,
+        "height": 720,
+        "depth": 560,
+        "price": 514,
+        "bodyCost": 35.206562319999996
+      },
+      {
+        "width": 600,
+        "height": 720,
+        "depth": 560,
+        "price": 532,
+        "bodyCost": 42.70984432
+      }
+    ],
+    "model": {
+      "shelfCount": 1,
+      "front": {
+        "type": "doubleDoor",
+        "doorCount": 1,
+        "handle": {
+          "lengthMm": 176
+        }
+      },
+      "legs": {
+        "heightMm": 110
+      }
+    }
+  },
+  {
+    "id": "base-three-drawer",
+    "name": "Three-drawer base cabinet",
+    "category": "drawer",
+    "catalogFamily": "base-drawers",
+    "currency": "USD",
+    "pricingProfileId": "base-three-drawer",
+    "activeVariantId": "900x720x560",
+    "tableTopProfileId": "straight-run",
+    "variants": [
+      {
+        "width": 600,
+        "height": 720,
+        "depth": 560,
+        "price": 626,
+        "bodyCost": 37.045267392
+      },
+      {
+        "width": 800,
+        "height": 720,
+        "depth": 560,
+        "price": 848,
+        "bodyCost": 44.938108992
+      },
+      {
+        "width": 900,
+        "height": 720,
+        "depth": 560,
+        "price": 860,
+        "bodyCost": 48.884529791999995
+      }
+    ],
+    "model": {
+      "shelfCount": 0,
+      "front": {
+        "type": "drawers",
+        "drawerCount": 3,
+        "handle": {
+          "orientation": "horizontal",
+          "lengthMm": 224
+        }
+      },
+      "legs": {
+        "heightMm": 110
+      }
+    }
+  },
+  {
+    "id": "wall-double-door",
+    "name": "Double-door wall cabinet",
+    "category": "wall",
+    "catalogFamily": "wall-doors",
+    "currency": "USD",
+    "pricingProfileId": "wall-double-door",
+    "activeVariantId": "600x720x320",
+    "tableTopProfileId": null,
+    "variants": [
+      {
+        "width": 300,
+        "height": 720,
+        "depth": 320,
+        "price": 93,
+        "bodyCost": 18.129055142400002
+      },
+      {
+        "width": 350,
+        "height": 720,
+        "depth": 320,
+        "price": 99,
+        "bodyCost": 19.858815222399997
+      },
+      {
+        "width": 400,
+        "height": 720,
+        "depth": 320,
+        "price": 104,
+        "bodyCost": 21.5885753024
+      },
+      {
+        "width": 450,
+        "height": 720,
+        "depth": 320,
+        "price": 109,
+        "bodyCost": 23.3183353824
+      },
+      {
+        "width": 600,
+        "height": 720,
+        "depth": 320,
+        "price": 126,
+        "bodyCost": 28.507615622400003
+      }
+    ],
+    "model": {
+      "shelfCount": 1,
+      "legs": null,
+      "front": {
+        "type": "doubleDoor",
+        "handle": {
+          "lengthMm": 160
+        }
+      }
+    }
+  },
+  {
+    "id": "tall-pantry",
+    "name": "Pantry tower",
+    "category": "tall",
+    "catalogFamily": "tall",
+    "currency": "USD",
+    "pricingProfileId": "tall-pantry",
+    "activeVariantId": "600x2100x600",
+    "tableTopProfileId": null,
+    "variants": [
+      {
+        "width": 600,
+        "height": 2100,
+        "depth": 600,
+        "price": 459,
+        "bodyCost": 144.418499232
+      },
+      {
+        "width": 600,
+        "height": 2300,
+        "depth": 600,
+        "price": 483,
+        "bodyCost": 153.647939232
+      }
+    ],
+    "model": {
+      "shelfCount": 4,
+      "legs": null,
+      "front": {
+        "type": "doubleDoor",
+        "handle": {
+          "lengthMm": 256
+        }
+      }
+    }
+  }
+]

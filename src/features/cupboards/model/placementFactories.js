@@ -1,7 +1,8 @@
 import { resolveStarterCabinetInstance } from "./catalog";
+import { cloneCupboardCustomisation, createInheritedCupboardCustomisation } from "./customization";
 import { getCupboardFootprint } from "./geometry";
 import { PLACEMENT_VALIDATION_REASONS } from "./placementConstants";
-import { getWallAlignedPreviewPosition, getWallAlignedRotation } from "./wallAlignment";
+import { getCabinetWallAlignedPreviewPosition, getWallAlignedRotation } from "./wallAlignment";
 import { BACK_WALL_ID } from "./walls";
 
 const CABINET_GAP = 0.08;
@@ -24,6 +25,9 @@ export const createCupboard = ({ id, cabinet, position, rotation = 0, wall = BAC
   ...resolveStarterCabinetInstance(cabinet, {
     variantId: cabinet?.activeVariantId ?? null,
   }),
+  customisation: cabinet?.customisation
+    ? cloneCupboardCustomisation(cabinet.customisation)
+    : createInheritedCupboardCustomisation(),
   position,
   rotation,
   wall,
@@ -57,16 +61,24 @@ export const createPlacementValidationResult = ({
   magneticAttachment: magneticAttachment ? { ...magneticAttachment } : null,
 });
 
-export const createPlacementPreview = (cabinet, roomBounds) => {
+export const createPlacementPreview = (cabinet, roomBounds, { variantId = null } = {}) => {
   const resolvedCabinet =
     resolveStarterCabinetInstance(cabinet, {
-      useDefaultVariant: true,
+      variantId,
+      useDefaultVariant: !variantId,
     }) ?? cabinet;
   const initialRotation = getWallAlignedRotation(BACK_WALL_ID);
-  const initialPosition = getWallAlignedPreviewPosition(resolvedCabinet.size, { x: 0 }, roomBounds, BACK_WALL_ID);
+  const initialPosition = getCabinetWallAlignedPreviewPosition(
+    resolvedCabinet,
+    { x: 0 },
+    roomBounds,
+    BACK_WALL_ID,
+    initialRotation,
+  );
 
   return {
     ...resolvedCabinet,
+    customisation: createInheritedCupboardCustomisation(),
     rotation: initialRotation,
     wall: null,
     position: initialPosition,

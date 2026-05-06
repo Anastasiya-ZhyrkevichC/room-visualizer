@@ -4,10 +4,17 @@ import {
   findStarterCabinet,
   findStarterCabinetVariant,
 } from "../../cupboards/model/catalog";
+import {
+  cloneCupboardCustomisation,
+  createInheritedCupboardCustomisation,
+  getDefaultProjectCustomisation,
+  normalizeProjectCustomisation,
+} from "../../cupboards/model/customization";
 import { createCupboard } from "../../cupboards/model/placement";
 
-export const PROJECT_SCHEMA_VERSION = 1;
+export const PROJECT_SCHEMA_VERSION = 2;
 export const PROJECT_FILE_EXTENSION = ".room-project.json";
+const LEGACY_PROJECT_SCHEMA_VERSION = 1;
 
 const DEFAULT_PROJECT_NAME = "Kitchen plan";
 const DEFAULT_EXPORT_FILE_PREFIX = "kitchen-plan";
@@ -87,6 +94,19 @@ const serializeCabinetSnapshot = (cupboard = {}) => ({
   activeVariantId: sanitizeString(cupboard.activeVariantId, ""),
 });
 
+const serializeCupboardCustomisation = (customisation = {}) => ({
+  carcassId: typeof customisation?.carcassId === "string" && customisation.carcassId.trim() !== "" ? customisation.carcassId : null,
+  facadeId: typeof customisation?.facadeId === "string" && customisation.facadeId.trim() !== "" ? customisation.facadeId : null,
+  handleId: typeof customisation?.handleId === "string" && customisation.handleId.trim() !== "" ? customisation.handleId : null,
+  accessoryPresetId:
+    typeof customisation?.accessoryPresetId === "string" && customisation.accessoryPresetId.trim() !== ""
+      ? customisation.accessoryPresetId
+      : null,
+  accessoryIds: Array.isArray(customisation?.accessoryIds)
+    ? customisation.accessoryIds.filter((value) => typeof value === "string" && value.trim() !== "")
+    : null,
+});
+
 const serializePricingLineItem = (lineItem = {}) => ({
   cupboardId: Number.isFinite(lineItem.cupboardId) ? lineItem.cupboardId : null,
   instanceId: Number.isFinite(lineItem.instanceId) ? lineItem.instanceId : null,
@@ -94,7 +114,13 @@ const serializePricingLineItem = (lineItem = {}) => ({
   activeVariantId: sanitizeString(lineItem.activeVariantId, ""),
   displayName: sanitizeString(lineItem.displayName, "Unnamed cabinet"),
   dimensionsLabel: sanitizeString(lineItem.dimensionsLabel, ""),
-  price: Number.isFinite(lineItem.price) ? lineItem.price : null,
+  price: Number.isFinite(lineItem.totalPrice ?? lineItem.price) ? lineItem.totalPrice ?? lineItem.price : null,
+  totalPrice: Number.isFinite(lineItem.totalPrice ?? lineItem.price) ? lineItem.totalPrice ?? lineItem.price : null,
+  bodyPrice: Number.isFinite(lineItem.bodyPrice) ? lineItem.bodyPrice : null,
+  carcassPrice: Number.isFinite(lineItem.carcassPrice) ? lineItem.carcassPrice : null,
+  facadePrice: Number.isFinite(lineItem.facadePrice) ? lineItem.facadePrice : null,
+  handlePrice: Number.isFinite(lineItem.handlePrice) ? lineItem.handlePrice : null,
+  accessoriesPrice: Number.isFinite(lineItem.accessoriesPrice) ? lineItem.accessoriesPrice : null,
   currency: sanitizeString(lineItem.currency, STARTER_CABINET_PRICE_CURRENCY),
   isUnavailable: Boolean(lineItem.isUnavailable),
 });
@@ -111,6 +137,25 @@ const parsePosition = (position = {}) => ({
   z: requireFiniteNumber(position.z, "module.position.z"),
 });
 
+const parseProjectCustomisation = (projectCustomisation = {}) =>
+  normalizeProjectCustomisation({
+    carcassId: sanitizeString(projectCustomisation?.carcassId, ""),
+    facadeId: sanitizeString(projectCustomisation?.facadeId, ""),
+    handleId: sanitizeString(projectCustomisation?.handleId, ""),
+    accessoryPresetId: sanitizeString(projectCustomisation?.accessoryPresetId, ""),
+  });
+
+const parseCupboardCustomisation = (customisation = {}) =>
+  cloneCupboardCustomisation({
+    carcassId: sanitizeString(customisation?.carcassId, ""),
+    facadeId: sanitizeString(customisation?.facadeId, ""),
+    handleId: sanitizeString(customisation?.handleId, ""),
+    accessoryPresetId: sanitizeString(customisation?.accessoryPresetId, ""),
+    accessoryIds: Array.isArray(customisation?.accessoryIds)
+      ? customisation.accessoryIds.filter((value) => typeof value === "string" && value.trim() !== "")
+      : null,
+  });
+
 const parsePricingSnapshot = (pricingSnapshot = {}, savedAt) => {
   const lineItems = Array.isArray(pricingSnapshot.lineItems)
     ? pricingSnapshot.lineItems.map((lineItem, index) => ({
@@ -123,7 +168,14 @@ const parsePricingSnapshot = (pricingSnapshot = {}, savedAt) => {
         activeVariantId: sanitizeString(lineItem?.activeVariantId, ""),
         displayName: sanitizeString(lineItem?.displayName, "Unnamed cabinet"),
         dimensionsLabel: sanitizeString(lineItem?.dimensionsLabel, ""),
-        price: isFiniteNumber(lineItem?.price) ? lineItem.price : null,
+        price: isFiniteNumber(lineItem?.totalPrice) ? lineItem.totalPrice : isFiniteNumber(lineItem?.price) ? lineItem.price : null,
+        totalPrice:
+          isFiniteNumber(lineItem?.totalPrice) ? lineItem.totalPrice : isFiniteNumber(lineItem?.price) ? lineItem.price : null,
+        bodyPrice: isFiniteNumber(lineItem?.bodyPrice) ? lineItem.bodyPrice : null,
+        carcassPrice: isFiniteNumber(lineItem?.carcassPrice) ? lineItem.carcassPrice : null,
+        facadePrice: isFiniteNumber(lineItem?.facadePrice) ? lineItem.facadePrice : null,
+        handlePrice: isFiniteNumber(lineItem?.handlePrice) ? lineItem.handlePrice : null,
+        accessoriesPrice: isFiniteNumber(lineItem?.accessoriesPrice) ? lineItem.accessoriesPrice : null,
         currency: sanitizeString(lineItem?.currency, STARTER_CABINET_PRICE_CURRENCY),
         isUnavailable: Boolean(lineItem?.isUnavailable),
       }))
@@ -167,7 +219,7 @@ const parseCabinetSnapshot = (snapshot = {}, index) => {
   };
 };
 
-const parseModule = (moduleRecord = {}, index) => {
+const parseModule = (moduleRecord = {}, index, schemaVersion = PROJECT_SCHEMA_VERSION) => {
   const catalogId = sanitizeString(moduleRecord.catalogItemId, "");
 
   return {
@@ -179,6 +231,10 @@ const parseModule = (moduleRecord = {}, index) => {
     rotation: requireFiniteNumber(moduleRecord.rotation ?? 0, `modules[${index}].rotation`),
     position: parsePosition(moduleRecord.position),
     cabinetSnapshot: parseCabinetSnapshot(moduleRecord.cabinetSnapshot ?? {}, index),
+    customisation:
+      schemaVersion >= 2
+        ? parseCupboardCustomisation(moduleRecord.customisation ?? {})
+        : createInheritedCupboardCustomisation(),
   };
 };
 
@@ -212,6 +268,7 @@ const rehydrateUnavailableCupboard = (moduleRecord, unavailableReason) => {
     position: moduleRecord.position,
     rotation: moduleRecord.rotation,
     wall: moduleRecord.wall,
+    customisation: moduleRecord.customisation,
     isUnavailable: true,
     unavailableReason,
   };
@@ -228,6 +285,7 @@ const rehydrateImportedCupboard = (moduleRecord) => {
       cabinet: {
         catalogId: moduleRecord.catalogId,
         activeVariantId: variantId,
+        customisation: moduleRecord.customisation,
       },
       position: moduleRecord.position,
       rotation: moduleRecord.rotation,
@@ -259,6 +317,7 @@ export const createProjectPricingSnapshot = (pricingSummary = {}, savedAt = new 
 export const createProjectDocument = ({
   cupboards = [],
   pricingSummary,
+  projectCustomisation = getDefaultProjectCustomisation(),
   projectId = createProjectId(),
   projectName = DEFAULT_PROJECT_NAME,
   roomDimensions,
@@ -276,6 +335,7 @@ export const createProjectDocument = ({
       wall: sanitizeString(cupboard.wall, "back"),
       rotation: Number.isFinite(cupboard.rotation) ? cupboard.rotation : 0,
       position: serializePosition(cupboard.position),
+      customisation: serializeCupboardCustomisation(cupboard.customisation),
       cabinetSnapshot: serializeCabinetSnapshot(cupboard),
     }));
 
@@ -285,6 +345,7 @@ export const createProjectDocument = ({
     projectName,
     savedAt: normalizedSavedAt,
     catalogVersion: STARTER_CABINET_CATALOG_VERSION,
+    projectCustomisation: parseProjectCustomisation(projectCustomisation),
     room: {
       lengthMm: requirePositiveInteger(roomDimensions?.length, "room.length"),
       widthMm: requirePositiveInteger(roomDimensions?.width, "room.width"),
@@ -310,13 +371,13 @@ export const parseProjectDocument = (projectDocumentText) => {
 
   const schemaVersion = Number(rawProjectDocument.schemaVersion);
 
-  if (schemaVersion !== PROJECT_SCHEMA_VERSION) {
+  if (schemaVersion !== PROJECT_SCHEMA_VERSION && schemaVersion !== LEGACY_PROJECT_SCHEMA_VERSION) {
     throw new Error(`Imported project schemaVersion ${rawProjectDocument.schemaVersion} is not supported.`);
   }
 
   const savedAt = normalizeTimestamp(rawProjectDocument.savedAt);
   const modules = Array.isArray(rawProjectDocument.modules)
-    ? rawProjectDocument.modules.map((moduleRecord, index) => parseModule(moduleRecord, index))
+    ? rawProjectDocument.modules.map((moduleRecord, index) => parseModule(moduleRecord, index, schemaVersion))
     : [];
 
   return {
@@ -326,8 +387,20 @@ export const parseProjectDocument = (projectDocumentText) => {
     savedAt,
     catalogVersion: sanitizeString(rawProjectDocument.catalogVersion, ""),
     roomDimensions: parseRoomDimensions(rawProjectDocument.room),
+    projectCustomisation:
+      schemaVersion >= PROJECT_SCHEMA_VERSION
+        ? parseProjectCustomisation(rawProjectDocument.projectCustomisation ?? {})
+        : getDefaultProjectCustomisation(),
     pricingSnapshot: parsePricingSnapshot(rawProjectDocument.pricingSnapshot, savedAt),
     cupboards: modules.map(rehydrateImportedCupboard),
+    migration:
+      schemaVersion === LEGACY_PROJECT_SCHEMA_VERSION
+        ? {
+            fromSchemaVersion: LEGACY_PROJECT_SCHEMA_VERSION,
+            message:
+              "This older project was loaded with the current default cabinet customisation settings because schema version 1 files did not store facade, handle, carcass, or accessory choices.",
+          }
+        : null,
   };
 };
 
@@ -354,7 +427,7 @@ export const reconcilePricingSnapshot = ({ currentPricingSummary, pricingSnapsho
       currentItem.catalogId !== snapshotItem.catalogId ||
       currentItem.displayName !== snapshotItem.displayName ||
       currentItem.currency !== snapshotItem.currency ||
-      currentItem.price !== snapshotItem.price
+      (currentItem.totalPrice ?? currentItem.price) !== (snapshotItem.totalPrice ?? snapshotItem.price)
     ) {
       status = "changed";
     }
@@ -365,11 +438,12 @@ export const reconcilePricingSnapshot = ({ currentPricingSummary, pricingSnapsho
       liveDisplayName: currentItem?.displayName ?? null,
       liveDimensionsLabel: currentItem?.dimensionsLabel ?? null,
       liveCurrency: currentItem?.currency ?? currentPricingSummary?.currency ?? snapshotItem.currency,
-      livePrice: currentItem?.isUnavailable ? null : (currentItem?.price ?? null),
+      livePrice: currentItem?.isUnavailable ? null : (currentItem?.totalPrice ?? currentItem?.price ?? null),
       status,
       deltaPrice:
-        Number.isFinite(snapshotItem.price) && Number.isFinite(currentItem?.price)
-          ? currentItem.price - snapshotItem.price
+        Number.isFinite(snapshotItem.totalPrice ?? snapshotItem.price) &&
+        Number.isFinite(currentItem?.totalPrice ?? currentItem?.price)
+          ? (currentItem.totalPrice ?? currentItem.price) - (snapshotItem.totalPrice ?? snapshotItem.price)
           : null,
     };
   });

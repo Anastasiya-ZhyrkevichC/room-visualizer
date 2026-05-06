@@ -1,13 +1,13 @@
 import {
-  CATALOG_PLACEMENT_CUE,
   HEIGHT_OPTIONS_REFERENCE_NOTE,
   formatCatalogModulePrice,
-  formatCatalogPlacementHint,
   formatModuleDepth,
   formatModuleFamily,
   formatModuleHeightOptions,
   formatModuleWidthOptions,
   formatSelectionResizeHint,
+  formatTableTopDimensions,
+  formatTableTopLabel,
 } from "./roomFormatting";
 
 describe("room formatting", () => {
@@ -55,7 +55,7 @@ describe("room formatting", () => {
         maxPrice: 240,
         price: 240,
       }),
-    ).toBe("From $160");
+    ).toBe("With current defaults from $160");
 
     expect(
       formatCatalogModulePrice({
@@ -63,21 +63,37 @@ describe("room formatting", () => {
         maxPrice: 680,
         price: 680,
       }),
-    ).toBe("$680");
+    ).toBe("With current defaults $680");
   });
 
-  it("shares variable-size guidance copy between catalog, stage messaging, and selection details", () => {
-    expect(CATALOG_PLACEMENT_CUE).toBe("Places smallest first, resize after selection");
+  it("shares variable-size guidance between stage messaging and selection details", () => {
     expect(HEIGHT_OPTIONS_REFERENCE_NOTE).toBe("Height options are display-only for now");
-    expect(
-      formatCatalogPlacementHint({
-        width: 300,
-        height: 720,
-        depth: 560,
-      }),
-    ).toBe("Default placement size 300 x 720 x 560 mm. Places smallest first, resize after selection.");
     expect(formatSelectionResizeHint("back wall")).toBe(
       "Drag the in-scene side handles to resize through supported widths, or drag the cabinet body to reposition it along the back wall.",
     );
+  });
+
+  it("formats derived tabletop labels and dimensions for planner summary rows", () => {
+    expect(
+      formatTableTopDimensions({
+        length: 1.8,
+        depth: 0.62,
+        thickness: 0.04,
+      }),
+    ).toBe("1800 x 620 x 40 mm");
+
+    expect(
+      formatTableTopLabel({
+        wall: "left",
+      }),
+    ).toBe("Left wall");
+
+    expect(
+      formatTableTopDimensions({
+        length: 1.2,
+        depth: null,
+        thickness: 0.04,
+      }),
+    ).toBe("");
   });
 });

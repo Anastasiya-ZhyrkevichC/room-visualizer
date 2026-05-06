@@ -96,7 +96,7 @@ describe("cupboard reducer placement preview", () => {
       availableWidths: [300, 350, 400, 450, 600],
       availableHeights: [720],
       width: 300,
-      price: 160,
+      price: 170,
       wall: null,
     });
     expectPositionToMatch(nextState.placementPreview.position, {
@@ -191,6 +191,46 @@ describe("cupboard reducer placement preview", () => {
     });
   });
 
+  it("keeps wall-cabinet previews mounted above the floor during placement updates", () => {
+    const startedState = cupboardReducer(initialCupboardState, {
+      type: "START_PLACEMENT_PREVIEW",
+      payload: {
+        catalogId: "wall-double-door",
+        roomBounds,
+      },
+    });
+
+    const nextState = cupboardReducer(startedState, {
+      type: "UPDATE_PLACEMENT_PREVIEW",
+      payload: {
+        wall: BACK_WALL_ID,
+        point: {
+          x: 0.4,
+          y: 0.2,
+        },
+        roomBounds,
+      },
+    });
+
+    expect(nextState.placementPreview).toMatchObject({
+      catalogId: "wall-double-door",
+      category: "wall",
+      wall: BACK_WALL_ID,
+    });
+    expectPositionToMatch(nextState.placementPreview.position, {
+      x: 0.4,
+      y: 0.14,
+      z: -1.84,
+    });
+    expect(nextState.placementPreview.validation).toMatchObject({
+      isValid: true,
+      reason: null,
+      wall: BACK_WALL_ID,
+      rotation: 0,
+      collidingCupboardIds: [],
+    });
+  });
+
   it("marks the preview invalid when the pointer leaves the back wall", () => {
     const startedState = cupboardReducer(initialCupboardState, {
       type: "START_PLACEMENT_PREVIEW",
@@ -275,7 +315,7 @@ describe("cupboard reducer placement preview", () => {
       availableWidths: [600, 800, 900],
       availableHeights: [720],
       width: 600,
-      price: 290,
+      price: 305,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -325,7 +365,7 @@ describe("cupboard reducer placement preview", () => {
       availableWidths: [600, 800, 900],
       availableHeights: [720],
       width: 600,
-      price: 290,
+      price: 305,
       wall: RIGHT_WALL_ID,
     });
     expect(nextState.cupboards[0].rotation).toBeCloseTo(Math.PI * 1.5);
@@ -451,6 +491,39 @@ describe("cupboard reducer placement preview", () => {
     expect(nextState.cupboards).toHaveLength(1);
     expect(nextState.cupboards[0].id).toBe(10);
     expect(nextState.selectedCupboardId).toBeNull();
+  });
+
+  it("starts preview mode from an explicitly selected variant when one is provided", () => {
+    const nextState = cupboardReducer(
+      {
+        ...initialCupboardState,
+        selectedCupboardId: 4,
+      },
+      {
+        type: "START_PLACEMENT_PREVIEW",
+        payload: {
+          catalogId: "tall-pantry",
+          variantId: "600x2300x600",
+          roomBounds,
+        },
+      },
+    );
+
+    expect(nextState.selectedCupboardId).toBeNull();
+    expect(nextState.placementPreview).toMatchObject({
+      catalogId: "tall-pantry",
+      defaultVariantId: "600x2100x600",
+      activeVariantId: "600x2300x600",
+      width: 600,
+      height: 2300,
+      depth: 600,
+      price: 720,
+    });
+    expectPositionToMatch(nextState.placementPreview.position, {
+      x: 0,
+      y: -0.35,
+      z: -1.7,
+    });
   });
 
   it("rejects a cross-wall preview that intersects a cabinet at the corner", () => {
@@ -616,7 +689,7 @@ describe("cupboard reducer width stepping", () => {
       width: 350,
       height: 720,
       depth: 560,
-      price: 175,
+      price: 179,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -722,7 +795,7 @@ describe("cupboard reducer cabinet replacement", () => {
       width: 600,
       height: 2100,
       depth: 600,
-      price: 680,
+      price: 682,
       wall: BACK_WALL_ID,
     });
     expectPositionToMatch(nextState.cupboards[0].position, {
@@ -974,7 +1047,7 @@ describe("cupboard reducer project import", () => {
       },
     );
 
-    expect(nextState.cupboards).toEqual(importedCupboards);
+    expect(nextState.cupboards).toMatchObject(importedCupboards);
     expect(nextState.placementPreview).toBeNull();
     expect(nextState.activeMove).toBeNull();
     expect(nextState.activeResize).toBeNull();

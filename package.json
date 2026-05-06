@@ -23,7 +23,11 @@
     "eject": "react-scripts eject",
     "format": "npx prettier --write .",
     "deploy": "npm run build && wrangler deploy",
-    "preview": "npm run build && wrangler dev"
+    "preview": "npm run build && wrangler dev",
+    "prices:update": "node scripts/update-cabinet-prices.js",
+    "prices:check": "node scripts/update-cabinet-prices.js --check",
+    "manufacturing:update": "node scripts/update-cabinet-manufacturing.js",
+    "manufacturing:check": "node scripts/update-cabinet-manufacturing.js --check"
   },
   "eslintConfig": {
     "extends": [

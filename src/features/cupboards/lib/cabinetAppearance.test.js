@@ -48,4 +48,14 @@ describe("cabinet appearance helpers", () => {
       transparent: false,
     });
   });
+
+  it("falls back to the base cabinet theme when appearanceTheme is null", () => {
+    expect(getKitchenCabinetTheme({ appearanceTheme: null })).toMatchObject({
+      bodyColor: "#b89b78",
+      frontColor: "#efe1cf",
+      interiorColor: "#9d7c5d",
+      handleColor: "#5d564e",
+      legColor: "#4b4036",
+    });
+  });
 });

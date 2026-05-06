@@ -1,6 +1,7 @@
 import React from "react";
 
 import CupboardRenderer from "../../cupboards/components/CupboardRenderer";
+import TableTopRenderer from "../../cupboards/components/TableTopRenderer";
 import { useRoomScene } from "../context/RoomSceneContext";
 import FloorPlane from "./FloorPlane";
 import RoomBox from "./RoomBox";
@@ -27,6 +28,7 @@ const RoomShell = () => {
       <WallPlane position={[0, 0, bounds.back]} rotation={[0, 0, 0]} size={[dimensions.length, dimensions.height]} />
       <FloorPlane position={[0, bounds.floor, 0]} size={[dimensions.length, dimensions.width]} />
       <CupboardRenderer />
+      <TableTopRenderer />
     </RoomBox>
   );
 };

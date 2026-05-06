@@ -1,4 +1,11 @@
 import { defaultStarterCabinetId, getStarterCabinet, resolveStarterCabinetInstance } from "../model/catalog";
+import {
+  cloneCupboardCustomisation,
+  createInheritedCupboardCustomisation,
+  getDefaultProjectCustomisation,
+  normalizeProjectCustomisation,
+  resolveCompatibleOverrideOrFallback,
+} from "../model/customization";
 import { ROTATION_STEP, getNormalizedRotation } from "../model/geometry";
 import { createCupboard, createPlacementPreview, createPlacementValidationResult } from "../model/placementFactories";
 import { getCupboardResizeDragOutcome, getCupboardWidthStepOutcome } from "../model/cupboardResize";
@@ -7,6 +14,7 @@ import { alignCupboardToWall, getWallAlignedRotation } from "../model/wallAlignm
 
 export const initialCupboardState = {
   cupboards: [],
+  projectCustomisation: getDefaultProjectCustomisation(),
   placementPreview: null,
   activeMove: null,
   activeResize: null,
@@ -31,10 +39,46 @@ const cloneCupboardSnapshot = (cupboard) => ({
   ...cupboard,
   position: cupboard?.position ? { ...cupboard.position } : cupboard?.position,
   size: Array.isArray(cupboard?.size) ? [...cupboard.size] : cupboard?.size,
+  customisation: cloneCupboardCustomisation(cupboard?.customisation),
 });
 
 const getNextCupboardId = (cupboards) =>
   cupboards.reduce((currentMaxId, cupboard) => Math.max(currentMaxId, cupboard?.id ?? 0), 0) + 1;
+
+const applyCupboardCustomisationPatch = (currentCustomisation, patch = {}) => {
+  const nextCustomisation = cloneCupboardCustomisation(currentCustomisation);
+
+  if (Object.prototype.hasOwnProperty.call(patch, "carcassId")) {
+    nextCustomisation.carcassId = patch.carcassId;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(patch, "facadeId")) {
+    nextCustomisation.facadeId = patch.facadeId;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(patch, "handleId")) {
+    nextCustomisation.handleId = patch.handleId;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(patch, "accessoryPresetId")) {
+    nextCustomisation.accessoryPresetId = patch.accessoryPresetId;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(patch, "accessoryIds")) {
+    nextCustomisation.accessoryIds = patch.accessoryIds;
+  }
+
+  return nextCustomisation;
+};
+
+const normalizeCupboardCustomisation = (cupboard, projectCustomisation) => ({
+  ...cupboard,
+  customisation: resolveCompatibleOverrideOrFallback(
+    cupboard,
+    cupboard?.customisation ?? createInheritedCupboardCustomisation(),
+    projectCustomisation,
+  ),
+});
 
 const clearActiveMove = (state) => {
   if (!state.activeMove) {
@@ -95,7 +139,9 @@ export const cupboardReducer = (state, action) => {
 
       return {
         ...nextState,
-        placementPreview: createPlacementPreview(cabinet, action.payload.roomBounds),
+        placementPreview: createPlacementPreview(cabinet, action.payload.roomBounds, {
+          variantId: action.payload.variantId ?? null,
+        }),
         selectedCupboardId: null,
       };
     }
@@ -137,13 +183,16 @@ export const cupboardReducer = (state, action) => {
         ...state,
         cupboards: [
           ...state.cupboards,
-          createCupboard({
-            id: nextCupboardId,
-            cabinet: state.placementPreview,
-            position: state.placementPreview.position,
-            rotation: state.placementPreview.rotation,
-            wall: state.placementPreview.wall,
-          }),
+          normalizeCupboardCustomisation(
+            createCupboard({
+              id: nextCupboardId,
+              cabinet: state.placementPreview,
+              position: state.placementPreview.position,
+              rotation: state.placementPreview.rotation,
+              wall: state.placementPreview.wall,
+            }),
+            state.projectCustomisation,
+          ),
         ],
         placementPreview: null,
         selectedCupboardId: nextCupboardId,
@@ -317,7 +366,9 @@ export const cupboardReducer = (state, action) => {
 
       return {
         ...state,
-        cupboards: updateCupboardById(state.cupboards, currentCupboard.id, () => resizeOutcome.cupboard),
+        cupboards: updateCupboardById(state.cupboards, currentCupboard.id, () =>
+          normalizeCupboardCustomisation(resizeOutcome.cupboard, state.projectCustomisation),
+        ),
         activeResize: {
           ...state.activeResize,
           validation: resizeOutcome.validation,
@@ -395,7 +446,10 @@ export const cupboardReducer = (state, action) => {
 
       const replacementCupboard = createCupboard({
         id: selectedCupboard.id,
-        cabinet: replacementSource,
+        cabinet: {
+          ...replacementSource,
+          customisation: selectedCupboard.customisation,
+        },
         position: selectedCupboard.position,
         rotation: getWallAlignedRotation(selectedCupboard.wall),
         wall: selectedCupboard.wall,
@@ -415,7 +469,7 @@ export const cupboardReducer = (state, action) => {
       return {
         ...state,
         cupboards: updateCupboardById(state.cupboards, selectedCupboard.id, () => ({
-          ...replacementCupboard,
+          ...normalizeCupboardCustomisation(replacementCupboard, state.projectCustomisation),
           position: validation.snappedPosition,
           rotation: validation.rotation,
           wall: validation.wall,
@@ -448,18 +502,70 @@ export const cupboardReducer = (state, action) => {
 
       return {
         ...state,
-        cupboards: updateCupboardById(state.cupboards, selectedCupboard.id, () => widthStepOutcome.cupboard),
+        cupboards: updateCupboardById(state.cupboards, selectedCupboard.id, () =>
+          normalizeCupboardCustomisation(widthStepOutcome.cupboard, state.projectCustomisation),
+        ),
+      };
+    }
+
+    case "UPDATE_PROJECT_CUSTOMISATION":
+      return {
+        ...state,
+        projectCustomisation: normalizeProjectCustomisation({
+          ...state.projectCustomisation,
+          ...(action.payload ?? {}),
+        }),
+      };
+
+    case "UPDATE_CUPBOARD_CUSTOMISATION": {
+      const cupboard = findCupboardById(state.cupboards, action.payload?.cupboardId);
+
+      if (!cupboard || cupboard.isUnavailable) {
+        return state;
+      }
+
+      return {
+        ...state,
+        cupboards: updateCupboardById(state.cupboards, cupboard.id, (currentCupboard) =>
+          normalizeCupboardCustomisation(
+            {
+              ...currentCupboard,
+              customisation: applyCupboardCustomisationPatch(currentCupboard.customisation, action.payload?.patch),
+            },
+            state.projectCustomisation,
+          ),
+        ),
+      };
+    }
+
+    case "RESET_CUPBOARD_CUSTOMISATION": {
+      const cupboard = findCupboardById(state.cupboards, action.payload?.cupboardId);
+
+      if (!cupboard || cupboard.isUnavailable) {
+        return state;
+      }
+
+      return {
+        ...state,
+        cupboards: updateCupboardById(state.cupboards, cupboard.id, (currentCupboard) => ({
+          ...currentCupboard,
+          customisation: createInheritedCupboardCustomisation(),
+        })),
       };
     }
 
     case "LOAD_PROJECT": {
+      const nextProjectCustomisation = normalizeProjectCustomisation(action.payload?.projectCustomisation);
       const nextCupboards = Array.isArray(action.payload?.cupboards)
-        ? action.payload.cupboards.map((cupboard) => cloneCupboardSnapshot(cupboard))
+        ? action.payload.cupboards.map((cupboard) =>
+            normalizeCupboardCustomisation(cloneCupboardSnapshot(cupboard), nextProjectCustomisation),
+          )
         : [];
 
       return {
         ...state,
         cupboards: nextCupboards,
+        projectCustomisation: nextProjectCustomisation,
         placementPreview: null,
         activeMove: null,
         activeResize: null,

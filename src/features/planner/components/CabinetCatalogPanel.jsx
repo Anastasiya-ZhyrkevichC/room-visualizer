@@ -2,22 +2,34 @@ import React, { useEffect, useRef, useState } from "react";
 
 import {
   defaultOpenStarterCabinetGroupIds,
+  getStarterCabinetVariantsForHeight,
+  resolveStarterCabinetDefaultVariantForHeight,
   resolveDefaultStarterCabinetVariant,
+  resolveStarterCabinetInstance,
   starterCabinetCatalogGroups,
 } from "../../cupboards/model/catalog";
+import { calculateCupboardPriceBreakdown } from "../../cupboards/model/pricing";
 import { useCupboards } from "../../cupboards/state/CupboardProvider";
 import {
-  CATALOG_PLACEMENT_CUE,
   formatCatalogModulePrice,
-  formatCatalogPlacementHint,
+  formatMillimeterOptions,
   formatModuleDepth,
-  formatModuleHeightOptions,
-  formatModuleWidthOptions,
+  formatPrototypePrice,
 } from "../lib/roomFormatting";
+import CatalogCabinetPreview from "./CatalogCabinetPreview";
 
 const createInitialOpenGroups = () =>
   starterCabinetCatalogGroups.reduce((lookup, group) => {
     lookup[group.id] = defaultOpenStarterCabinetGroupIds.includes(group.id);
+    return lookup;
+  }, {});
+
+const createInitialSelectedHeights = () =>
+  starterCabinetCatalogGroups.reduce((lookup, group) => {
+    group.cabinets.forEach((cabinet) => {
+      lookup[cabinet.id] = resolveDefaultStarterCabinetVariant(cabinet)?.height ?? cabinet.height ?? null;
+    });
+
     return lookup;
   }, {});
 
@@ -26,11 +38,11 @@ const CabinetCatalogPanel = () => {
     cancelPlacementPreview,
     finishPlacementPreview,
     placementPreview,
-    replaceSelectedCupboard,
-    selectedCupboard,
+    projectCustomisation,
     startPlacementPreview,
   } = useCupboards();
   const [openGroups, setOpenGroups] = useState(createInitialOpenGroups);
+  const [selectedHeights, setSelectedHeights] = useState(createInitialSelectedHeights);
   const placementCleanupRef = useRef(null);
 
   useEffect(() => {
@@ -41,7 +53,7 @@ const CabinetCatalogPanel = () => {
     };
   }, []);
 
-  const startPlacementSession = (catalogId) => {
+  const startPlacementSession = (catalogId, variantId = null) => {
     if (placementCleanupRef.current) {
       placementCleanupRef.current("cancel");
     }
@@ -84,30 +96,29 @@ const CabinetCatalogPanel = () => {
     window.addEventListener("pointerup", handlePointerUp);
     window.addEventListener("pointercancel", handlePointerCancel);
     window.addEventListener("keydown", handleKeyDown);
-    startPlacementPreview(catalogId);
+    startPlacementPreview(catalogId, { variantId });
   };
 
-  const handleCatalogPointerDown = (catalogId, event) => {
+  const handleCatalogPointerDown = (catalogId, variantId, event) => {
     if (event.button !== 0) {
       return;
     }
 
     event.preventDefault();
-    startPlacementSession(catalogId);
-  };
-
-  const handleCatalogAddClick = (catalogId) => {
-    startPlacementSession(catalogId);
-  };
-
-  const handleCatalogReplaceClick = (catalogId) => {
-    replaceSelectedCupboard(catalogId);
+    startPlacementSession(catalogId, variantId);
   };
 
   const handleGroupToggle = (groupId) => {
     setOpenGroups((currentOpenGroups) => ({
       ...currentOpenGroups,
       [groupId]: !currentOpenGroups[groupId],
+    }));
+  };
+
+  const handleHeightChange = (catalogId, nextHeight) => {
+    setSelectedHeights((currentSelectedHeights) => ({
+      ...currentSelectedHeights,
+      [catalogId]: nextHeight,
     }));
   };
 
@@ -118,9 +129,9 @@ const CabinetCatalogPanel = () => {
         <h2 className="panel-card__title">Browse by cabinet family</h2>
       </div>
       <p className="panel-card__copy">
-        Expand a cabinet family, then drag a cabinet into the room or click Add. Each row places the smallest size
-        first, and you can resize it after selecting it. When a cabinet is selected in the scene, Replace swaps in a new
-        module on the same wall.
+        Expand a cabinet family, choose a height when variants exist, then drag a cabinet into the room. Each row places
+        the selected cabinet with the current project finish defaults, and you can resize it after selecting it in the
+        scene.
       </p>
 
       <div className="catalog-tree">
@@ -154,13 +165,36 @@ const CabinetCatalogPanel = () => {
                 <div className="catalog-list" id={groupPanelId}>
                   {group.cabinets.length > 0 ? (
                     group.cabinets.map((cabinet) => {
-                      const defaultVariant = resolveDefaultStarterCabinetVariant(cabinet) ?? cabinet;
-                      const widthOptionsLabel = formatModuleWidthOptions(cabinet);
-                      const heightOptionsLabel = formatModuleHeightOptions(cabinet);
+                      const fallbackVariant = resolveDefaultStarterCabinetVariant(cabinet) ?? cabinet;
+                      const selectedHeight = selectedHeights[cabinet.id] ?? fallbackVariant.height ?? null;
+                      const heightVariants = getStarterCabinetVariantsForHeight(cabinet, selectedHeight);
+                      const defaultVariant =
+                        resolveStarterCabinetDefaultVariantForHeight(cabinet, selectedHeight) ?? fallbackVariant;
+                      const resolvedVariantRows = heightVariants.map((variant) => {
+                        const resolvedInstance = resolveStarterCabinetInstance(cabinet, {
+                          variantId: variant.id,
+                        });
+                        const totalPrice = calculateCupboardPriceBreakdown(
+                          resolvedInstance,
+                          projectCustomisation,
+                        ).totalPrice;
+
+                        return {
+                          variant,
+                          totalPrice,
+                        };
+                      });
+                      const resolvedPrices = resolvedVariantRows
+                        .map((item) => item.totalPrice)
+                        .filter((price) => Number.isFinite(price));
+                      const selectedHeightLabel = formatMillimeterOptions([selectedHeight]);
                       const depthLabel = formatModuleDepth(defaultVariant);
-                      const priceLabel = formatCatalogModulePrice(cabinet);
-                      const placementHint = formatCatalogPlacementHint(defaultVariant);
-                      const canReplaceSelected = selectedCupboard && selectedCupboard.catalogId !== cabinet.id;
+                      const priceLabel = formatCatalogModulePrice({
+                        startingPrice: resolvedPrices[0] ?? 0,
+                        maxPrice: resolvedPrices[resolvedPrices.length - 1] ?? resolvedPrices[0] ?? 0,
+                        currency: cabinet.currency,
+                      });
+                      const hasHeightOptions = (cabinet.availableHeights?.length ?? 0) > 1;
 
                       return (
                         <article
@@ -168,62 +202,88 @@ const CabinetCatalogPanel = () => {
                             placementPreview?.catalogId === cabinet.id ? " catalog-row--dragging" : ""
                           }`}
                           key={cabinet.id}
-                          onPointerDown={(event) => handleCatalogPointerDown(cabinet.id, event)}
+                          onPointerDown={(event) => handleCatalogPointerDown(cabinet.id, defaultVariant.id, event)}
                         >
+                          <div className="catalog-row__preview">
+                            <CatalogCabinetPreview
+                              size={defaultVariant.size}
+                              category={cabinet.category}
+                              model={cabinet.model}
+                            />
+                          </div>
                           <div className="catalog-row__content">
                             <div className="catalog-row__headline">
-                              <strong className="catalog-row__title" title={cabinet.name}>
-                                {cabinet.name}
-                              </strong>
-                              <strong className="catalog-row__price">{priceLabel}</strong>
-                            </div>
-                            <div className="catalog-row__size-summary" aria-label={`${cabinet.name} supported sizes`}>
-                              <div className="catalog-row__size-line">
-                                <span className="catalog-row__size-label">Widths</span>
-                                <span className="catalog-row__size-value" title={widthOptionsLabel}>
-                                  {widthOptionsLabel}
-                                </span>
-                              </div>
-                              <div className="catalog-row__size-line">
-                                <span className="catalog-row__size-label">Heights</span>
-                                <span className="catalog-row__size-value" title={heightOptionsLabel}>
-                                  {heightOptionsLabel}
-                                </span>
+                              <div className="catalog-row__title-stack">
+                                <strong className="catalog-row__title" title={cabinet.name}>
+                                  {cabinet.name}
+                                </strong>
+                                <div className="catalog-row__meta">
+                                  <span className="catalog-row__price">{priceLabel}</span>
+                                  <span className="catalog-row__separator" aria-hidden="true">
+                                    •
+                                  </span>
+                                  <span className="catalog-row__depth">Depth {depthLabel}</span>
+                                </div>
                               </div>
                             </div>
-                            <div className="catalog-row__meta">
-                              <span className="catalog-row__depth">Depth {depthLabel}</span>
-                              <span className="catalog-row__separator" aria-hidden="true">
-                                •
-                              </span>
-                              <span className="catalog-row__placement-cue" title={placementHint}>
-                                {CATALOG_PLACEMENT_CUE}
-                              </span>
+                            <div className="catalog-row__controls">
+                              {hasHeightOptions ? (
+                                <label
+                                  className="catalog-row__control"
+                                  onPointerDown={(event) => {
+                                    event.stopPropagation();
+                                  }}
+                                >
+                                  <span className="catalog-row__control-label">Height</span>
+                                  <select
+                                    className="catalog-row__select"
+                                    value={String(selectedHeight)}
+                                    onChange={(event) => handleHeightChange(cabinet.id, Number(event.target.value))}
+                                    onPointerDown={(event) => {
+                                      event.stopPropagation();
+                                    }}
+                                  >
+                                    {cabinet.availableHeights.map((height) => (
+                                      <option key={height} value={height}>
+                                        {formatMillimeterOptions([height])}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </label>
+                              ) : (
+                                <div className="catalog-row__control catalog-row__control--static">
+                                  <span className="catalog-row__control-label">Height</span>
+                                  <strong className="catalog-row__control-value">{selectedHeightLabel}</strong>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                          <div className="catalog-row__actions">
-                            <button
-                              type="button"
-                              className="catalog-row__add"
-                              onPointerDown={(event) => {
-                                event.stopPropagation();
-                              }}
-                              onClick={() => handleCatalogAddClick(cabinet.id)}
-                            >
-                              Add
-                            </button>
-                            {canReplaceSelected ? (
-                              <button
-                                type="button"
-                                className="catalog-row__replace"
-                                onPointerDown={(event) => {
-                                  event.stopPropagation();
-                                }}
-                                onClick={() => handleCatalogReplaceClick(cabinet.id)}
+                            <div className="catalog-row__table-wrap">
+                              <table
+                                className="catalog-row__variant-table"
+                                aria-label={`${cabinet.name} widths and prices`}
                               >
-                                Replace
-                              </button>
-                            ) : null}
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Width</th>
+                                    <th scope="col">Price</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {resolvedVariantRows.map(({ variant, totalPrice }) => {
+                                    return (
+                                      <tr key={variant.id}>
+                                        <td>
+                                          <span className="catalog-row__variant-width">
+                                            {formatMillimeterOptions([variant.width])}
+                                          </span>
+                                        </td>
+                                        <td>{formatPrototypePrice(totalPrice, cabinet.currency)}</td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </article>
                       );

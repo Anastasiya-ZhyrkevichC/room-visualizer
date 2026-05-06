@@ -1,8 +1,33 @@
+import { convertMillimetersToMeters } from "../../../lib/units";
+import { WALL_CABINET_BOTTOM_OFFSET_MM } from "./placementConstants";
 import { getCupboardFootprint } from "./geometry";
 import { BACK_WALL_ID, LEFT_WALL_ID, RIGHT_WALL_ID } from "./walls";
 
 const createPosition = (x, y, z) => ({ x, y, z });
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const wallCabinetBottomOffset = convertMillimetersToMeters(WALL_CABINET_BOTTOM_OFFSET_MM);
+
+export const getCabinetCenterY = ({ category, size, roomBounds }) =>
+  roomBounds.floor + size[1] / 2 + (category === "wall" ? wallCabinetBottomOffset : 0);
+
+export const getCabinetWallAlignedPreviewPosition = (
+  cabinet,
+  point,
+  roomBounds,
+  wall,
+  rotation = getWallAlignedRotation(wall),
+) => {
+  const wallAlignedPosition = getWallAlignedPreviewPosition(cabinet.size, point, roomBounds, wall, rotation);
+
+  return {
+    ...wallAlignedPosition,
+    y: getCabinetCenterY({
+      category: cabinet.category,
+      size: cabinet.size,
+      roomBounds,
+    }),
+  };
+};
 
 export const isPlacementWall = (wall) => wall === BACK_WALL_ID || wall === LEFT_WALL_ID || wall === RIGHT_WALL_ID;
 
